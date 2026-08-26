@@ -1,0 +1,135 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: crm_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-crm_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crm_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-crm_user}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - crm_network
+
+  auth-service:
+    build: ./services/auth
+    container_name: crm_auth_service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@postgres:5432/auth_db
+      JWT_SECRET: ${JWT_SECRET:-cambia_esta_clave_secreta}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@tuempresa.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-CambiaEstaClave123}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8001:8000"
+    networks:
+      - crm_network
+
+  empleados-service:
+    build: ./services/empleados
+    container_name: crm_empleados_service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@postgres:5432/empleados_db
+      JWT_SECRET: ${JWT_SECRET:-cambia_esta_clave_secreta}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8002:8000"
+    networks:
+      - crm_network
+
+  calendario-service:
+    build: ./services/calendario
+    container_name: crm_calendario_service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@postgres:5432/calendario_db
+      JWT_SECRET: ${JWT_SECRET:-cambia_esta_clave_secreta}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8003:8000"
+    networks:
+      - crm_network
+
+  inventario-service:
+    build: ./services/inventario
+    container_name: crm_inventario_service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@postgres:5432/inventario_db
+      JWT_SECRET: ${JWT_SECRET:-cambia_esta_clave_secreta}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8004:8000"
+    networks:
+      - crm_network
+
+  reservas-service:
+    build: ./services/reservas
+    container_name: crm_reservas_service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@postgres:5432/reservas_db
+      JWT_SECRET: ${JWT_SECRET:-cambia_esta_clave_secreta}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8005:8000"
+    networks:
+      - crm_network
+
+  frontend:
+    build: ./frontend
+    container_name: crm_frontend
+    restart: unless-stopped
+    environment:
+      GATEWAY_PORT: ${GATEWAY_PORT:-8080}
+    ports:
+      - "3000:80"
+    depends_on:
+      - gateway
+    networks:
+      - crm_network
+
+  gateway:
+    image: nginx:alpine
+    container_name: crm_gateway
+    restart: unless-stopped
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - auth-service
+      - empleados-service
+      - calendario-service
+      - inventario-service
+      - reservas-service
+    networks:
+      - crm_network
+
+networks:
+  crm_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

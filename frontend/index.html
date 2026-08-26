@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- PANTALLA DE LOGIN -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="brand-mark">CRM</span>
+      <h1>Panel de gestión</h1>
+      <p>Ingresa con tu usuario para continuar</p>
+    </div>
+    <form id="login-form" class="login-form">
+      <label>
+        Usuario
+        <input type="text" id="login-username" required autocomplete="username" placeholder="ej. maria.recepcion">
+      </label>
+      <label>
+        Contraseña
+        <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••">
+      </label>
+      <div id="login-error" class="form-error" hidden></div>
+      <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+    </form>
+    <p style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:16px;">
+      ¿No tienes acceso? Pídele a un administrador que cree tu perfil.
+    </p>
+  </div>
+</div>
+
+<!-- APP PRINCIPAL -->
+<div id="app-shell" class="app-shell" hidden>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">CRM</span>
+      <span class="brand-name">Panel de gestión</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item" data-module="empleados">
+        <span class="nav-dot dot-empleados"></span>
+        Empleados
+      </button>
+      <button class="nav-item" data-module="calendario">
+        <span class="nav-dot dot-calendario"></span>
+        Calendario
+      </button>
+      <button class="nav-item" data-module="inventario">
+        <span class="nav-dot dot-inventario"></span>
+        Inventario
+      </button>
+      <button class="nav-item" data-module="reservas">
+        <span class="nav-dot dot-reservas"></span>
+        Reservas
+      </button>
+      <button class="nav-item" data-module="usuarios" id="nav-usuarios">
+        <span class="nav-dot dot-usuarios"></span>
+        Usuarios
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <span class="user-avatar" id="user-avatar">U</span>
+        <div>
+          <div class="user-name" id="user-name">Usuario</div>
+          <div class="user-role" id="user-role">Rol</div>
+        </div>
+      </div>
+      <button id="logout-btn" class="link-btn">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <h2 id="module-title">Empleados</h2>
+      <div id="topbar-actions"></div>
+    </header>
+    <div id="module-content" class="module-content"></div>
+  </main>
+</div>
+
+<!-- MODAL GENÉRICO -->
+<div id="modal-overlay" class="modal-overlay" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Título</h3>
+      <button id="modal-close" class="modal-close" aria-label="Cerrar">&times;</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div id="toast-container" class="toast-container"></div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/empleados.js"></script>
+<script src="js/calendario.js"></script>
+<script src="js/inventario.js"></script>
+<script src="js/reservas.js"></script>
+<script src="js/usuarios.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

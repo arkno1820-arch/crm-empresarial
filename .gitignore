@@ -1,0 +1,21 @@
+# Secretos y configuración local — nunca subir esto
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node (si en el futuro agregas build tools al frontend)
+node_modules/
+
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Docker
+*.log
