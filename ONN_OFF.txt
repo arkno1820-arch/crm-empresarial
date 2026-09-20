@@ -1,0 +1,17 @@
+docker compose down --------- APAGAR
+
+------------
+
+
+docker compose up -d -----------LEVANTAR
+
+
+
+----------------------------
+
+Comando	Cuándo usarlo
+docker compose up --build -d			Cuando cambiaste código y necesitas reconstruir las imágenes
+docker compose up --build frontend -d		Reconstruir solo un servicio específico
+docker compose down -v				Apagar Y borrar toda la base de datos (empiezas de cero)
+docker compose logs -f nombre-del-servicio	Ver los logs en vivo de un servicio
+docker compose ps				Ver el estado de todos los contenedores

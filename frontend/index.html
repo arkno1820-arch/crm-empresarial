@@ -4,64 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel CRM</title>
+<!-- Los archivos CSS/JS llevan "?v=N": súbelo cada vez que cambies su contenido.
+     Los navegadores cachean estos archivos de forma heurística incluso con
+     Cache-Control: no-store, así que una URL nueva es la única forma segura
+     de forzar que se descargue la versión actual tras un deploy. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/styles.css?v=20">
 </head>
 <body>
 
 <!-- PANTALLA DE LOGIN -->
 <div id="login-screen" class="login-screen">
-  <div class="login-card">
-    <div class="login-brand">
-      <span class="brand-mark">CRM</span>
-      <h1>Panel de gestión</h1>
-      <p>Ingresa con tu usuario para continuar</p>
-    </div>
-    <form id="login-form" class="login-form">
-      <label>
-        Usuario
-        <input type="text" id="login-username" required autocomplete="username" placeholder="ej. maria.recepcion">
-      </label>
-      <label>
-        Contraseña
-        <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••••">
-      </label>
+  <div class="login-bg" aria-hidden="true"></div>
+  <div class="login-overlay" aria-hidden="true"></div>
+
+  <div class="login-topbrand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+      CRM Empresarial
+    </span>
+    <h1><span class="hl">Gestión</span> integral <span class="hl">para</span> tu <span class="hl">empresa</span></h1>
+  </div>
+
+  <div class="login-glass">
+    <h2>Inicia sesión</h2>
+    <p class="login-subtitle">Ingresa tus credenciales para acceder al panel</p>
+
+    <form id="login-form" class="login-form login-form-icons">
+      <div class="input-icon-group">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <input type="text" id="login-username" required autocomplete="username" placeholder="Usuario">
+      </div>
+      <div class="input-icon-group">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input type="password" id="login-password" required autocomplete="current-password" placeholder="Contraseña">
+      </div>
       <div id="login-error" class="form-error" hidden></div>
       <button type="submit" class="btn btn-primary btn-block">Entrar</button>
     </form>
-    <p style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:16px;">
+
+    <p class="login-hint">
       ¿No tienes acceso? Pídele a un administrador que cree tu perfil.
     </p>
   </div>
+
+  <footer class="login-footer">
+    &copy; 2026 CRM Empresarial. Todos los derechos reservados | Desarrollado por
+    <a href="mailto:arkno1820@gmail.com">César Manríquez Figueroa</a>
+  </footer>
 </div>
 
 <!-- APP PRINCIPAL -->
 <div id="app-shell" class="app-shell" hidden>
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <span class="brand-mark">CRM</span>
-      <span class="brand-name">Panel de gestión</span>
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+      </span>
+      <span class="brand-name">CRM Suite</span>
     </div>
     <nav class="sidebar-nav">
       <button class="nav-item" data-module="empleados">
-        <span class="nav-dot dot-empleados"></span>
+        <span class="nav-icon icon-empleados"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
         Empleados
       </button>
       <button class="nav-item" data-module="calendario">
-        <span class="nav-dot dot-calendario"></span>
+        <span class="nav-icon icon-calendario"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
         Calendario
       </button>
       <button class="nav-item" data-module="inventario">
-        <span class="nav-dot dot-inventario"></span>
+        <span class="nav-icon icon-inventario"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21 8-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span>
         Inventario
       </button>
       <button class="nav-item" data-module="reservas">
-        <span class="nav-dot dot-reservas"></span>
+        <span class="nav-icon icon-reservas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8V6a2 2 0 0 1 2-2h3"/></svg></span>
         Reservas
       </button>
+      <button class="nav-item" data-module="chat">
+        <span class="nav-icon icon-chat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        Chat
+      </button>
       <button class="nav-item" data-module="usuarios" id="nav-usuarios">
-        <span class="nav-dot dot-usuarios"></span>
+        <span class="nav-icon icon-usuarios"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></span>
         Usuarios
       </button>
     </nav>
@@ -74,6 +99,9 @@
         </div>
       </div>
       <button id="logout-btn" class="link-btn">Cerrar sesión</button>
+      <div class="sidebar-credit">
+        Desarrollado por<br><a href="mailto:arkno1820@gmail.com">César Manríquez Figueroa</a>
+      </div>
     </div>
   </aside>
 
@@ -100,14 +128,15 @@
 <!-- TOASTS -->
 <div id="toast-container" class="toast-container"></div>
 
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/empleados.js"></script>
-<script src="js/calendario.js"></script>
-<script src="js/inventario.js"></script>
-<script src="js/reservas.js"></script>
-<script src="js/usuarios.js"></script>
-<script src="js/app.js"></script>
+<script src="js/config.js?v=20"></script>
+<script src="js/api.js?v=20"></script>
+<script src="js/ui.js?v=20"></script>
+<script src="js/empleados.js?v=20"></script>
+<script src="js/calendario.js?v=20"></script>
+<script src="js/inventario.js?v=20"></script>
+<script src="js/reservas.js?v=20"></script>
+<script src="js/chat.js?v=20"></script>
+<script src="js/usuarios.js?v=20"></script>
+<script src="js/app.js?v=20"></script>
 </body>
 </html>

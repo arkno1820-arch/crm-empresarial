@@ -1,0 +1,7 @@
+proxmox_endpoint  = "https://192.168.1.147:8006/"
+proxmox_api_token = "root@pam!terraform=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+proxmox_node      = "pve"
+template_vm_id    = 9000
+ssh_public_key    = "ssh-ed25519 AAAA... tu-correo@ejemplo.com"
+lan_gateway       = "192.168.1.1"
+crm_edge_lan_ip   = "192.168.1.60/24"

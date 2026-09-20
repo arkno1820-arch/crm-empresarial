@@ -1,0 +1,349 @@
+========================================================================
+ CRM EMPRESARIAL - GUIA DE RESPALDO Y RESTAURACION
+ Escrita para que la sigas paso a paso aunque hayas olvidado todo el resto.
+ Ultima actualizacion: 13-09-2026 (agregada seccion 10: seguridad y datos)
+========================================================================
+
+--------------------------------------------------------------------
+1. QUE ES ESTO
+--------------------------------------------------------------------
+Tienes un sistema CRM (empleados, calendario, inventario, reservas)
+corriendo en tu computador con Docker. Vive en dos lugares:
+
+  a) El CODIGO del sistema:
+     C:\Users\HP\Desktop\crm-empresarial
+
+  b) Los DATOS (lo que carga la gente cada dia: empleados, reservas,
+     usuarios, etc.): viven DENTRO de Docker, en un contenedor de
+     Postgres. NO son un archivo que puedas ver en el Explorador de
+     Windows - por eso hace falta un respaldo para poder recuperarlos.
+
+Si el disco duro falla, si borras la carpeta sin querer, o si algo se
+corrompe, SOLO puedes recuperar lo que hayas respaldado. Por eso existe
+este procedimiento.
+
+
+--------------------------------------------------------------------
+2. COSAS QUE DEBES SABER ANTES DE EMPEZAR
+--------------------------------------------------------------------
+- Necesitas tener Docker Desktop ABIERTO y corriendo (el icono de la
+  ballena en la barra de tareas, sin animacion de "cargando").
+
+- Necesitas tener el sistema CRM encendido. Para encenderlo:
+    1. Abre una terminal (PowerShell). Se abre asi: click en el boton
+       de inicio de Windows, escribe "PowerShell", presiona Enter.
+    2. Escribe este comando y presiona Enter:
+
+         cd "C:\Users\HP\Desktop\crm-empresarial"
+
+    3. Escribe este otro comando y presiona Enter:
+
+         docker compose up -d
+
+    4. Espera unos 20-30 segundos a que todo termine de arrancar.
+
+- Para APAGAR el sistema cuando termines de usarlo (opcional, no es
+  obligatorio apagarlo cada dia):
+
+         docker compose down
+
+- Para ABRIR el panel en el navegador, ahora hay dos formas:
+
+    * http://localhost:3000   (como siempre, funciona igual que antes)
+    * https://localhost:3443  (RECOMENDADA: la conexion va cifrada)
+
+  La primera vez que abras la version https://, el navegador va a
+  mostrar una advertencia tipo "La conexion no es privada" o "Advanced/
+  Avanzado". Es normal y esperado: es porque el certificado de
+  seguridad es "autofirmado" (no lo emitio una autoridad externa, ya
+  que el sistema no tiene un dominio de internet propio). Haz click en
+  "Avanzado" y luego en "Continuar a localhost (no seguro)" o similar.
+
+  IMPORTANTE - HAY QUE HACER ESTO DOS VECES, NO UNA: el panel
+  (localhost:3443) y el "motor" que atiende los datos (localhost:8443)
+  tienen certificados separados, y el navegador los aprueba por
+  separado. Si solo aceptas el de 3443, el panel carga pero el login
+  falla con un error como "Failed to fetch". La primera vez que uses
+  https://, en ESE ORDEN:
+
+    1. Abre https://localhost:8443 en una pestana, acepta la
+       advertencia ("Avanzado" > "Continuar"). Deberia mostrar el
+       texto "CRM Empresarial - Gateway activo".
+    2. Recien ahi abre https://localhost:3443 e inicia sesion.
+
+  Se hace UNA sola vez por navegador/equipo y no vuelve a preguntar:
+  no es "cada vez que abres el sistema", es solo la primera vez que
+  ESE navegador en ESE equipo visita el sitio. Despues de eso, cerrar
+  y abrir la pestana, reiniciar el computador, etc. no vuelve a pedirlo.
+
+  Hay que repetir los 2 pasos de arriba de nuevo solo si:
+    - Usas OTRO navegador en el mismo equipo (ej. ya lo aceptaste en
+      Chrome y ahora abres Edge o Firefox por primera vez).
+    - Otra persona lo abre desde SU PROPIO computador.
+    - Usas una ventana de incognito/privada (no guardan la excepcion).
+    - Borras el historial/datos de navegacion de ese navegador.
+
+  Para el uso normal del dia a dia, en el mismo navegador de siempre:
+  no hace falta hacer nada de esto, entras directo por
+  https://localhost:3443.
+
+
+--------------------------------------------------------------------
+3. COMO HACER UN RESPALDO NUEVO (hazlo seguido, ej. 1 vez por semana)
+--------------------------------------------------------------------
+Paso a paso:
+
+  1. Abre PowerShell (boton de inicio > escribe "PowerShell" > Enter).
+
+  2. Asegurate de que Docker Desktop este abierto y el CRM encendido
+     (ver punto 2 de esta guia).
+
+  3. Copia y pega este comando completo, y presiona Enter:
+
+         powershell -ExecutionPolicy Bypass -File "C:\Users\HP\Desktop\crm-empresarial\scripts\backup.ps1"
+
+  4. Espera a que termine. Al final vas a ver un resumen como este:
+
+         Respaldo completo en: C:\Users\HP\Desktop\crm-empresarial-backups\20260913_182035
+         Name                          Tamano (MB)
+         crm-empresarial-source.zip    1.19
+         postgres_dump.sql             0.03
+         postgres_volume.tar.gz        16.56
+         chat_files.tar.gz             0.02
+
+  5. Listo. El respaldo quedo guardado en tu Escritorio, dentro de la
+     carpeta:
+
+         C:\Users\HP\Desktop\crm-empresarial-backups\
+
+     Cada vez que corras el script se crea una carpeta NUEVA con la
+     fecha y hora exacta (ej. "20260913_182035" = 13-sept-2026, 18:20:35).
+     El script guarda automaticamente solo los ultimos 10 respaldos y
+     borra los mas viejos (para no llenar el disco).
+
+
+--------------------------------------------------------------------
+4. QUE CONTIENE CADA RESPALDO (dentro de cada carpeta con fecha)
+--------------------------------------------------------------------
+  - postgres_dump.sql
+      Todos los datos del sistema (empleados, reservas, usuarios,
+      calendario, inventario) en un archivo de texto. ESTE es el
+      archivo mas importante para recuperar informacion.
+
+  - postgres_volume.tar.gz
+      Una copia "cruda" extra de la base de datos, por si el archivo
+      anterior fallara. No necesitas abrirlo nunca a mano.
+
+  - chat_files.tar.gz
+      Los documentos que la gente comparte por el modulo Chat (fotos,
+      PDFs, etc.). Estos archivos NO estan dentro de Postgres, viven en
+      su propio espacio de Docker, por eso hace falta este archivo
+      aparte para no perderlos.
+
+  - crm-empresarial-source.zip
+      TODO el codigo del sistema (paginas, estilos, backend, la
+      configuracion de Docker, y el archivo .env con las claves).
+      Esto es lo que necesitas si perdieras la carpeta del proyecto
+      completa.
+
+
+--------------------------------------------------------------------
+5. MUY IMPORTANTE: SACA UNA COPIA FUERA DE ESTE COMPUTADOR
+--------------------------------------------------------------------
+Tener el respaldo en el mismo disco duro NO te protege si el disco se
+rompe, se pierde el computador, o hay un virus. Cada cierto tiempo
+(ej. una vez al mes), copia la carpeta completa:
+
+    C:\Users\HP\Desktop\crm-empresarial-backups\
+
+...a alguno de estos lugares:
+    - Un pendrive o disco duro externo.
+    - Google Drive, OneDrive o Dropbox.
+    - Un correo a ti mismo con el archivo mas reciente (si es chico).
+
+El archivo .env que viaja dentro de crm-empresarial-source.zip tiene
+contrasenas. Igual puedes guardarlo en tu nube personal, pero NUNCA lo
+subas a un repositorio publico (como GitHub publico) ni lo compartas
+con nadie que no sea de confianza.
+
+
+--------------------------------------------------------------------
+6. COMO RESTAURAR LOS DATOS (si algo se borro o se corrompio)
+--------------------------------------------------------------------
+Usa esto si el sistema esta funcionando pero PERDISTE DATOS (por
+ejemplo, alguien elimino empleados por error, o la base de datos se
+corrompio) y quieres volver a un respaldo anterior.
+
+  1. Abre PowerShell.
+
+  2. Ve a la carpeta del proyecto:
+
+         cd "C:\Users\HP\Desktop\crm-empresarial"
+
+  3. Asegurate de que el sistema este encendido:
+
+         docker compose up -d
+
+  4. Elige la carpeta de respaldo que quieres restaurar (por ejemplo
+     "20260913_182035") y corre este comando, cambiando la fecha por
+     la que quieras usar:
+
+         Get-Content "C:\Users\HP\Desktop\crm-empresarial-backups\20260913_182035\postgres_dump.sql" | docker exec -i crm_postgres psql -U crm_user postgres
+
+  5. Esto vuelve a cargar TODOS los datos tal como estaban en ese
+     respaldo. Los datos que se hayan creado DESPUES de ese respaldo
+     y no se hayan vuelto a respaldar, se pierden.
+
+  6. Recarga la pagina del CRM en el navegador (http://localhost:3000)
+     para ver los datos restaurados.
+
+
+--------------------------------------------------------------------
+7. COMO RECUPERAR TODO DESDE CERO (ej. computador nuevo, o se borro
+   la carpeta completa del proyecto)
+--------------------------------------------------------------------
+  1. Instala Docker Desktop en el computador nuevo:
+     https://www.docker.com/products/docker-desktop/
+     (abrelo y espera a que diga que esta corriendo).
+
+  2. Copia la carpeta de respaldos (o al menos la carpeta con la
+     fecha mas reciente) al computador nuevo, por ejemplo a:
+
+         C:\Users\HP\Desktop\crm-empresarial-backups\
+
+  3. Descomprime el archivo "crm-empresarial-source.zip" de esa
+     carpeta. Click derecho sobre el archivo > "Extraer todo..." >
+     elige como destino:
+
+         C:\Users\HP\Desktop\crm-empresarial
+
+  4. Abre PowerShell y escribe:
+
+         cd "C:\Users\HP\Desktop\crm-empresarial"
+         docker compose up -d --build
+
+  5. Espera 1-2 minutos a que todo se construya y arranque.
+
+  6. Carga los datos del respaldo (reemplaza la fecha por la carpeta
+     que copiaste):
+
+         Get-Content "C:\Users\HP\Desktop\crm-empresarial-backups\20260913_182035\postgres_dump.sql" | docker exec -i crm_postgres psql -U crm_user postgres
+
+  7. Recupera los documentos compartidos por el chat (reemplaza la
+     fecha igual que en el paso anterior):
+
+         docker run --rm -v crm-empresarial_chat_files:/volume -v "C:\Users\HP\Desktop\crm-empresarial-backups\20260913_182035:/backup" alpine sh -c "tar xzf /backup/chat_files.tar.gz -C /volume"
+
+  8. Abre el navegador en http://localhost:3000 - deberia verse todo
+     exactamente como antes, con los mismos usuarios, empleados,
+     reservas, etc.
+
+
+--------------------------------------------------------------------
+8. DONDE ESTAN LAS CONTRASENAS
+--------------------------------------------------------------------
+El archivo que tiene las claves del sistema (usuario admin, clave de
+la base de datos, clave secreta de sesiones) se llama ".env" y esta
+en la raiz del proyecto:
+
+    C:\Users\HP\Desktop\crm-empresarial\.env
+
+Tambien viaja una copia dentro de cada respaldo (crm-empresarial-source.zip).
+Ábrelo con el Bloc de notas si alguna vez necesitas ver o cambiar una
+clave.
+
+
+--------------------------------------------------------------------
+9. RESUMEN RAPIDO (lo minimo que necesitas recordar)
+--------------------------------------------------------------------
+  - Para respaldar:
+      powershell -ExecutionPolicy Bypass -File "C:\Users\HP\Desktop\crm-empresarial\scripts\backup.ps1"
+
+  - Los respaldos quedan en:
+      C:\Users\HP\Desktop\crm-empresarial-backups\
+
+  - Hazlo cada semana, y copia esa carpeta a una nube o disco externo
+    cada mes.
+
+
+--------------------------------------------------------------------
+10. SEGURIDAD Y PROTECCION DE DATOS (agregado 13-09-2026)
+--------------------------------------------------------------------
+El modulo Empleados guarda datos "sensibles" (alergias, medicamentos,
+prevision medica, contacto de emergencia) protegidos asi:
+
+  - Permiso separado: solo un Administrador, o un usuario al que se le
+    haya marcado el permiso "Empleados: datos de salud" en el modulo
+    Usuarios, puede ver o editar esos 4 campos. Cualquier otra persona
+    con acceso a Empleados ve el resto de la ficha normalmente, pero
+    esos campos le aparecen vacios.
+
+  - Estan cifrados en la base de datos (no se leen en texto plano ni
+    aunque alguien abra el respaldo o la base de datos directamente).
+    La clave que permite leerlos es FIELD_ENCRYPTION_KEY, guardada en
+    el archivo .env. SI SE PIERDE O SE CAMBIA ESA CLAVE, ESOS 4 CAMPOS
+    QUEDAN ILEGIBLES PARA SIEMPRE. El .env ya viaja dentro de cada
+    respaldo (crm-empresarial-source.zip), asi que respaldando
+    regularmente (seccion 3 de esta guia) esa clave queda a salvo.
+
+  - Hay un boton "Historial" (solo lo ve el Administrador) en cada
+    empleado, que muestra quien vio o modifico esa ficha y cuando.
+
+  - "Eliminar" un empleado YA NO borra el registro por completo: lo
+    anonimiza. Se conservan nombre, RUT, cargo, fecha de ingreso y
+    salario (por obligacion legal-laboral), pero se borran telefono,
+    correo, direccion, notas y los 4 datos sensibles. El empleado
+    queda marcado como "Inactivo" en la tabla en vez de desaparecer.
+
+  - El sistema pide (y guarda con fecha) el consentimiento del
+    empleado antes de permitir cargar sus datos de salud, con un
+    casillero en la ficha.
+
+  - Documentos legales borrador (para revisar con un abogado): carpeta
+
+         C:\Users\HP\Desktop\crm-empresarial\legal\
+
+    Empieza por "LEEME_LEGAL.txt" dentro de esa carpeta.
+
+
+--------------------------------------------------------------------
+11. MODULO CHAT (agregado 14-09-2026)
+--------------------------------------------------------------------
+Mensajeria interna 1 a 1 entre usuarios (tipo WhatsApp), con opcion de
+compartir documentos (maximo 25 MB por archivo).
+
+  - La bandeja se actualiza sola cada 3 segundos (no hace falta
+    recargar la pagina para ver mensajes nuevos). Esto se puede ajustar
+    en frontend/js/chat.js, funcion iniciarPolling() (busca el numero
+    al final, en milisegundos).
+
+  - Para que alguien pueda usarlo, necesita el permiso "Chat" marcado
+    en su perfil (modulo Usuarios). Un Administrador tiene acceso
+    siempre.
+
+  - Los mensajes y documentos SOLO se ven en la bandeja del usuario
+    durante 30 dias desde que se enviaron. Pasado ese plazo, dejan de
+    aparecer para los usuarios normales (no se pueden recuperar desde
+    la interfaz).
+
+  - El Administrador ve SIEMPRE todo, sin limite de 30 dias, con el
+    boton "Auditoria" dentro del modulo Chat: quien le escribio a
+    quien, cuando, y el contenido (o el documento) de cada mensaje.
+    Esto es para poder investigar un eventual mal uso del chat.
+
+  - Por ley, los usuarios deben saber que esto existe: por eso el
+    modulo muestra siempre un aviso fijo arriba ("Este chat interno
+    queda registrado y es auditable..."). No lo quites ni lo ocultes:
+    hacerlo sin avisar no esta permitido.
+
+  - Los documentos compartidos viven en su PROPIO respaldo
+    (chat_files.tar.gz, ver secciones 3, 4 y 7 de esta guia) — no estan
+    dentro del volcado de Postgres.
+
+
+--------------------------------------------------------------------
+12. AUTORIA / CONTACTO
+--------------------------------------------------------------------
+Sistema desarrollado por Cesar Manriquez Figueroa
+Correo: arkno1820@gmail.com
+========================================================================

@@ -1,0 +1,111 @@
+========================================================================
+ REGISTRO DE ACTIVIDADES DE TRATAMIENTO (RAT) - BORRADOR
+ CRM Empresarial - Módulo Empleados
+ Generado: 13-09-2026 | Requiere revisión legal antes de considerarse oficial
+========================================================================
+
+1. RESPONSABLE DEL TRATAMIENTO
+--------------------------------------------------------------------
+Nombre de la empresa: ______________________ (completar)
+RUT empresa:          ______________________ (completar)
+Representante/contacto: ____________________ (completar)
+Correo de contacto para temas de datos personales: ____________________
+
+
+2. ACTIVIDAD DE TRATAMIENTO: FICHAS DE PERSONAL (módulo Empleados)
+--------------------------------------------------------------------
+
+2.1 Finalidad
+    Gestión de la relación laboral: identificación del trabajador,
+    administración de remuneraciones, contacto operativo, y atención
+    de emergencias médicas durante la jornada laboral.
+
+2.2 Categorías de datos tratados
+
+    Datos de identificación y laborales (no sensibles):
+      - Nombre, apellido, RUT
+      - Cargo, departamento, fecha de ingreso
+      - Salario
+      - Teléfono, correo, dirección
+      - Notas administrativas de texto libre
+
+    Datos sensibles (Art. 2 letra g, Ley 19.628 / Ley 21.719 - salud):
+      - Alergias
+      - Medicamentos que consume
+      - Previsión médica (Fonasa/Isapre)
+      - Contacto de emergencia (dato de un tercero, no del trabajador)
+
+2.3 Base de licitud
+    - Datos laborales: ejecución del contrato de trabajo (relación
+      laboral vigente).
+    - Datos sensibles de salud: consentimiento explícito e informado
+      del trabajador, registrado en el sistema con fecha y hora
+      (campo "consentimiento_datos_sensibles" + "consentimiento_fecha").
+      Sin ese consentimiento, estos campos deben permanecer vacíos.
+
+2.4 Quién accede (dentro de la empresa)
+    - Cualquier usuario con el permiso "Empleados": ve datos de
+      identificación y laborales.
+    - Solo usuarios con el permiso adicional "Empleados: datos de
+      salud" (o rol Administrador): ven y editan los datos sensibles.
+    - Solo el rol Administrador: puede ver el historial de auditoría
+      (quién accedió/modificó cada ficha).
+
+2.5 Terceros / transferencias
+    Ninguna. El sistema no comparte estos datos con proveedores
+    externos, servicios de nube de terceros ni ninguna otra empresa.
+    Todo el procesamiento ocurre en la infraestructura propia (Docker
+    en el equipo/servidor de la empresa).
+
+2.6 Plazo de conservación
+    - Mientras dura la relación laboral: todos los campos activos.
+    - Al término de la relación laboral ("Eliminar" en el sistema):
+      se ANONIMIZAN los datos personales operativos y TODOS los datos
+      sensibles de salud (dejan de tener finalidad una vez terminado
+      el contrato). Se conservan nombre, RUT, cargo, fechas de ingreso
+      y salario por obligación de retención laboral/previsional/
+      tributaria (Código del Trabajo y normativa de la Dirección del
+      Trabajo / Servicio de Impuestos Internos).
+    - [Completar con tu abogado/contador: plazo exacto de retención
+      exigido para los datos laborales básicos en tu caso, ej. 5-6 años.]
+
+2.7 Medidas de seguridad implementadas
+    - Control de acceso basado en roles y permisos (RBAC), con un
+      permiso separado específicamente para datos de salud.
+    - Cifrado a nivel de columna (AES/Fernet) para los 4 campos
+      sensibles, en la base de datos.
+    - Registro de auditoría: toda lectura, creación, modificación y
+      anonimización queda registrada con usuario, fecha y acción.
+    - Comunicación cifrada (HTTPS) disponible entre el navegador y el
+      sistema.
+    - Respaldos periódicos (ver scripts/backup.ps1), incluyendo la
+      clave de cifrado, guardados fuera del equipo principal.
+
+2.8 Derechos de los titulares (ARCO+)
+    Estado actual: estos derechos se gestionan hoy de forma MANUAL
+    (el trabajador solicita a RRHH/Administrador, quien exporta o
+    corrige el dato directamente en el sistema). No existe todavía un
+    autoservicio para que el propio trabajador vea o pida corregir sus
+    datos.
+    [Pendiente de definir con tu abogado: procedimiento formal escrito
+    para atender solicitudes de acceso, rectificación, cancelación y
+    oposición dentro de los plazos legales.]
+
+
+3. OTRAS ACTIVIDADES DE TRATAMIENTO DEL SISTEMA (resumen)
+--------------------------------------------------------------------
+    - Usuarios y accesos: credenciales de login del personal que usa
+      el sistema (usuario, contraseña cifrada con hash, rol, permisos).
+    - Calendario: eventos internos, pueden incluir nombres de
+      participantes.
+    - Inventario: no contiene datos personales (productos, stock).
+    - Reservas: nombre, correo y teléfono de huéspedes/clientes.
+    [Si se necesita, se puede expandir este RAT con una sección propia
+    para cada uno de estos módulos, igual de detallada que la de
+    Empleados.]
+
+
+========================================================================
+ Este documento debe revisarse y actualizarse cada vez que cambien los
+ datos recolectados, los permisos de acceso, o los plazos de retención.
+========================================================================

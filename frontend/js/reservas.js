@@ -63,7 +63,9 @@ const ReservasModule = {
           <td>${formatMoney(r.total)}</td>
           <td>${badgeFor(r.estado)}</td>
           <td class="actions-cell">
+            <button class="btn btn-ghost btn-sm" data-edit="${r.id}">Editar</button>
             ${r.estado === "confirmada" ? `<button class="btn btn-danger btn-sm" data-cancel="${r.id}">Cancelar</button>` : ""}
+            <button class="btn btn-danger btn-sm" data-delete="${r.id}">Eliminar</button>
           </td>
         </tr>
       `;
@@ -78,8 +80,15 @@ const ReservasModule = {
       </div>
     `;
 
+    el.querySelectorAll("[data-edit]").forEach(btn =>
+      btn.addEventListener("click", () => {
+        const reserva = this.reservas.find(r => r.id == btn.dataset.edit);
+        this.openReservaEditForm(reserva);
+      }));
     el.querySelectorAll("[data-cancel]").forEach(btn =>
       btn.addEventListener("click", () => this.cancelarReserva(btn.dataset.cancel)));
+    el.querySelectorAll("[data-delete]").forEach(btn =>
+      btn.addEventListener("click", () => this.eliminarReserva(btn.dataset.delete)));
   },
 
   renderHabitaciones() {
@@ -96,45 +105,65 @@ const ReservasModule = {
         <td>${h.capacidad} personas</td>
         <td>${formatMoney(h.precio_noche)} / noche</td>
         <td>${h.estado === "disponible" ? `<span class="badge badge-ok">Disponible</span>` : `<span class="badge badge-warn">${escapeHtml(h.estado)}</span>`}</td>
+        <td class="actions-cell">
+          <button class="btn btn-ghost btn-sm" data-edit-hab="${h.id}">Editar</button>
+          <button class="btn btn-danger btn-sm" data-delete-hab="${h.id}">Eliminar</button>
+        </td>
       </tr>
     `).join("");
 
     el.innerHTML = `
       <div class="card">
         <table class="data-table">
-          <thead><tr><th>Número</th><th>Tipo</th><th>Capacidad</th><th>Precio</th><th>Estado</th></tr></thead>
+          <thead><tr><th>Número</th><th>Tipo</th><th>Capacidad</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
     `;
+
+    el.querySelectorAll("[data-edit-hab]").forEach(btn =>
+      btn.addEventListener("click", () => {
+        const habitacion = this.habitaciones.find(h => h.id == btn.dataset.editHab);
+        this.openHabitacionForm(habitacion);
+      }));
+    el.querySelectorAll("[data-delete-hab]").forEach(btn =>
+      btn.addEventListener("click", () => this.eliminarHabitacion(btn.dataset.deleteHab)));
   },
 
-  openHabitacionForm() {
-    Modal.open("Nueva habitación", `
+  openHabitacionForm(habitacion = null) {
+    const isEdit = !!habitacion;
+    const tipos = ["individual", "doble", "camarote", "suite"];
+    Modal.open(isEdit ? `Editar habitación — ${habitacion.numero}` : "Nueva habitación", `
       <form id="hab-form" class="form-grid">
         <div class="field">
           <label>Número</label>
-          <input name="numero" required placeholder="Ej. 101">
+          <input name="numero" required placeholder="Ej. 101" value="${escapeHtml(habitacion?.numero || "")}">
         </div>
         <div class="field">
           <label>Tipo</label>
           <select name="tipo">
-            <option value="individual">Individual</option>
-            <option value="doble">Doble</option>
-            <option value="suite">Suite</option>
+            ${tipos.map(t => `<option value="${t}" ${habitacion?.tipo === t ? "selected" : ""}>${t.charAt(0).toUpperCase() + t.slice(1)}</option>`).join("")}
           </select>
         </div>
         <div class="field">
-          <label>Precio por noche</label>
-          <input type="number" step="0.01" name="precio_noche" required>
+          <label>Precio por noche (CLP)</label>
+          <input type="number" step="1" min="0" name="precio_noche" placeholder="CLP" required value="${habitacion?.precio_noche ?? ""}">
         </div>
         <div class="field">
           <label>Capacidad</label>
-          <input type="number" name="capacidad" value="2">
+          <input type="number" name="capacidad" value="${habitacion?.capacidad ?? 2}">
         </div>
+        ${isEdit ? `
+        <div class="field full">
+          <label>Estado</label>
+          <select name="estado">
+            <option value="disponible" ${habitacion.estado === "disponible" ? "selected" : ""}>Disponible</option>
+            <option value="mantenimiento" ${habitacion.estado === "mantenimiento" ? "selected" : ""}>Mantenimiento</option>
+          </select>
+        </div>` : ""}
         <div class="form-actions full">
           <button type="button" class="btn btn-ghost" id="cancel-form">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Crear habitación</button>
+          <button type="submit" class="btn btn-primary">${isEdit ? "Guardar cambios" : "Crear habitación"}</button>
         </div>
       </form>
     `);
@@ -148,14 +177,31 @@ const ReservasModule = {
       payload.capacidad = Number(payload.capacidad);
 
       try {
-        await API.createHabitacion(payload);
-        showToast("Habitación creada", "success");
+        if (isEdit) {
+          await API.updateHabitacion(habitacion.id, payload);
+          showToast("Habitación actualizada", "success");
+        } else {
+          await API.createHabitacion(payload);
+          showToast("Habitación creada", "success");
+        }
         Modal.close();
         this.render();
       } catch (err) {
-        handleApiError(err, "No se pudo crear la habitación");
+        handleApiError(err, isEdit ? "No se pudo actualizar la habitación" : "No se pudo crear la habitación");
       }
     });
+  },
+
+  async eliminarHabitacion(id) {
+    const habitacion = this.habitaciones.find(h => h.id == id);
+    if (!confirmAction(`¿Eliminar la habitación "${habitacion?.numero}"? Esta acción no se puede deshacer.`)) return;
+    try {
+      await API.deleteHabitacion(id);
+      showToast("Habitación eliminada", "success");
+      this.render();
+    } catch (err) {
+      handleApiError(err, "No se pudo eliminar la habitación");
+    }
   },
 
   openReservaForm() {
@@ -221,6 +267,57 @@ const ReservasModule = {
     });
   },
 
+  openReservaEditForm(reserva) {
+    const hab = this.habitaciones.find(h => h.id === reserva.habitacion_id);
+    Modal.open(`Editar reserva — ${reserva.huesped_nombre}`, `
+      <form id="reserva-edit-form" class="form-grid">
+        <div class="field full">
+          <label>Habitación</label>
+          <input value="${hab ? escapeHtml(hab.numero) + " · " + escapeHtml(hab.tipo) : "-"}" disabled>
+        </div>
+        <div class="field">
+          <label>Check-in</label>
+          <input type="date" name="fecha_checkin" required value="${reserva.fecha_checkin}">
+        </div>
+        <div class="field">
+          <label>Check-out</label>
+          <input type="date" name="fecha_checkout" required value="${reserva.fecha_checkout}">
+        </div>
+        <div class="field full">
+          <label>Estado</label>
+          <select name="estado">
+            <option value="confirmada" ${reserva.estado === "confirmada" ? "selected" : ""}>Confirmada</option>
+            <option value="cancelada" ${reserva.estado === "cancelada" ? "selected" : ""}>Cancelada</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Notas</label>
+          <textarea name="notas">${escapeHtml(reserva.notas || "")}</textarea>
+        </div>
+        <div class="form-actions full">
+          <button type="button" class="btn btn-ghost" id="cancel-form">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    `);
+
+    document.getElementById("cancel-form").addEventListener("click", () => Modal.close());
+    document.getElementById("reserva-edit-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const payload = Object.fromEntries(fd.entries());
+
+      try {
+        await API.updateReserva(reserva.id, payload);
+        showToast("Reserva actualizada", "success");
+        Modal.close();
+        this.render();
+      } catch (err) {
+        handleApiError(err, "No se pudo actualizar la reserva");
+      }
+    });
+  },
+
   async cancelarReserva(id) {
     if (!confirmAction("¿Cancelar esta reserva?")) return;
     try {
@@ -229,6 +326,18 @@ const ReservasModule = {
       this.render();
     } catch (err) {
       handleApiError(err, "No se pudo cancelar la reserva");
+    }
+  },
+
+  async eliminarReserva(id) {
+    const reserva = this.reservas.find(r => r.id == id);
+    if (!confirmAction(`¿Eliminar la reserva de "${reserva?.huesped_nombre}"? Esta acción no se puede deshacer.`)) return;
+    try {
+      await API.deleteReserva(id);
+      showToast("Reserva eliminada", "success");
+      this.render();
+    } catch (err) {
+      handleApiError(err, "No se pudo eliminar la reserva");
     }
   }
 };

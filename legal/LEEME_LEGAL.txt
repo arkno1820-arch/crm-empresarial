@@ -1,0 +1,38 @@
+========================================================================
+ CARPETA "legal" - QUE ES ESTO
+========================================================================
+
+Esta carpeta tiene dos documentos BORRADOR para ayudarte a cumplir la
+Ley 21.719 (nueva Ley de Protección de Datos Personales de Chile, que
+crea la Agencia de Protección de Datos Personales y entra en vigor
+completa en diciembre de 2026):
+
+  1. REGISTRO_ACTIVIDADES_TRATAMIENTO.txt
+     Documenta qué datos personales trata tu CRM, para qué, quién accede,
+     cuánto tiempo se guardan y qué medidas de seguridad tienen.
+
+  2. PROCEDIMIENTO_BRECHAS_SEGURIDAD.txt
+     Qué hacer paso a paso si alguna vez hay un incidente de seguridad
+     (por ejemplo, alguien accede sin autorización a los datos).
+
+--------------------------------------------------------------------
+IMPORTANTE - LEE ESTO ANTES DE USARLOS
+--------------------------------------------------------------------
+Estos documentos los redacté yo (un asistente de IA) en base a cómo está
+construido el sistema hoy. NO son asesoría legal. Antes de considerarlos
+"tu política oficial":
+
+  1. Haz que un abogado (idealmente especializado en protección de
+     datos) los revise y ajuste a tu caso real.
+  2. Confirma si tu empresa, por tamaño o volumen de datos que trata,
+     está obligada a nombrar un Delegado de Protección de Datos (DPO).
+     Eso depende de criterios que la Agencia de Protección de Datos irá
+     definiendo — es una pregunta específica para tu abogado, no algo
+     que yo pueda determinar por ti.
+  3. Actualiza estos documentos cada vez que cambie qué datos recolecta
+     el sistema (por ejemplo, si agregas un nuevo campo o módulo).
+
+Dicho eso, tener estos borradores YA es mejor que no tener nada: si la
+Agencia de Protección de Datos alguna vez pide evidencia de que estás
+tomando esto en serio, este es exactamente el tipo de documento que se
+espera que exista.

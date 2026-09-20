@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional, List
 
-MODULOS_VALIDOS = {"empleados", "calendario", "inventario", "reservas"}
+MODULOS_VALIDOS = {"empleados", "calendario", "inventario", "reservas", "empleados_salud", "chat"}
 
 
 class UserCreate(BaseModel):
@@ -28,6 +28,15 @@ class UserOut(BaseModel):
     permisos: List[str] = []
     is_active: bool
     created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class UserDirectorio(BaseModel):
+    """Version minima de un usuario, para elegir con quien chatear. No
+    lleva email/role/permisos: eso sigue siendo admin-only (/auth/users)."""
+    username: str
 
     class Config:
         from_attributes = True

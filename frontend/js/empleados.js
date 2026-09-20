@@ -1,6 +1,15 @@
 const EmpleadosModule = {
   data: [],
 
+  puedeVerSalud() {
+    const user = Auth.getUser();
+    return user?.role === "admin" || (user?.permisos || []).includes("empleados_salud");
+  },
+
+  esAdmin() {
+    return Auth.getUser()?.role === "admin";
+  },
+
   async render() {
     document.getElementById("module-title").textContent = "Empleados";
     document.getElementById("topbar-actions").innerHTML = `
@@ -36,9 +45,11 @@ const EmpleadosModule = {
         <td>${escapeHtml(e.departamento || "-")}</td>
         <td>${escapeHtml(e.telefono || "-")}</td>
         <td>${escapeHtml(e.email || "-")}</td>
+        <td>${e.activo ? `<span class="badge badge-ok">Activo</span>` : `<span class="badge badge-neutral">Inactivo</span>`}</td>
         <td class="actions-cell">
           <button class="btn btn-ghost btn-sm" data-edit="${e.id}">Editar</button>
-          <button class="btn btn-danger btn-sm" data-delete="${e.id}">Eliminar</button>
+          ${this.esAdmin() ? `<button class="btn btn-ghost btn-sm" data-historial="${e.id}">Historial</button>` : ""}
+          ${e.activo ? `<button class="btn btn-danger btn-sm" data-delete="${e.id}">Eliminar</button>` : ""}
         </td>
       </tr>
     `).join("");
@@ -48,7 +59,7 @@ const EmpleadosModule = {
         <table class="data-table">
           <thead>
             <tr>
-              <th>Nombre</th><th>DNI</th><th>Puesto</th><th>Departamento</th><th>Teléfono</th><th>Correo</th><th>Acciones</th>
+              <th>Nombre</th><th>RUT</th><th>Puesto</th><th>Departamento</th><th>Teléfono</th><th>Correo</th><th>Estado</th><th>Acciones</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -58,8 +69,39 @@ const EmpleadosModule = {
 
     content.querySelectorAll("[data-edit]").forEach(btn =>
       btn.addEventListener("click", () => this.openForm(btn.dataset.edit)));
+    content.querySelectorAll("[data-historial]").forEach(btn =>
+      btn.addEventListener("click", () => this.verHistorial(btn.dataset.historial)));
     content.querySelectorAll("[data-delete]").forEach(btn =>
       btn.addEventListener("click", () => this.remove(btn.dataset.delete)));
+  },
+
+  async verHistorial(id) {
+    const empleado = this.data.find(e => String(e.id) === String(id));
+    Modal.open(`Historial — ${empleado?.nombre || ""} ${empleado?.apellido || ""}`, `<div class="empty-state">Cargando…</div>`);
+
+    try {
+      const registros = await API.auditoriaEmpleado(id);
+      const filas = registros.map(r => `
+        <tr>
+          <td>${formatDateTime(r.fecha)}</td>
+          <td>${escapeHtml(r.usuario)}</td>
+          <td>${escapeHtml(r.accion)}</td>
+          <td>${escapeHtml(r.detalle || "-")}</td>
+        </tr>
+      `).join("");
+
+      document.getElementById("modal-body").innerHTML = registros.length ? `
+        <div class="card" style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead>
+            <tbody>${filas}</tbody>
+          </table>
+        </div>
+      ` : `<div class="empty-state"><h4>Sin registros</h4><p>Aún no hay historial de accesos para esta ficha.</p></div>`;
+    } catch (err) {
+      handleApiError(err, "No se pudo cargar el historial");
+      document.getElementById("modal-body").innerHTML = `<div class="empty-state"><h4>No se pudo cargar</h4></div>`;
+    }
   },
 
   openForm(id = null) {
@@ -68,6 +110,7 @@ const EmpleadosModule = {
 
     Modal.open(isEdit ? "Editar empleado" : "Nuevo empleado", `
       <form id="empleado-form" class="form-grid">
+        <div class="form-section-title full">Datos personales</div>
         <div class="field">
           <label>Nombre</label>
           <input name="nombre" required value="${escapeHtml(empleado?.nombre || "")}">
@@ -77,24 +120,8 @@ const EmpleadosModule = {
           <input name="apellido" required value="${escapeHtml(empleado?.apellido || "")}">
         </div>
         <div class="field">
-          <label>DNI</label>
+          <label>RUT</label>
           <input name="dni" required ${isEdit ? "disabled" : ""} value="${escapeHtml(empleado?.dni || "")}">
-        </div>
-        <div class="field">
-          <label>Puesto</label>
-          <input name="puesto" value="${escapeHtml(empleado?.puesto || "")}">
-        </div>
-        <div class="field">
-          <label>Departamento</label>
-          <input name="departamento" value="${escapeHtml(empleado?.departamento || "")}">
-        </div>
-        <div class="field">
-          <label>Fecha de ingreso</label>
-          <input type="date" name="fecha_ingreso" value="${empleado?.fecha_ingreso || ""}">
-        </div>
-        <div class="field">
-          <label>Salario</label>
-          <input type="number" step="0.01" name="salario" value="${empleado?.salario ?? ""}">
         </div>
         <div class="field">
           <label>Teléfono</label>
@@ -108,6 +135,61 @@ const EmpleadosModule = {
           <label>Dirección</label>
           <textarea name="direccion">${escapeHtml(empleado?.direccion || "")}</textarea>
         </div>
+
+        <div class="form-section-title full">Datos laborales</div>
+        <div class="field">
+          <label>Puesto</label>
+          <input name="puesto" value="${escapeHtml(empleado?.puesto || "")}">
+        </div>
+        <div class="field">
+          <label>Departamento</label>
+          <input name="departamento" value="${escapeHtml(empleado?.departamento || "")}">
+        </div>
+        <div class="field">
+          <label>Fecha de ingreso</label>
+          <input type="date" name="fecha_ingreso" value="${empleado?.fecha_ingreso || ""}">
+        </div>
+        <div class="field">
+          <label>Salario (CLP)</label>
+          <input type="number" step="1" min="0" name="salario" placeholder="CLP" value="${empleado?.salario ?? ""}">
+        </div>
+
+        ${this.puedeVerSalud() ? `
+        <div class="form-section-title full">Salud y contacto de emergencia</div>
+        <div class="field">
+          <label>Contacto de emergencia</label>
+          <input name="contacto_emergencia" placeholder="Nombre y teléfono" value="${escapeHtml(empleado?.contacto_emergencia || "")}">
+        </div>
+        <div class="field">
+          <label>Previsión médica</label>
+          <input name="prevision_medica" placeholder="Ej. Fonasa, Isapre..." value="${escapeHtml(empleado?.prevision_medica || "")}">
+        </div>
+        <div class="field full">
+          <label>Alergias</label>
+          <textarea name="alergias" placeholder="Ej. penicilina, mariscos...">${escapeHtml(empleado?.alergias || "")}</textarea>
+        </div>
+        <div class="field full">
+          <label>Medicamentos que consume</label>
+          <textarea name="medicamentos">${escapeHtml(empleado?.medicamentos || "")}</textarea>
+        </div>
+        <div class="field full">
+          <label style="display:flex;align-items:center;gap:8px;font-weight:600;">
+            <input type="checkbox" name="consentimiento_datos_sensibles" ${empleado?.consentimiento_datos_sensibles ? "checked" : ""}>
+            El empleado autorizó entregar estos datos (uso: contacto en caso de emergencia médica)
+          </label>
+          ${empleado?.consentimiento_fecha ? `<p style="font-size:12px;color:var(--text-muted);margin:4px 0 0;">Autorizado el ${formatDateTime(empleado.consentimiento_fecha)}</p>` : ""}
+        </div>
+        ` : `
+        <div class="form-section-title full">Salud y contacto de emergencia</div>
+        <p style="font-size:13px;color:var(--text-muted);margin:0;">No tienes permiso para ver ni editar estos datos. Pídele a un administrador el acceso "Empleados: datos de salud" si lo necesitas.</p>
+        `}
+
+        <div class="form-section-title full">Otras informaciones</div>
+        <div class="field full">
+          <label>Notas</label>
+          <textarea name="notas" placeholder="Cualquier otro dato relevante">${escapeHtml(empleado?.notas || "")}</textarea>
+        </div>
+
         <div class="form-actions full">
           <button type="button" class="btn btn-ghost" id="cancel-form">Cancelar</button>
           <button type="submit" class="btn btn-primary">${isEdit ? "Guardar cambios" : "Crear empleado"}</button>
@@ -122,6 +204,11 @@ const EmpleadosModule = {
       const payload = Object.fromEntries(fd.entries());
       if (payload.salario === "") delete payload.salario;
       if (payload.fecha_ingreso === "") delete payload.fecha_ingreso;
+      // Un checkbox sin marcar no viaja en el FormData; si la sección de
+      // salud está visible, hay que mandar explícitamente el false.
+      if (this.puedeVerSalud()) {
+        payload.consentimiento_datos_sensibles = fd.get("consentimiento_datos_sensibles") === "on";
+      }
 
       try {
         if (isEdit) {
@@ -142,10 +229,16 @@ const EmpleadosModule = {
 
   async remove(id) {
     const empleado = this.data.find(e => String(e.id) === String(id));
-    if (!confirmAction(`¿Eliminar a ${empleado?.nombre} ${empleado?.apellido}? Esta acción no se puede deshacer.`)) return;
+    const confirmado = confirmAction(
+      `¿Eliminar a ${empleado?.nombre} ${empleado?.apellido}?\n\n` +
+      `Esto no borra el registro por completo: se conservan nombre, RUT, cargo, fechas y salario ` +
+      `(exigido por la ley laboral), pero se eliminan todos sus datos de contacto y de salud. ` +
+      `Esta acción no se puede deshacer.`
+    );
+    if (!confirmado) return;
     try {
       await API.deleteEmpleado(id);
-      showToast("Empleado eliminado", "success");
+      showToast("Empleado eliminado (datos personales y de salud anonimizados)", "success");
       this.render();
     } catch (err) {
       handleApiError(err, "No se pudo eliminar el empleado");

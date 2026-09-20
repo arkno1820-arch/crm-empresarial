@@ -72,6 +72,18 @@ def list_users(db: Session = Depends(get_db), admin=Depends(get_current_admin)):
     return db.query(models.User).order_by(models.User.created_at.desc()).all()
 
 
+@router.get("/directorio", response_model=list[schemas.UserDirectorio])
+def directorio(db: Session = Depends(get_db), current=Depends(get_current_user)):
+    """Lista minima (solo username) de cuentas activas, para que cualquier
+    usuario elija con quien chatear. A diferencia de /users, no requiere
+    ser admin ni expone email/rol/permisos de nadie."""
+    usuarios = db.query(models.User).filter(
+        models.User.is_active == True,  # noqa: E712
+        models.User.username != current.get("sub"),
+    ).order_by(models.User.username).all()
+    return usuarios
+
+
 @router.put("/users/{user_id}", response_model=schemas.UserOut)
 def update_user(
     user_id: int,

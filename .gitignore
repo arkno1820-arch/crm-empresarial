@@ -1,21 +1,21 @@
-# Secretos y configuración local — nunca subir esto
+# Secretos y credenciales - nunca subir
 .env
+*.pem
+infra/proxmox-terraform/terraform.tfvars
+
+# Certificados autofirmados (se regeneran por entorno, ver README/guias)
+gateway/certs/
+frontend/certs/
 
 # Python
 __pycache__/
 *.pyc
-*.pyo
 .venv/
 venv/
 
-# Node (si en el futuro agregas build tools al frontend)
-node_modules/
+# Config local de herramientas
+.claude/
 
-# Sistema operativo / editor
+# Sistema
 .DS_Store
 Thumbs.db
-.vscode/
-.idea/
-
-# Docker
-*.log

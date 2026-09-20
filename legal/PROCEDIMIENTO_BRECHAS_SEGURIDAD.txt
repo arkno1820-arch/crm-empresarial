@@ -1,0 +1,90 @@
+========================================================================
+ PROCEDIMIENTO ANTE BRECHAS DE SEGURIDAD - BORRADOR
+ CRM Empresarial
+ Generado: 13-09-2026 | Requiere revisión legal antes de considerarse oficial
+========================================================================
+
+¿Qué es una "brecha de seguridad"? Cualquier evento que resulte en la
+destrucción, pérdida, alteración, comunicación o acceso no autorizado a
+datos personales. Ejemplos concretos para este sistema:
+  - Alguien entra a una cuenta de usuario que no le pertenece.
+  - Se pierde o roba el computador/servidor donde corre el sistema.
+  - Un respaldo (backup) se comparte o se pierde fuera de control.
+  - Un empleado con acceso legítimo copia o comparte datos sin
+    autorización (ej. la ficha de salud de un compañero).
+  - Un error de configuración deja el sistema accesible desde
+    internet sin protección.
+
+
+PASO 1 - DETECTAR Y CONTENER (primeras horas)
+--------------------------------------------------------------------
+  [ ] Identifica qué pasó: ¿qué sistema, qué datos, cuántas personas
+      afectadas?
+  [ ] Corta el acceso de inmediato si sigue activo:
+        - Cambia la contraseña del usuario admin y de cualquier cuenta
+          comprometida (módulo Usuarios).
+        - Si el problema es de red/exposición, apaga temporalmente el
+          gateway: "docker compose stop gateway" (corta el acceso
+          externo sin perder datos).
+  [ ] Revisa el historial de auditoría del módulo afectado (ej. botón
+      "Historial" en Empleados) para ver qué se accedió/modificó y
+      cuándo.
+  [ ] NO borres nada todavía: guarda evidencia (logs, capturas,
+      historial de auditoría) antes de "limpiar".
+
+PASO 2 - EVALUAR LA GRAVEDAD
+--------------------------------------------------------------------
+  [ ] ¿Qué tipo de datos se vieron comprometidos?
+        - Datos comunes (nombre, teléfono) -> riesgo menor.
+        - Datos sensibles de salud (alergias, medicamentos, previsión)
+          o credenciales (contraseñas) -> riesgo alto, requiere
+          notificación.
+  [ ] ¿Cuántas personas están afectadas?
+  [ ] ¿Los datos estaban cifrados? (los campos de salud SÍ lo están si
+      FIELD_ENCRYPTION_KEY está configurada — revisa el .env). Un dato
+      cifrado y robado es un riesgo menor que uno en texto plano.
+
+PASO 3 - NOTIFICAR (dentro de los plazos legales)
+--------------------------------------------------------------------
+  La Ley 21.719 exige notificar brechas de seguridad relevantes a:
+    a) La Agencia de Protección de Datos Personales.
+    b) Los titulares de los datos afectados (ej. el empleado o cliente
+       cuya información se vio comprometida), cuando exista un riesgo
+       real para sus derechos.
+
+  [Pendiente de confirmar con tu abogado: plazo exacto de notificación
+  y el canal/formulario oficial de la Agencia, ya que esto depende de
+  la reglamentación que se termine de definir antes de diciembre 2026.]
+
+  Mientras tanto, como mínimo:
+  [ ] Documenta el incidente por escrito: qué pasó, cuándo se detectó,
+      qué datos y personas afectó, qué se hizo para contenerlo.
+  [ ] Si hay duda razonable de que hay riesgo para las personas
+      afectadas, avísales directamente aunque el plazo legal exacto no
+      esté claro todavía — es mejor comunicar temprano que tarde.
+
+PASO 4 - CORREGIR LA CAUSA
+--------------------------------------------------------------------
+  [ ] Identifica la causa raíz (contraseña débil, permiso mal
+      configurado, servidor expuesto, etc.).
+  [ ] Aplica la corrección antes de volver a levantar el sistema.
+  [ ] Si la causa fue una contraseña o clave comprometida, rótala:
+        - Contraseñas de usuarios: módulo Usuarios.
+        - JWT_SECRET o FIELD_ENCRYPTION_KEY (.env): requiere ayuda
+          técnica, ya que cambiar FIELD_ENCRYPTION_KEY vuelve
+          ilegibles los datos cifrados con la clave anterior.
+
+PASO 5 - DEJAR REGISTRO
+--------------------------------------------------------------------
+  [ ] Guarda una copia de este checklist completado (fecha, qué pasó,
+      qué se hizo, quién fue notificado) en un lugar seguro y
+      accesible para una eventual auditoría.
+  [ ] Revisa si este mismo tipo de incidente podría repetirse en otro
+      módulo, y corrige preventivamente.
+
+
+========================================================================
+ Este es un procedimiento base. Un abogado especializado debería
+ revisarlo y completar los plazos y canales de notificación exactos
+ una vez que la Agencia de Protección de Datos publique su reglamento.
+========================================================================

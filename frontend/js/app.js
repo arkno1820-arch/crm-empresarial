@@ -3,6 +3,7 @@ const Modules = {
   calendario: CalendarioModule,
   inventario: InventarioModule,
   reservas: ReservasModule,
+  chat: ChatModule,
   usuarios: UsuariosModule,
 };
 
@@ -16,7 +17,7 @@ function showScreen(id) {
 
 function accesibleModules(user) {
   // El admin ve todo, incluyendo Usuarios. Los demás solo ven lo que tengan en "permisos".
-  if (user.role === "admin") return ["empleados", "calendario", "inventario", "reservas", "usuarios"];
+  if (user.role === "admin") return ["empleados", "calendario", "inventario", "reservas", "chat", "usuarios"];
   return (user.permisos || []).filter(m => Modules[m]);
 }
 

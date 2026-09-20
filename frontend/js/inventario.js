@@ -94,8 +94,8 @@ const InventarioModule = {
           <input type="number" name="cantidad" value="0">
         </div>` : ""}
         <div class="field">
-          <label>Precio unitario</label>
-          <input type="number" step="0.01" name="precio_unitario" value="${producto?.precio_unitario ?? 0}">
+          <label>Precio unitario (CLP)</label>
+          <input type="number" step="1" min="0" name="precio_unitario" placeholder="CLP" value="${producto?.precio_unitario ?? 0}">
         </div>
         <div class="field">
           <label>Stock mínimo (alerta)</label>

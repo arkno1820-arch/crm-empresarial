@@ -9,7 +9,7 @@ create_db() {
 EOSQL
 }
 
-for db in auth_db empleados_db calendario_db inventario_db reservas_db; do
+for db in auth_db empleados_db calendario_db inventario_db reservas_db chat_db; do
 	create_db "$db"
 done
 

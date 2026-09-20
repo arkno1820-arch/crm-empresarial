@@ -1,8 +1,10 @@
 const MODULOS_DISPONIBLES = [
   { key: "empleados", label: "Empleados" },
+  { key: "empleados_salud", label: "Empleados: datos de salud (sensible)" },
   { key: "calendario", label: "Calendario" },
   { key: "inventario", label: "Inventario" },
   { key: "reservas", label: "Reservas" },
+  { key: "chat", label: "Chat" },
 ];
 
 const UsuariosModule = {
@@ -115,7 +117,8 @@ const UsuariosModule = {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 0;">
             ${this.checkboxesHtml(usuario?.permisos || [])}
           </div>
-          <p style="font-size:12px;color:var(--text-muted);margin:0;">Si el rol es "Administrador", tiene acceso a todo sin importar estos checkboxes.</p>
+          <p style="font-size:12px;color:var(--text-muted);margin:0 0 4px;">Si el rol es "Administrador", tiene acceso a todo sin importar estos checkboxes.</p>
+          <p style="font-size:12px;color:var(--text-muted);margin:0;">"Datos de salud" solo tiene efecto si la persona también tiene "Empleados" marcado — sin eso no puede entrar al módulo.</p>
         </div>
         ${isEdit ? `
         <div class="field full">

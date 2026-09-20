@@ -16,6 +16,14 @@ class HabitacionCreate(HabitacionBase):
     pass
 
 
+class HabitacionUpdate(BaseModel):
+    numero: Optional[str] = None
+    tipo: Optional[str] = None
+    precio_noche: Optional[Decimal] = None
+    capacidad: Optional[int] = None
+    estado: Optional[str] = None
+
+
 class HabitacionOut(HabitacionBase):
     id: int
 
