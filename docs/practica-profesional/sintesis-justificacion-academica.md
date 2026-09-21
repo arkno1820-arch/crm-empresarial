@@ -35,12 +35,17 @@ explícitamente en cualquier informe).
 
 - **`vmbr1`**: red virtual interna, sin puerto físico asociado — existe solo dentro de
   Proxmox. Es la "red virtual" evaluada por la asignatura Redes Virtuales.
-- **`crm-edge`** (2 vCPU/2GB): Nginx nativo, con una interfaz en `vmbr0` (hacia la LAN) y
-  otra en `vmbr1` (hacia el núcleo). Es el único punto de entrada.
-- **`crm-core`** (4 vCPU/8GB): corre el `docker-compose.yml` completo del CRM. Solo tiene
-  interfaz en `vmbr1` — inalcanzable directamente desde la LAN. La prueba de aislamiento
-  (`curl` fallido desde otro equipo de la LAN a `10.10.10.10`) es la evidencia central de
-  segmentación real.
+- **Par de borde — `crm-edge` + `crm-edge-b`** (2 vCPU/2GB cada una): Nginx nativo, cada
+  una con una interfaz en `vmbr0` (hacia la LAN) y otra en `vmbr1` (hacia el núcleo). No es
+  una sola VM sino un par redundante con Keepalived/VRRP (detalle en sección 4) — es el
+  único punto de entrada al sistema.
+- **Par de núcleo — `crm-core` + `crm-core-b`** (4 vCPU/6GB cada una): corren el
+  `docker-compose.yml` completo del CRM. Solo tienen interfaz en `vmbr1` — inalcanzables
+  directamente desde la LAN. La prueba de aislamiento (`curl` fallido desde otro equipo de
+  la LAN a `10.10.10.10`) es la evidencia central de segmentación real. `crm-core-b` recibe
+  una réplica de la base de datos (sección 4) y queda en espera pasiva.
+- El diagrama `arquitectura_crm_proxmox.svg` (embebido en el `README.md` del repo) muestra
+  las 4 VMs, la IP virtual de Keepalived y la relación de réplica entre el par de núcleo.
 - **Insight no evidente**: VMware (donde vive Proxmox) + Proxmox/KVM (donde viven las VMs
   del CRM) ya constituyen "al menos dos tecnologías de virtualización líderes" — requisito
   explícito del indicador 2.1.1 de Virtualización, cumplido sin haberlo buscado a propósito.
@@ -110,7 +115,7 @@ explícitamente en pausa (ver sección 8) hasta que se retome.
 | **Gestión de Servicios TI - ITIL** (CR304ICRE) | ✅ Fuerte | Su ficha oficial la asocia a Ciberseguridad, no a Conectividad y Redes, pero su contenido es la Función 06 ya mapeada en el perfil de egreso. La bitácora de incidentes (sección 5) ES evidencia real de gestión de incidentes/problemas/cambios (RA 1.2). El monitoreo pendiente (Uptime Kuma + Proxmox) cierra también el RA 1.4 de este ramo — misma tarea, doble evidencia. |
 | **Gestión de la Información con TICs** (AS300PCOM) | 🔧 Parcial | Ramo transversal (todas las carreras). Calza fuerte en comparación de plataformas cloud (tabla de proveedores ya construida) y en seguridad/protección de datos según marco legal (todo el trabajo de Ley 21.719). El resto del programa (IA, RA/RV, IoT, análisis estadístico de datos, identidad digital en redes sociales) no aplica al CRM — no forzarlo. |
 | **Automatización de Redes Corporativas** (CR303CICRE) | ⛔ El más débil | Sin programa oficial disponible; contenido es Multicast/QoS/GRE/IPsec a nivel de routers físicos Cisco — no aplica a una red de bridges virtuales. Su único punto de contacto (Ansible) ya está contado en Redes Virtuales, no suma evidencia nueva. No forzarlo más. |
-| **Diseño y Arquitectura de Redes** (CR301ICRE) | ✅✅ Uno de los match más fuertes | RA 2.1 (diseño escalable con rendimiento/disponibilidad/seguridad) describe literalmente `crm-edge`/`crm-core`. El estándar **FCAPS** (Fault/Configuration/Accounting/Security ya cubiertos; solo falta Performance = el monitoreo pendiente) mapea casi perfecto con el proyecto. Diagrama topológico actualizado: `arquitectura_crm_proxmox.svg` (reemplaza al antiguo `arquitectura_crm_microservicios.png`, de antes del pivote a Proxmox). |
+| **Diseño y Arquitectura de Redes** (CR301ICRE) | ✅✅ Uno de los match más fuertes | RA 2.1 (diseño escalable con rendimiento/disponibilidad/seguridad) describe literalmente el par `crm-edge`/`crm-edge-b` y el par `crm-core`/`crm-core-b`. El estándar **FCAPS** (Fault/Configuration/Accounting/Security ya cubiertos; solo falta Performance = el monitoreo pendiente) mapea casi perfecto con el proyecto. Diagrama topológico actualizado: `arquitectura_crm_proxmox.svg`, ahora con las 4 VMs redundantes (reemplaza al antiguo `arquitectura_crm_microservicios.png` y a la primera versión de 2 VMs, ambas de antes del plan de redundancia). |
 
 Referencia adicional: el documento "Funciones Laborales — Ingeniería en Conectividad y
 Redes" (perfil de egreso, 8 áreas / 32 indicadores) ya fue mapeado en detalle contra este
@@ -173,9 +178,11 @@ evidencia auténtica de gestión de incidentes, no simulada:
    respaldo cruzado: cierra la supervisión de continuidad operacional del perfil de
    egreso, el RA 1.4 de ITIL, y el pilar "Performance" de FCAPS (Diseño y Arquitectura
    de Redes) — los otros 4 pilares de FCAPS ya están cubiertos.
-5. ~~Actualizar el diagrama topológico~~ — **hecho el 2026-09-20**: `arquitectura_crm_proxmox.svg`
-   reemplaza al antiguo `arquitectura_crm_microservicios.png` — pedido explícito del RA 2.2 de
-   Diseño y Arquitectura de Redes.
+5. ~~Actualizar el diagrama topológico~~ — hecho el 2026-09-20 (reemplazó al antiguo
+   `arquitectura_crm_microservicios.png`), y **actualizado de nuevo el 2026-09-21** porque esa
+   primera versión solo mostraba 2 VMs y ya existía el plan de redundancia: `arquitectura_crm_proxmox.svg`
+   ahora muestra las 4 VMs (par de borde con IP virtual de Keepalived, par de núcleo con la
+   réplica de Postgres) — pedido explícito del RA 2.2 de Diseño y Arquitectura de Redes.
 6. **Artefactos de Gestión de Proyectos** (EDT, Gantt, RACI, riesgos, EVM) usando el
    historial real de este proyecto como caso de estudio.
 7. Formalizar un **informe de auditoría de seguridad** sobre la prueba de aislamiento de
