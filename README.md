@@ -1,10 +1,74 @@
-# CRM Empresarial — Microservicios
+# CRM Empresarial
 
-Arquitectura de microservicios con FastAPI + PostgreSQL + Docker, con un gateway Nginx como punto único de entrada.
+Sistema de gestión interna (empleados, calendario, inventario, reservas, chat) para una
+pyme chilena, construido como microservicios con FastAPI + PostgreSQL + Docker, detrás de
+un gateway Nginx. En producción corre virtualizado sobre Proxmox con un diseño de
+redundancia — no solo un `docker compose up` en un laptop.
 
-## Administración de accesos
+Desarrollado por **César Manríquez Figueroa** ([arkno1820@gmail.com](mailto:arkno1820@gmail.com)).
 
-**Ya no existe registro público.** El servicio `auth` (Administración de accesos) crea automáticamente **un único usuario administrador** la primera vez que arranca, usando las variables de tu `.env`:
+## Qué incluye
+
+- 6 microservicios de negocio + gateway, patrón *database per service* (una base de datos
+  por servicio sobre una única instancia PostgreSQL).
+- HTTPS en el gateway y el frontend (certificados propios).
+- RBAC granular por módulo, incluyendo un permiso separado para datos de salud de
+  empleados.
+- Cifrado a nivel de campo para datos sensibles, consentimiento informado y política de
+  anonimización (no borrado) — cumplimiento Ley 21.719.
+- Auditoría de accesos, exportable para revisión administrativa.
+- Chat interno tipo mensajería, con aviso legal de monitoreo y persistencia de 30 días
+  para usuarios regulares (permanente para auditoría de administración).
+- Sistema de respaldo ante desastres documentado paso a paso (`scripts/`).
+
+## Arquitectura
+
+| Servicio     | Puerto directo | Ruta vía gateway     | Base de datos    |
+|--------------|----------------|-----------------------|------------------|
+| Auth         | 8001           | `/api/auth/`          | `auth_db`        |
+| Empleados    | 8002           | `/api/empleados/`     | `empleados_db`   |
+| Calendario   | 8003           | `/api/calendario/`    | `calendario_db`  |
+| Inventario   | 8004           | `/api/inventario/`    | `inventario_db`  |
+| Reservas     | 8005           | `/api/reservas/`      | `reservas_db`    |
+| Chat         | 8006           | `/api/chat/`          | `chat_db`        |
+| **Gateway**  | 8080 / **8443 (HTTPS)** | —             | —                |
+| **Frontend** | 3000 / **3443 (HTTPS)** | —             | —                |
+
+## Despliegue en producción: Proxmox, no solo Docker Compose
+
+El CRM real de la empresa no vive en un contenedor suelto — corre virtualizado sobre
+Proxmox, con un diseño pensado para tolerar fallas de software sin caerse entero:
+
+![Arquitectura de virtualización](arquitectura_crm_proxmox.svg)
+
+- **`crm-edge`** (borde, expuesto a la LAN) + **`crm-edge-b`**: par redundante con
+  Keepalived/VRRP — una IP virtual salta automáticamente al nodo sano.
+- **`crm-core`** (núcleo, aislado en una red interna sin salida a Internet) +
+  **`crm-core-b`**: réplica de Postgres cada 15 minutos, con promoción manual
+  documentada ante falla.
+
+Guías paso a paso: [`infra/proxmox-terraform/`](infra/proxmox-terraform) (Terraform, crea
+las 4 VMs y la red) e [`infra/ansible/`](infra/ansible) (configura Nginx, Docker, Keepalived
+y la réplica). El porqué de cada decisión de arquitectura —incluyendo qué protege esta
+redundancia y qué no— está en
+[`docs/practica-profesional/sintesis-justificacion-academica.md`](docs/practica-profesional/sintesis-justificacion-academica.md).
+
+## Desarrollo local (Docker Compose)
+
+Para levantar todo en tu propia máquina, sin Proxmox:
+
+```bash
+cd crm-empresarial
+cp .env.example .env    # cambia JWT_SECRET y las contraseñas antes de producción
+docker compose up --build
+```
+
+Espera a que todos los contenedores estén healthy. La primera vez, Postgres ejecutará
+`init-db/init-multiple-dbs.sh` para crear las 6 bases de datos.
+
+Abre **http://localhost:3000** (o `https://localhost:3443` si aceptaste el certificado
+propio) — es la interfaz de uso diario del equipo. El primer arranque crea automáticamente
+un único usuario administrador con las credenciales de tu `.env`:
 
 ```
 ADMIN_USERNAME=admin
@@ -12,125 +76,64 @@ ADMIN_EMAIL=admin@tuempresa.com
 ADMIN_PASSWORD=CambiaEstaClave123
 ```
 
-**Cambia `ADMIN_PASSWORD` antes de tu primer `docker compose up`.** Con esa cuenta inicias sesión en `http://localhost:3000` y desde el módulo **"Usuarios"** (visible solo para el rol `admin`) das de alta al resto del equipo, eligiendo:
+Desde el módulo **"Usuarios"** (solo visible para `admin`) das de alta al resto del
+equipo, asignando rol y módulos permitidos a cada persona.
 
-- Su **rol**: admin, rrhh, recepción o empleado
-- Sus **módulos permitidos**: empleados, calendario, inventario, reservas (un admin siempre tiene acceso total)
-
-Cada persona, al iniciar sesión, solo ve en el menú lateral los módulos que le asignaste. Los 4 microservicios de negocio (empleados, calendario, inventario, reservas) ahora **exigen un token válido** — ya no son de acceso libre aunque alguien conozca la URL directa.
-
-Si necesitas resetear todo (por ejemplo, olvidaste la contraseña del admin y no hay otro admin activo), borra el volumen de la base de datos y vuelve a levantar:
+Si necesitas resetear todo:
 
 ```bash
 docker compose down -v
 docker compose up --build
 ```
 
-Esto recreará el único usuario admin desde cero con los valores de tu `.env`.
-
-## Servicios
-
-| Servicio    | Puerto directo | Ruta vía gateway     | Base de datos   |
-|-------------|----------------|----------------------|-----------------|
-| Auth        | 8001           | `/api/auth/`         | `auth_db`       |
-| Empleados   | 8002           | `/api/empleados/`    | `empleados_db`  |
-| Calendario  | 8003           | `/api/calendario/`   | `calendario_db` |
-| Inventario  | 8004           | `/api/inventario/`   | `inventario_db` |
-| Reservas    | 8005           | `/api/reservas/`     | `reservas_db`   |
-| Gateway     | 80             | —                    | —               |
-| **Frontend**| **3000**       | —                    | —               |
-
-## Panel visual (frontend)
-
-Abre **http://localhost:3000** — es la interfaz pensada para uso diario del equipo (secretarias, recepción, RRHH), sin necesidad de tocar Swagger ni JSON:
-
-- Pantalla de login / registro de usuarios
-- **Empleados**: tabla con fichas, alta/edición/baja por formulario
-- **Calendario**: agenda de eventos agrupada por día
-- **Inventario**: tabla de productos con alertas visuales de stock bajo, registro de entradas/salidas
-- **Reservas**: pestañas de Habitaciones y Reservas, formulario de nueva reserva con validación de disponibilidad
-
-El primer usuario que crees en la pantalla de registro puede ser tu admin.
-
-Cada servicio tiene su propia base de datos dentro de la misma instancia de Postgres (patrón *database per service*), lo que te permite separarlos en el futuro sin cambiar código.
-
-## Requisitos
-
-- Docker y Docker Compose instalados en tu PC.
-
-## Cómo levantar el proyecto
-
-```bash
-cd crm-empresarial
-cp .env.example .env    # ya viene copiado, pero cambia JWT_SECRET en producción
-docker compose up --build
-```
-
-Espera a que todos los contenedores estén healthy. La primera vez, Postgres ejecutará `init-db/init-multiple-dbs.sh` para crear las 5 bases de datos.
-
 ## Documentación interactiva de cada servicio
 
-FastAPI genera Swagger automáticamente:
-
-- Auth: http://localhost:8001/docs
-- Empleados: http://localhost:8002/docs
-- Calendario: http://localhost:8003/docs
-- Inventario: http://localhost:8004/docs
-- Reservas: http://localhost:8005/docs
-
-## Flujo típico
-
-1. **Inicia sesión como admin** en `http://localhost:3000` con las credenciales de tu `.env`.
-2. **Crea perfiles** desde el módulo "Usuarios", asignando rol y módulos permitidos a cada persona.
-3. Cada persona **inicia sesión** con su propio usuario y ve solo lo que le asignaste.
-4. Desde ahí, todo se hace por la interfaz: fichas de empleados, eventos de calendario, inventario y reservas.
-
-Si prefieres usar la API directamente (Swagger), todos los endpoints de negocio ahora requieren el header `Authorization: Bearer <token>` que obtienes en `POST /api/auth/login`. El endpoint `POST /api/auth/register` también requiere ese header, y además que el token pertenezca a un usuario con rol `admin`.
+FastAPI genera Swagger automáticamente en `http://localhost:<puerto>/docs` para cada
+microservicio (ver tabla de puertos arriba).
 
 ## Comandos útiles
 
 ```bash
-# Ver logs de un servicio
-docker compose logs -f empleados-service
-
-# Reconstruir solo un servicio tras editar código
-docker compose up --build empleados-service
-
-# Parar todo
-docker compose down
-
-# Parar y borrar también los datos de Postgres
-docker compose down -v
+docker compose logs -f empleados-service          # ver logs de un servicio
+docker compose up --build empleados-service       # reconstruir solo uno
+docker compose down                                # parar todo
+docker compose down -v                             # parar y borrar los datos
 ```
 
-## Próximos pasos recomendados
+## Documentación adicional
 
-1. **Notificaciones del calendario**: añadir un worker o webhook que avise por email cuando se crea/edita un evento.
-2. **Subida de fotos/documentos** de empleados: añadir un servicio de almacenamiento (o usar un volumen + endpoint de upload).
-3. **Permisos más finos por acción**: hoy el acceso es por módulo completo (ej. "inventario"); si necesitas que recepción solo pueda *ver* reservas pero no *cancelarlas*, se puede refinar por endpoint.
-4. **Expiración y renovación de sesión**: el token dura 8 horas; se puede añadir un refresh token si quieres sesiones más largas sin volver a pedir contraseña.
-5. **Producción**: usar HTTPS en el gateway, secrets manejados fuera del `.env` (ej. Docker secrets o un vault), y backups automáticos de Postgres.
+- [`scripts/INSTRUCCIONES_RESPALDO.txt`](scripts/INSTRUCCIONES_RESPALDO.txt) — la
+  "biblia": qué es el sistema, cómo respaldarlo y cómo recuperarlo por completo ante un
+  desastre.
+- [`legal/`](legal) — registro de actividades de tratamiento y procedimiento de brechas
+  de seguridad (Ley 21.719), con caveat de que no reemplazan asesoría legal.
+- [`docs/practica-profesional/`](docs/practica-profesional) — cómo este proyecto se
+  conecta con las competencias de Ingeniería en Conectividad y Redes, decisiones de
+  arquitectura y su justificación, bitácora de incidentes reales.
 
 ## Estructura del proyecto
 
 ```
 crm-empresarial/
 ├── docker-compose.yml
-├── .env.example
-├── gateway/
-│   └── nginx.conf
+├── arquitectura_crm_proxmox.svg
+├── gateway/                  # Nginx: proxy reverso + HTTPS
+│   ├── nginx.conf
+│   └── locations.conf
+├── frontend/                 # SPA en JS plano, servida por Nginx
 ├── init-db/
-│   └── init-multiple-dbs.sh
-└── services/
-    ├── auth/
-    ├── empleados/
-    ├── calendario/
-    ├── inventario/
-    └── reservas/
-        └── app/
-            ├── main.py
-            ├── database.py
-            ├── models.py
-            ├── schemas.py
-            └── routers/
+├── services/
+│   ├── auth/
+│   ├── empleados/            # incluye cifrado de datos sensibles + auditoría
+│   ├── calendario/
+│   ├── inventario/
+│   ├── reservas/
+│   └── chat/
+├── infra/
+│   ├── proxmox-terraform/    # crea las 4 VMs y la red interna
+│   └── ansible/              # configura cada VM (Nginx, Docker, Keepalived, réplica)
+├── scripts/                  # respaldo y recuperación ante desastres
+├── legal/                    # cumplimiento Ley 21.719
+└── docs/
+    └── practica-profesional/ # justificación académica del proyecto
 ```
