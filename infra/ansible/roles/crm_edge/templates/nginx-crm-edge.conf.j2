@@ -1,0 +1,17 @@
+server {
+    listen 80;
+
+{% for m in microservicios %}
+    location /api/{{ m.nombre }}/ {
+        proxy_pass http://{{ crm_core_ip }}:{{ m.puerto }}/;
+{% if m.nombre == 'chat' %}
+        client_max_body_size 30M;
+{% endif %}
+    }
+{% endfor %}
+
+    root {{ repo_dest }}/frontend;
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

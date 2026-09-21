@@ -1,0 +1,27 @@
+---
+- name: Instalar Nginx y Git
+  ansible.builtin.apt:
+    name:
+      - nginx
+      - git
+    state: present
+    update_cache: true
+
+- name: Clonar o actualizar el repositorio del CRM (para servir el frontend)
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ repo_dest }}"
+    version: main
+    force: true
+
+- name: Desplegar la configuracion de Nginx (proxy hacia crm-core)
+  ansible.builtin.template:
+    src: nginx-crm-edge.conf.j2
+    dest: /etc/nginx/sites-available/default
+  notify: Reiniciar Nginx
+
+- name: Habilitar y arrancar Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

@@ -1,0 +1,84 @@
+<svg viewBox="0 0 1040 760" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4b5563"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1040" height="760" fill="#f4f5f2"/>
+
+  <!-- Title -->
+  <text x="520" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#161b1a">CRM Empresarial — Arquitectura de Virtualización</text>
+  <text x="520" y="60" text-anchor="middle" font-size="13" fill="#535e5c">Proxmox VE 9.2 (anidado en VMware) — PC físico Ryzen 7 / 20GB RAM</text>
+
+  <!-- Internet / Router -->
+  <g>
+    <ellipse cx="520" cy="110" rx="70" ry="30" fill="#ffffff" stroke="#8a8f8a" stroke-width="1.5"/>
+    <text x="520" y="106" text-anchor="middle" font-size="13" fill="#333">Router / LAN</text>
+    <text x="520" y="121" text-anchor="middle" font-size="11" fill="#666">Empleados, dispositivos</text>
+  </g>
+  <line x1="520" y1="140" x2="520" y2="185" stroke="#4b5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="535" y="168" font-size="11" fill="#4b5563">192.168.1.0/24</text>
+
+  <!-- Proxmox outer box -->
+  <rect x="70" y="185" width="900" height="500" rx="14" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="90" y="212" font-size="14" font-weight="700" fill="#0f403c">Proxmox VE — hipervisor</text>
+
+  <!-- vmbr0 bridge -->
+  <rect x="110" y="230" width="820" height="34" rx="6" fill="#e2efec" stroke="#1f6f68" stroke-width="1"/>
+  <text x="130" y="252" font-size="13" fill="#0f403c" font-weight="600">vmbr0 — puente hacia la LAN (conectado a la placa física)</text>
+
+  <!-- crm-edge box -->
+  <rect x="140" y="300" width="300" height="180" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="290" y="326" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">crm-edge</text>
+  <text x="290" y="344" text-anchor="middle" font-size="11" fill="#535e5c">2 vCPU / 2 GB RAM</text>
+  <line x1="160" y1="352" x2="420" y2="352" stroke="#d9dbd3" stroke-width="1"/>
+  <text x="290" y="372" text-anchor="middle" font-size="12" fill="#333">Nginx (nativo, sin Docker)</text>
+  <text x="290" y="390" text-anchor="middle" font-size="12" fill="#333">Proxy reverso + frontend estático</text>
+  <text x="290" y="414" text-anchor="middle" font-size="11" fill="#666">eth0: 192.168.1.60 (vmbr0)</text>
+  <text x="290" y="430" text-anchor="middle" font-size="11" fill="#666">eth1: 10.10.10.2 (vmbr1)</text>
+  <text x="290" y="462" text-anchor="middle" font-size="11" fill="#0f403c" font-weight="600">Único punto de entrada</text>
+
+  <!-- edge to vmbr0 -->
+  <line x1="290" y1="264" x2="290" y2="300" stroke="#1f6f68" stroke-width="2"/>
+
+  <!-- vmbr1 bridge -->
+  <rect x="110" y="500" width="820" height="34" rx="6" fill="#f4e9d7" stroke="#8a5a1c" stroke-width="1"/>
+  <text x="130" y="522" font-size="12" fill="#8a5a1c" font-weight="600">vmbr1 — red interna (10.10.10.0/24), sin puerto físico ni salida a Internet</text>
+
+  <!-- edge to vmbr1 -->
+  <path d="M 200 480 C 150 490, 150 495, 175 500" fill="none" stroke="#1f6f68" stroke-width="2"/>
+
+  <!-- crm-core box -->
+  <rect x="600" y="300" width="330" height="230" rx="10" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
+  <text x="765" y="326" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">crm-core</text>
+  <text x="765" y="344" text-anchor="middle" font-size="11" fill="#535e5c">4 vCPU / 8 GB RAM</text>
+  <line x1="620" y1="352" x2="910" y2="352" stroke="#d9dbd3" stroke-width="1"/>
+  <text x="765" y="372" text-anchor="middle" font-size="12" fill="#333">Docker Compose completo:</text>
+  <text x="765" y="392" text-anchor="middle" font-size="11" fill="#333">auth · empleados · calendario</text>
+  <text x="765" y="408" text-anchor="middle" font-size="11" fill="#333">inventario · reservas · chat</text>
+  <text x="765" y="424" text-anchor="middle" font-size="11" fill="#333">postgres (1 base por servicio)</text>
+  <text x="765" y="454" text-anchor="middle" font-size="11" fill="#666">eth0: 10.10.10.10 (vmbr1 — única interfaz)</text>
+  <text x="765" y="478" text-anchor="middle" font-size="11" fill="#8a5a1c" font-weight="600">Sin ruta directa a la LAN ni a Internet</text>
+  <text x="765" y="496" text-anchor="middle" font-size="11" fill="#8a5a1c" font-weight="600">(solo alcanzable vía crm-edge)</text>
+
+  <!-- core to vmbr1 (routed along the left edge so it doesn't cross the text) -->
+  <line x1="615" y1="530" x2="615" y2="315" stroke="#8a5a1c" stroke-width="2"/>
+  <path d="M 615 315 L 600 315" stroke="#8a5a1c" stroke-width="2" fill="none"/>
+
+  <!-- Isolation mark between vmbr0 area and crm-core -->
+  <text x="500" y="300" text-anchor="middle" font-size="26" fill="#c0392b">🔒</text>
+  <line x1="440" y1="380" x2="600" y2="380" stroke="#c0392b" stroke-width="2" stroke-dasharray="6,5"/>
+  <text x="520" y="368" text-anchor="middle" font-size="11" fill="#c0392b">sin conexión directa</text>
+
+  <!-- Backup / bastion note -->
+  <rect x="140" y="555" width="790" height="90" rx="8" fill="#eceee8" stroke="#d9dbd3" stroke-width="1"/>
+  <text x="160" y="578" font-size="12" font-weight="700" fill="#161b1a">crm-edge como bastión único de administración</text>
+  <text x="160" y="598" font-size="11" fill="#535e5c">Todo el acceso administrativo (SSH, respaldos, futuro monitoreo) cruza por crm-edge,</text>
+  <text x="160" y="616" font-size="11" fill="#535e5c">que es el único host con una pata en la LAN y otra en la red interna. crm-core nunca</text>
+  <text x="160" y="634" font-size="11" fill="#535e5c">necesita ruta a Internet, en ningún sentido.</text>
+
+  <!-- Legend -->
+  <text x="90" y="670" font-size="10" fill="#8a8f8a">Insight: VMware (donde vive Proxmox) + Proxmox/KVM (donde viven las VMs) son dos tecnologías de virtualización distintas.</text>
+  <text x="90" y="686" font-size="10" fill="#8a8f8a">Generado 2026-09-20 — reemplaza a arquitectura_crm_microservicios.png (previo al pivote a Proxmox).</text>
+</svg>

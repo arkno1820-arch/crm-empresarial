@@ -37,3 +37,15 @@ variable "crm_edge_lan_ip" {
   type        = string
   default     = "192.168.1.60/24"
 }
+
+variable "crm_edge_b_lan_ip" {
+  description = "IP fija que tendra crm-edge-b (borde en espera) dentro de tu LAN"
+  type        = string
+  default     = "192.168.1.61/24"
+}
+
+variable "crm_edge_vip" {
+  description = "IP virtual que Keepalived mueve entre crm-edge y crm-edge-b (no la asigna Terraform, la gestiona Keepalived en el sistema operativo)"
+  type        = string
+  default     = "192.168.1.62"
+}

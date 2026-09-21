@@ -1,0 +1,14 @@
+---
+- name: "Configurar el par de borde: Nginx + frontend + Keepalived (VIP)"
+  hosts: crm_edge
+  become: true
+  roles:
+    - crm_edge
+    - keepalived
+
+- name: "Configurar el par de nucleo: Docker + CRM completo + replica de Postgres"
+  hosts: crm_core
+  become: true
+  roles:
+    - crm_core
+    - pg_replica

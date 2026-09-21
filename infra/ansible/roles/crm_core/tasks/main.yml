@@ -1,0 +1,40 @@
+---
+- name: Instalar Docker, el plugin de compose y Git
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      - docker-compose-plugin
+      - git
+    state: present
+    update_cache: true
+
+- name: Agregar el usuario al grupo docker (para no necesitar sudo con docker)
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
+
+- name: Clonar o actualizar el repositorio del CRM
+  ansible.builtin.git:
+    repo: "{{ repo_url }}"
+    dest: "{{ repo_dest }}"
+    version: main
+    force: true
+
+- name: Verificar que el .env real ya este copiado (nunca vive en git)
+  ansible.builtin.stat:
+    path: "{{ repo_dest }}/.env"
+  register: env_file
+
+- name: Detener si falta el .env
+  ansible.builtin.fail:
+    msg: >-
+      Falta {{ repo_dest }}/.env en crm-core. Cópialo antes de correr este
+      playbook, de un salto desde tu PC (a través de crm-edge):
+      scp -o ProxyJump=cesar@192.168.1.60 .env cesar@10.10.10.10:{{ repo_dest }}/.env
+  when: not env_file.stat.exists
+
+- name: Levantar el stack completo del CRM
+  ansible.builtin.shell: docker compose up --build -d
+  args:
+    chdir: "{{ repo_dest }}"

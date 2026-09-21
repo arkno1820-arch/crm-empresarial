@@ -1,15 +1,17 @@
 # IaC — CRM Empresarial sobre Proxmox (Terraform)
 
-Automatiza la creación de la red interna (`vmbr1`) y las 2 VMs
-(`crm-edge`, `crm-core`) que ya diseñamos en `guia-proxmox-vms.md`, en vez
-de crearlas a mano por la consola web. Esto es lo que cierra con fuerza
-el punto "Automatización e Integración de Redes" del perfil de egreso —
-y reutiliza directamente lo que ya aprendiste con Terraform en el examen
-de Arquitectura Cloud (mismo lenguaje, proveedor distinto).
+Automatiza la creación de la red interna (`vmbr1`) y las **4 VMs** del plan
+de redundancia — par de borde `crm-edge`/`crm-edge-b` y par de núcleo
+`crm-core`/`crm-core-b` (ver `docs/practica-profesional/sintesis-justificacion-academica.md`
+sección 4 para el porqué del diseño), en vez de crearlas a mano por la
+consola web. Esto es lo que cierra con fuerza el punto "Automatización e
+Integración de Redes" del perfil de egreso — y reutiliza directamente lo que
+ya aprendiste con Terraform en el examen de Arquitectura Cloud (mismo
+lenguaje, proveedor distinto).
 
 **Reemplaza los pasos 1, 3 y 4 de `guia-proxmox-vms.md`** (crear `vmbr1`
-y crear las 2 VMs a mano). Los pasos 5 en adelante (instalar Nginx/Docker
-dentro de cada VM, levantar el CRM, probar, respaldar) siguen igual.
+y crear las VMs a mano). Los pasos 5 en adelante siguen igual, pero ahora
+los ejecuta el playbook de Ansible (`infra/ansible/`) sobre las 4 VMs.
 
 ---
 
@@ -67,19 +69,21 @@ Edita `terraform.tfvars` con el token del paso 1 y la llave del paso 3.
 ## 5. Desplegar
 
 ```powershell
-cd C:\Users\HP\Desktop\iac-proxmox-crm
+cd C:\Users\HP\Desktop\crm-empresarial\infra\proxmox-terraform
 terraform init
 terraform plan
 terraform apply
 ```
 
-Escribe `yes`. Al terminar, `terraform output` te confirma las IPs.
+Escribe `yes`. Al terminar, `terraform output` te confirma las IPs de las 4
+VMs y recuerda que el acceso final es por la IP virtual (`crm_edge_vip`),
+no por `crm-edge` directamente.
 
 ## 6. Continuar con el CRM
 
-Desde aquí, sigue exactamente los pasos 5 a 9 de `guia-proxmox-vms.md`
-(instalar Nginx en `crm-edge`, Docker en `crm-core`, levantar el
-`docker-compose.yml`, probar, respaldar) — esa parte no cambia.
+Desde aquí, sigue `infra/ansible/README.md` — instala Ansible en `crm-edge`
+y corre el playbook, que configura Nginx + Keepalived en el par de borde y
+Docker + replicación en el par de núcleo sobre las 4 VMs recién creadas.
 
 ## 7. Eliminar (si necesitas rehacerlo desde cero)
 
@@ -102,4 +106,4 @@ dos veces antes de que quede limpio, no es que algo esté mal planteado.
 - `terraform plan` mostrando los recursos a crear.
 - `terraform apply` completo (`Apply complete! Resources: N added`).
 - El archivo `.tf` mismo como evidencia de la definición de infraestructura como código.
-- Captura de las 2 VMs y la red `vmbr1` ya existiendo en la consola de Proxmox, creadas por Terraform (no manualmente).
+- Captura de las 4 VMs y la red `vmbr1` ya existiendo en la consola de Proxmox, creadas por Terraform (no manualmente).

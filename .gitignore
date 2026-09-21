@@ -13,6 +13,9 @@ __pycache__/
 .venv/
 venv/
 
+# Terraform (cache de proveedores descargados, no el lock file)
+**/.terraform/
+
 # Config local de herramientas
 .claude/
 

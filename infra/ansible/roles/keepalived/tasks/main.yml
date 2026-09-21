@@ -1,0 +1,18 @@
+---
+- name: Instalar Keepalived
+  ansible.builtin.apt:
+    name: keepalived
+    state: present
+    update_cache: true
+
+- name: Desplegar la configuracion de Keepalived
+  ansible.builtin.template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: Reiniciar Keepalived
+
+- name: Habilitar y arrancar Keepalived
+  ansible.builtin.service:
+    name: keepalived
+    state: started
+    enabled: true
