@@ -97,7 +97,28 @@ almacenamiento local estándar (no algo propietario), para que cuando el segundo
 llegue, Proxmox permita sumarlo a un clúster y migrar VMs con copia de disco incluida,
 sin depender de storage compartido desde el día uno.
 
-### 4.4 Qué no cambia con este plan
+### 4.4 Prueba de failover real (ejecutada, no solo diseñada)
+
+Ejecutada el 2026-09-23 contra la infraestructura real, sin avisar a Keepalived
+(apagado abrupto vía la API de Proxmox, `status/stop` — no un `shutdown`
+ordenado, para simular una falla real y no una degradación graciosa):
+
+1. **19:03:40** — se apaga `crm-edge` de golpe (`qm stop` equivalente).
+   `crm-edge` tenía la VIP (`192.168.1.62`) en ese momento.
+2. **19:03:50** (primer chequeo tras el apagado) — `http://192.168.1.62`
+   ya respondía `200 OK`, ahora servido por `crm-edge-b` (confirmado con
+   `ip addr` en ambas VMs). Falla total de `crm-edge` sin caída visible
+   del servicio.
+3. **19:04:37** — se enciende `crm-edge` de nuevo.
+4. Al terminar de bootear, `crm-edge` **reclamó la VIP automáticamente**
+   (prioridad 150 vs. 100 de `crm-edge-b`, comportamiento de preferencia
+   estándar de VRRP) y `crm-edge-b` la soltó — sin intervención manual en
+   ningún punto del ciclo completo.
+
+Esta es la evidencia central del plan de redundancia: no es una afirmación
+de diseño, es un resultado medido contra el Proxmox real.
+
+### 4.5 Qué no cambia con este plan
 
 La redundancia de VMs descrita en 4.2 protege contra fallas de software/VM. **No**
 protege contra la falla del PC físico completo — eso sigue dependiendo de: (a) el segundo
@@ -227,9 +248,10 @@ evidencia auténtica de gestión de incidentes, no simulada:
    (`nginx-crm-edge.conf.j2`) solo tiene `listen 80` — nunca se le agregó HTTPS. Es
    el mismo tema que quedó en pausa en `pendiente_https_multidispositivo` (memoria);
    ahora que ya se sabe que el CRM vive en Proxmox, se puede retomar.
-   **Aún no probado**: el failover real de Keepalived (apagar `crm-edge` y confirmar
-   que `192.168.1.62` sigue respondiendo vía `crm-edge-b`) — es la evidencia central
-   del plan de redundancia y todavía no se ha ejecutado la prueba.
+   ~~Probar el failover real de Keepalived~~ — **hecho el 2026-09-23**: ver sección 4.4
+   para los tiempos exactos. Apagado abrupto de `crm-edge`, `crm-edge-b` tomó la VIP
+   en menos de 10 segundos sin caída visible del servicio, y `crm-edge` la reclamó
+   automáticamente al volver a estar arriba.
 4. **Monitoreo** (Uptime Kuma + gráficos nativos de Proxmox) — la acción con más
    respaldo cruzado: cierra la supervisión de continuidad operacional del perfil de
    egreso, el RA 1.4 de ITIL, y el pilar "Performance" de FCAPS (Diseño y Arquitectura
