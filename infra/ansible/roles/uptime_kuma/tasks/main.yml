@@ -1,0 +1,52 @@
+---
+# Uptime Kuma vive solo en crm-edge (no en crm-edge-b): es la unica VM con
+# visibilidad simultanea hacia la LAN (vmbr0) y hacia la red interna (vmbr1),
+# asi que es la unica que puede monitorear el par de nucleo sin abrir mas
+# rutas de red de las que ya existen. Nativo (Node.js), no Docker, para
+# mantener el principio de diseno de crm-edge sin Docker.
+
+- name: Agregar el repositorio oficial de NodeSource (Ubuntu trae una version de Node muy vieja)
+  ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  args:
+    creates: /etc/apt/sources.list.d/nodesource.list
+
+- name: Instalar Node.js
+  ansible.builtin.apt:
+    name: nodejs
+    state: present
+    update_cache: true
+
+- name: Clonar Uptime Kuma (version fija, no "master" -- esa rama es de desarrollo)
+  ansible.builtin.git:
+    repo: https://github.com/louislam/uptime-kuma.git
+    dest: /opt/uptime-kuma
+    version: "2.5.5"
+  register: kuma_clonado
+
+- name: Dar el directorio a cesar (npm no debe correr como root)
+  ansible.builtin.file:
+    path: /opt/uptime-kuma
+    owner: cesar
+    group: cesar
+    recurse: true
+
+- name: Instalar dependencias y compilar el frontend (npm run setup, solo la primera vez)
+  ansible.builtin.command:
+    cmd: npm run setup
+    chdir: /opt/uptime-kuma
+    creates: /opt/uptime-kuma/dist/index.html
+  become: true
+  become_user: cesar
+
+- name: Desplegar el servicio systemd de Uptime Kuma
+  ansible.builtin.template:
+    src: uptime-kuma.service.j2
+    dest: /etc/systemd/system/uptime-kuma.service
+  notify: Reiniciar Uptime Kuma
+
+- name: Habilitar y arrancar Uptime Kuma
+  ansible.builtin.systemd:
+    name: uptime-kuma
+    state: started
+    enabled: true
+    daemon_reload: true

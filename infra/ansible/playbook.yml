@@ -6,6 +6,12 @@
     - crm_edge
     - keepalived
 
+- name: "Monitoreo: Uptime Kuma (solo en crm-edge, es la unica VM con vista a ambas redes)"
+  hosts: localhost
+  become: true
+  roles:
+    - uptime_kuma
+
 - name: "Configurar el par de nucleo: Docker + CRM completo + replica de Postgres"
   hosts: crm_core
   become: true

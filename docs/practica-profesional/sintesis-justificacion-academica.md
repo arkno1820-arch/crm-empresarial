@@ -133,10 +133,10 @@ explícitamente en pausa (ver sección 8) hasta que se retome.
 | **Virtualización** (CR401ICRE) | ✅ Fuerte | Dos tecnologías de virtualización, VLANs y seguridad en redes virtualizadas (indicador 2.2.3 = diseño de `vmbr1`), asignación de recursos por VM. Clusters/HA/migración en vivo (RA 1.3): el verbo del RA es "comprende/explica" — ver sección 4 (Plan de redundancia), que documenta con precisión qué es posible con un solo host y qué requiere el segundo servidor. |
 | **Arquitectura Cloud** (IF304CIINF) | ✅ Ya resuelto | Cubierto al 100% por el Examen Transversal ya rendido sobre RetailPlus LATAM (AWS). No requiere trabajo adicional sobre el CRM. |
 | **Gestión de Proyectos** (IF405IINF) | ⏳ Pendiente, independiente de la infraestructura | Pide artefactos PMBOK formales (Acta de constitución, EDT, cronograma/Gantt, matriz RACI, registro de riesgos, línea base + EVM, lecciones aprendidas). Nada de esto existe en formato formal — pero todo el historial real de este proyecto (ver sección 6) es material genuino para construirlos retroactivamente. |
-| **Gestión de Servicios TI - ITIL** (CR304ICRE) | ✅ Fuerte | Su ficha oficial la asocia a Ciberseguridad, no a Conectividad y Redes, pero su contenido es la Función 06 ya mapeada en el perfil de egreso. La bitácora de incidentes (sección 5) ES evidencia real de gestión de incidentes/problemas/cambios (RA 1.2). El monitoreo pendiente (Uptime Kuma + Proxmox) cierra también el RA 1.4 de este ramo — misma tarea, doble evidencia. |
+| **Gestión de Servicios TI - ITIL** (CR304ICRE) | ✅✅ Fuerte | Su ficha oficial la asocia a Ciberseguridad, no a Conectividad y Redes, pero su contenido es la Función 06 ya mapeada en el perfil de egreso. La bitácora de incidentes (sección 5) ES evidencia real de gestión de incidentes/problemas/cambios (RA 1.2). El RA 1.4 (monitoreo, SLA, métricas) ya está cubierto: Uptime Kuma con 6 monitores reales sobre las 4 VMs, la VIP y Postgres. |
 | **Gestión de la Información con TICs** (AS300PCOM) | 🔧 Parcial | Ramo transversal (todas las carreras). Calza fuerte en comparación de plataformas cloud (tabla de proveedores ya construida) y en seguridad/protección de datos según marco legal (todo el trabajo de Ley 21.719). El resto del programa (IA, RA/RV, IoT, análisis estadístico de datos, identidad digital en redes sociales) no aplica al CRM — no forzarlo. |
 | **Automatización de Redes Corporativas** (CR303CICRE) | ⛔ El más débil | Sin programa oficial disponible; contenido es Multicast/QoS/GRE/IPsec a nivel de routers físicos Cisco — no aplica a una red de bridges virtuales. Su único punto de contacto (Ansible) ya está contado en Redes Virtuales, no suma evidencia nueva. No forzarlo más. |
-| **Diseño y Arquitectura de Redes** (CR301ICRE) | ✅✅ Uno de los match más fuertes | RA 2.1 (diseño escalable con rendimiento/disponibilidad/seguridad) describe literalmente el par `crm-edge`/`crm-edge-b` y el par `crm-core`/`crm-core-b`. El estándar **FCAPS** (Fault/Configuration/Accounting/Security ya cubiertos; solo falta Performance = el monitoreo pendiente) mapea casi perfecto con el proyecto. Diagrama topológico actualizado: `arquitectura_crm_proxmox.svg`, ahora con las 4 VMs redundantes (reemplaza al antiguo `arquitectura_crm_microservicios.png` y a la primera versión de 2 VMs, ambas de antes del plan de redundancia). |
+| **Diseño y Arquitectura de Redes** (CR301ICRE) | ✅✅ Uno de los match más fuertes | RA 2.1 (diseño escalable con rendimiento/disponibilidad/seguridad) describe literalmente el par `crm-edge`/`crm-edge-b` y el par `crm-core`/`crm-core-b`. El estándar **FCAPS** mapea casi perfecto con el proyecto y ya están cubiertos los 5 pilares: Fault (bitácora de incidentes), Configuration (Git/Terraform/Ansible), Accounting (RBAC), Security (HTTPS/CA privada/cifrado/auditoría) y **Performance (Uptime Kuma, 6 monitores reales)**. Diagrama topológico actualizado: `arquitectura_crm_proxmox.svg`, con las 4 VMs redundantes. |
 
 Referencia adicional: el documento "Funciones Laborales — Ingeniería en Conectividad y
 Redes" (perfil de egreso, 8 áreas / 32 indicadores) ya fue mapeado en detalle contra este
@@ -267,10 +267,23 @@ evidencia auténtica de gestión de incidentes, no simulada:
    para los tiempos exactos. Apagado abrupto de `crm-edge`, `crm-edge-b` tomó la VIP
    en menos de 10 segundos sin caída visible del servicio, y `crm-edge` la reclamó
    automáticamente al volver a estar arriba.
-4. **Monitoreo** (Uptime Kuma + gráficos nativos de Proxmox) — la acción con más
-   respaldo cruzado: cierra la supervisión de continuidad operacional del perfil de
-   egreso, el RA 1.4 de ITIL, y el pilar "Performance" de FCAPS (Diseño y Arquitectura
-   de Redes) — los otros 4 pilares de FCAPS ya están cubiertos.
+4. ~~Monitoreo~~ — **hecho el 2026-09-24**: Uptime Kuma instalado nativo (Node.js, sin
+   Docker) en `crm-edge` vía el rol Ansible `uptime_kuma` — es la única VM con
+   visibilidad simultánea hacia la LAN y hacia `vmbr1`, por eso vive ahí y no en
+   `crm-core`. 6 monitores activos, todos en verde: la IP virtual (VRRP), ambos nodos
+   de borde, ambos nodos de núcleo (vía `auth-service:8001/docs`), y Postgres en
+   `crm-core` (TCP 5432). Los monitores HTTPS validan el certificado de la CA privada
+   sin advertencias gracias a `NODE_EXTRA_CA_CERTS` en el servicio systemd (Node no usa
+   el almacén de certificados del sistema operativo por defecto).
+   **Lección real del despliegue**: el rol clonaba inicialmente la rama `master` de
+   Uptime Kuma (desarrollo, no estable) sin `creates:` en la tarea de git, así que un
+   segundo `ansible-playbook` re-clonó una versión distinta a la que ya se había
+   compilado y rompió el arranque (`ERR_MODULE_NOT_FOUND`). Corregido fijando la
+   versión a un release estable (`2.5.5`) — evidencia real de por qué fijar versiones
+   importa en IaC, no solo un principio teórico.
+   Cierra la supervisión de continuidad operacional del perfil de egreso, el RA 1.4 de
+   ITIL, y el pilar "Performance" de FCAPS (Diseño y Arquitectura de Redes) — con esto
+   los 5 pilares de FCAPS quedan cubiertos.
 5. ~~Actualizar el diagrama topológico~~ — hecho el 2026-09-20 (reemplazó al antiguo
    `arquitectura_crm_microservicios.png`), y **actualizado de nuevo el 2026-09-21** porque esa
    primera versión solo mostraba 2 VMs y ya existía el plan de redundancia: `arquitectura_crm_proxmox.svg`

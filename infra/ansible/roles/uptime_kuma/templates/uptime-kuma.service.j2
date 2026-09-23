@@ -1,0 +1,17 @@
+[Unit]
+Description=Uptime Kuma - monitoreo del CRM Empresarial
+After=network.target
+
+[Service]
+Type=simple
+User=cesar
+WorkingDirectory=/opt/uptime-kuma
+# Node no usa el almacen de certificados del sistema operativo por defecto,
+# asi que sin esto los monitores HTTPS contra la CA privada fallarian.
+Environment="NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/crm-ca.crt"
+ExecStart=/usr/bin/node server/server.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
