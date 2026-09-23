@@ -213,6 +213,17 @@ evidencia auténtica de gestión de incidentes, no simulada:
     legibles. Síntoma: `500 Internal Server Error` con "Permission denied" en el log,
     pese a que el proxy hacia `crm-core` funcionaba bien. Resuelto con `chmod o+x
     /home/cesar` en ambos nodos de borde.
+12. **Login fallaba con "Failed to fetch" en `crm-edge`**: el frontend calcula la URL
+    de la API según un puerto de "gateway" separado (`8080`/`8443`), inyectado en
+    tiempo de arranque por `docker-entrypoint.sh` del contenedor Docker (genera
+    `frontend/js/config.js` a partir de variables de entorno). En `crm-edge` no hay
+    contenedor ni entrypoint — el archivo simplemente no existía, así que el frontend
+    caía al valor por defecto (`8443`) y llamaba a `https://192.168.1.62:8443/api/...`,
+    un puerto que no existe en esa VM (el proxy real vive en el mismo 443 que la
+    página). Resuelto generando `frontend/js/config.js` desde Ansible (rol `crm_edge`,
+    sin depender de un entrypoint) con `API_GATEWAY_PORT=80` / `API_GATEWAY_HTTPS_PORT=443`
+    — mismo puerto que la página, porque en este despliegue `crm-edge` hace de gateway
+    y de servidor de frontend a la vez.
 
 ## 7. Otros documentos de referencia
 
