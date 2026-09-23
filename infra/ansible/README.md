@@ -88,6 +88,12 @@ propósito — son material generado y sensible, distinto por instalación.
   Ajustes de confianza de certificados (iOS no confía automáticamente en CAs
   manuales aunque el perfil ya esté instalado).
 
+**Importante en Windows/Chrome/Edge**: si acabas de instalar la CA y el
+candado no aparece de inmediato, **cierra todas las ventanas del navegador**
+(revisa que no quede ningún proceso en el Administrador de tareas) y
+vuelve a abrirlo — el navegador cachea la verificación del certificado de
+antes de instalar la CA y no la revisa de nuevo hasta reiniciar.
+
 ## 2. Copiar esta carpeta a crm-edge
 
 Desde tu PC Windows:
