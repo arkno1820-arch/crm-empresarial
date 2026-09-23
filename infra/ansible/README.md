@@ -26,6 +26,68 @@ funciona como bastión único de administración.
 sudo apt update && sudo apt install -y ansible
 ```
 
+## 1.5. Generar la CA privada y el certificado de `crm-edge` (una sola vez, en tu PC)
+
+Para que HTTPS no muestre advertencia de "no seguro" en ningún dispositivo del
+equipo (PC, tablet, celulares), en vez de un certificado autofirmado suelto se
+usa una **CA (autoridad certificadora) privada**: se instala su certificado
+raíz una vez en cada dispositivo, y desde ese momento cualquier certificado
+que ella firme se ve confiable, sin advertencias, sin importar la IP.
+
+**La llave de la CA (`ca.key`) nunca sale de tu PC** — ni se sube a git, ni se
+copia a ninguna VM. Solo su certificado público (`ca.crt`) viaja a las VMs y a
+los dispositivos que deban confiar en ella.
+
+Desde tu PC Windows (Git Bash), en la raíz del repo:
+
+```bash
+mkdir -p infra/ca && cd infra/ca
+export MSYS_NO_PATHCONV=1   # evita que Git Bash reescriba "/CN=..." como ruta
+
+# 1. Llave y certificado raiz de la CA (10 anos)
+openssl genrsa -out ca.key 4096
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 \
+  -subj "/CN=CRM Empresarial - CA Interna/O=CRM Empresarial" \
+  -addext "basicConstraints=critical,CA:TRUE" \
+  -addext "keyUsage=critical,keyCertSign,cRLSign" \
+  -out ca.crt
+
+# 2. Certificado de crm-edge, firmado por la CA (2 anos, se puede rotar sin
+#    tener que reinstalar la CA en los dispositivos)
+openssl genrsa -out crm-edge.key 2048
+openssl req -new -key crm-edge.key -subj "/CN=192.168.1.62/O=CRM Empresarial" -out crm-edge.csr
+cat > crm-edge.ext <<'EOF'
+basicConstraints=CA:FALSE
+keyUsage=digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth
+subjectAltName=IP:192.168.1.62,IP:192.168.1.60,IP:192.168.1.61,DNS:crm-edge,DNS:crm-edge-b
+EOF
+openssl x509 -req -in crm-edge.csr -CA ca.crt -CAkey ca.key -CAcreateserial \
+  -days 730 -sha256 -extfile crm-edge.ext -out crm-edge.crt
+
+# 3. Copiar lo que SI va a las VMs (nunca ca.key) a la carpeta files del rol
+mkdir -p ../ansible/roles/crm_edge/files
+cp crm-edge.crt crm-edge.key ca.crt ../ansible/roles/crm_edge/files/
+```
+
+`infra/ca/` y `infra/ansible/roles/crm_edge/files/` están en `.gitignore` a
+propósito — son material generado y sensible, distinto por instalación.
+
+### Instalar la CA en cada dispositivo (una sola vez, elimina la advertencia)
+
+- **Windows** (tu PC): doble clic en `infra/ca/ca.crt` → *Instalar certificado*
+  → **Equipo local** → *Colocar todos los certificados en el siguiente
+  almacén* → **Entidades de certificación raíz de confianza**.
+- **Android**: una vez que `crm-edge` esté configurado (paso 4), abre
+  `http://192.168.1.62/ca.crt` desde el navegador del celular/tablet — Android
+  detecta el tipo de archivo y ofrece instalarla directo (Ajustes → Seguridad
+  → Cifrado y credenciales, si no aparece el instalador automático).
+- **iOS/iPadOS**: abre `http://192.168.1.62/ca.crt` en Safari, instala el
+  perfil que se descarga (Ajustes → General → VPN y administración de
+  dispositivos), y **además** actívala en Ajustes → General → Información →
+  Ajustes de confianza de certificados (iOS no confía automáticamente en CAs
+  manuales aunque el perfil ya esté instalado).
+
 ## 2. Copiar esta carpeta a crm-edge
 
 Desde tu PC Windows:
@@ -33,6 +95,9 @@ Desde tu PC Windows:
 ```powershell
 scp -r infra/ansible cesar@192.168.1.60:~/ansible
 ```
+
+(`-r` copia todo recursivamente, incluida la carpeta `files/` con los
+certificados del paso anterior.)
 
 ## 3. Copiar el `.env` y los certificados reales a AMBAS VMs del núcleo (paso manual, nunca por Ansible ni por git)
 
@@ -82,12 +147,13 @@ sudo chmod o+x /home/cesar
 
 Desde cualquier equipo de la LAN: `http://192.168.1.62` (la **IP virtual**,
 no la de `crm-edge` directamente) debe mostrar el login del CRM. También
-responde en `https://192.168.1.62` con un certificado autofirmado propio
-(cada nodo genera el suyo al primer arranque del rol `crm_edge`, cubriendo
-la VIP y ambos nodos como SAN — acepta la advertencia del navegador la
-primera vez, es autofirmado a propósito). Apaga `crm-edge` un momento y
-confirma que `192.168.1.62` sigue respondiendo (ahora servido por
-`crm-edge-b`) — esa es la prueba real de que Keepalived funciona.
+responde en `https://192.168.1.62` con el certificado firmado por la CA
+privada (cubre la VIP y ambos nodos como SAN) — si ya instalaste `ca.crt` en
+ese dispositivo (ver paso 1.5), entra **sin ninguna advertencia**; si no,
+verás la advertencia normal de certificado no confiable hasta que la
+instales. Apaga `crm-edge` un momento y confirma que `192.168.1.62` sigue
+respondiendo (ahora servido por `crm-edge-b`, con el mismo certificado) —
+esa es la prueba real de que Keepalived funciona.
 
 ---
 

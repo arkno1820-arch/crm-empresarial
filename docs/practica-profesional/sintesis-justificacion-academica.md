@@ -244,16 +244,25 @@ evidencia auténtica de gestión de incidentes, no simulada:
    `docker-compose-plugin` fuera de los repos base, orden de `git clone` vs. copiar
    `.env`, permisos de `$HOME` bloqueando a Nginx) — cada uno con su causa raíz real,
    diagnosticada y documentada, no solo "funcionó a la segunda".
-   ~~HTTPS en la plantilla Nginx de `crm-edge`~~ — **hecho el 2026-09-23**: el rol
-   `crm_edge` ahora genera un certificado autofirmado por VM (`openssl req -x509`,
-   idempotente vía `creates:`) con SAN cubriendo la IP virtual y ambas IPs de borde
-   (`192.168.1.62/60/61`) más los hostnames, y la plantilla Nginx agrega un segundo
-   `server { listen 443 ssl; }` en paralelo al puerto 80 (mismo patrón que el resto
-   del proyecto: HTTP y HTTPS conviven, sin redirect forzado). Verificado con
-   `https://192.168.1.62` sirviendo el login y el proxy a la API, y con el mismo
-   certificado válido si responde `crm-edge-b`. Cierra el tema que estaba en pausa en
-   `pendiente_https_multidispositivo` (memoria) — ya no aplica al Docker Compose local
-   (que ya tenía su propio HTTPS), sino al Nginx nativo de la VM de borde.
+   ~~HTTPS en la plantilla Nginx de `crm-edge`~~ — **hecho el 2026-09-23**: la
+   plantilla Nginx agrega un segundo `server { listen 443 ssl; }` en paralelo al
+   puerto 80 (HTTP y HTTPS conviven, sin redirect forzado, mismo patrón que el resto
+   del proyecto).
+   ~~CA privada para HTTPS sin advertencias en todos los dispositivos~~ — **hecho el
+   2026-09-24**: en vez de un certificado autofirmado suelto, se creó una **autoridad
+   certificadora (CA) privada** (`openssl req -x509`, CA:TRUE, 10 años) cuya llave
+   privada vive solo en el PC de César (nunca en git ni en ninguna VM), y con ella se
+   firmó el certificado de `crm-edge` (SAN: IP virtual `192.168.1.62` + ambas IPs de
+   borde + hostnames, 2 años de validez para poder rotarlo sin reinstalar la CA). El
+   certificado raíz de la CA se copia a ambas VMs de borde (rol Ansible `crm_edge`) y
+   se sirve en `http(s)://192.168.1.62/ca.crt` con el tipo MIME
+   `application/x-x509-ca-cert` — Android lo detecta y ofrece instalarlo directo al
+   abrir esa URL desde el navegador del celular; iOS y Windows requieren un paso
+   manual de "confiar" tras instalar el perfil/certificado. Una vez instalada la CA en
+   un dispositivo, **cualquier** certificado que ella firme se ve confiable sin
+   advertencias — cierra por completo el tema `pendiente_https_multidispositivo`
+   (memoria), que pedía exactamente esto: cero advertencias, en PC/tablet/celulares,
+   de forma permanente.
    ~~Probar el failover real de Keepalived~~ — **hecho el 2026-09-23**: ver sección 4.4
    para los tiempos exactos. Apagado abrupto de `crm-edge`, `crm-edge-b` tomó la VIP
    en menos de 10 segundos sin caída visible del servicio, y `crm-edge` la reclamó

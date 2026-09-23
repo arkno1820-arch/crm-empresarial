@@ -20,16 +20,30 @@
     state: directory
     mode: "0710"
 
-- name: Generar certificado autofirmado para HTTPS (una vez por VM, cubre la VIP y ambos nodos)
-  ansible.builtin.command:
-    cmd: >
-      openssl req -x509 -nodes -newkey rsa:2048
-      -keyout /etc/ssl/private/crm-edge.key
-      -out /etc/ssl/certs/crm-edge.crt
-      -days 3650
-      -subj "/CN={{ keepalived_vip }}"
-      -addext "subjectAltName=IP:{{ keepalived_vip }},IP:192.168.1.60,IP:192.168.1.61,DNS:crm-edge,DNS:crm-edge-b"
-    creates: /etc/ssl/certs/crm-edge.crt
+- name: Copiar el certificado de crm-edge firmado por la CA privada
+  ansible.builtin.copy:
+    src: crm-edge.crt
+    dest: /etc/ssl/certs/crm-edge.crt
+    mode: "0644"
+  notify: Reiniciar Nginx
+
+- name: Copiar la llave privada del certificado
+  ansible.builtin.copy:
+    src: crm-edge.key
+    dest: /etc/ssl/private/crm-edge.key
+    mode: "0640"
+  notify: Reiniciar Nginx
+
+- name: Copiar el certificado raiz de la CA privada (para distribuir y para que la VM tambien confie en ella)
+  ansible.builtin.copy:
+    src: ca.crt
+    dest: /usr/local/share/ca-certificates/crm-ca.crt
+    mode: "0644"
+  register: ca_copiada
+
+- name: Registrar la CA en los certificados de confianza del sistema
+  ansible.builtin.command: update-ca-certificates
+  when: ca_copiada.changed
 
 - name: Desplegar la configuracion de Nginx (proxy hacia crm-core)
   ansible.builtin.template:

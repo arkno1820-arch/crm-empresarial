@@ -1,6 +1,13 @@
 server {
     listen 80;
 
+    # Descarga de la CA privada (application/x-x509-ca-cert hace que Android
+    # ofrezca instalarla directo al abrir esta URL desde el celular/tablet).
+    location = /ca.crt {
+        alias /usr/local/share/ca-certificates/crm-ca.crt;
+        default_type application/x-x509-ca-cert;
+    }
+
 {% for m in microservicios %}
     location /api/{{ m.nombre }}/ {
         proxy_pass http://{{ crm_core_ip }}:{{ m.puerto }}/;
@@ -21,6 +28,11 @@ server {
 
     ssl_certificate     /etc/ssl/certs/crm-edge.crt;
     ssl_certificate_key /etc/ssl/private/crm-edge.key;
+
+    location = /ca.crt {
+        alias /usr/local/share/ca-certificates/crm-ca.crt;
+        default_type application/x-x509-ca-cert;
+    }
 
 {% for m in microservicios %}
     location /api/{{ m.nombre }}/ {

@@ -9,6 +9,11 @@ infra/proxmox-terraform/terraform.tfstate.backup
 gateway/certs/
 frontend/certs/
 
+# CA privada interna: la llave (ca.key) puede firmar certificados confiables
+# para toda la LAN si se filtra -- nunca sube ni se copia a ninguna VM.
+infra/ca/
+infra/ansible/roles/crm_edge/files/
+
 # Python
 __pycache__/
 *.pyc
