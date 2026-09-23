@@ -2,6 +2,8 @@
 .env
 *.pem
 infra/proxmox-terraform/terraform.tfvars
+infra/proxmox-terraform/terraform.tfstate
+infra/proxmox-terraform/terraform.tfstate.backup
 
 # Certificados autofirmados (se regeneran por entorno, ver README/guias)
 gateway/certs/

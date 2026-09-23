@@ -21,6 +21,12 @@ resource "proxmox_virtual_environment_vm" "crm_edge" {
     dedicated = 2048
   }
 
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "scsi0"
+    size         = 8 # la plantilla trae 2GB, insuficiente incluso para Nginx + logs
+  }
+
   network_device {
     bridge = "vmbr0" # hacia la LAN
   }
@@ -29,6 +35,9 @@ resource "proxmox_virtual_environment_vm" "crm_edge" {
   }
 
   initialization {
+    dns {
+      servers = ["8.8.8.8", "1.1.1.1"]
+    }
     ip_config {
       ipv4 {
         address = var.crm_edge_lan_ip
@@ -65,6 +74,12 @@ resource "proxmox_virtual_environment_vm" "crm_edge_b" {
     dedicated = 2048
   }
 
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "scsi0"
+    size         = 8
+  }
+
   network_device {
     bridge = "vmbr0"
   }
@@ -73,6 +88,9 @@ resource "proxmox_virtual_environment_vm" "crm_edge_b" {
   }
 
   initialization {
+    dns {
+      servers = ["8.8.8.8", "1.1.1.1"]
+    }
     ip_config {
       ipv4 {
         address = var.crm_edge_b_lan_ip
@@ -117,11 +135,20 @@ resource "proxmox_virtual_environment_vm" "crm_core" {
     dedicated = 6144
   }
 
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "scsi0"
+    size         = 25 # imagenes Docker (postgres + 6 microservicios) + datos de Postgres
+  }
+
   network_device {
     bridge = "vmbr1"
   }
 
   initialization {
+    dns {
+      servers = ["8.8.8.8", "1.1.1.1"]
+    }
     ip_config {
       ipv4 {
         address = "10.10.10.10/24"
@@ -153,11 +180,20 @@ resource "proxmox_virtual_environment_vm" "crm_core_b" {
     dedicated = 6144
   }
 
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "scsi0"
+    size         = 25
+  }
+
   network_device {
     bridge = "vmbr1"
   }
 
   initialization {
+    dns {
+      servers = ["8.8.8.8", "1.1.1.1"]
+    }
     ip_config {
       ipv4 {
         address = "10.10.10.11/24"

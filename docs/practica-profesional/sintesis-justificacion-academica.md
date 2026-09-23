@@ -151,6 +151,47 @@ evidencia auténtica de gestión de incidentes, no simulada:
    Hyper-V a nivel de arranque (`bcdedit /set hypervisorlaunchtype off`) para que Proxmox
    corra siempre acelerado. Este PC pasa de ser "laboratorio" a ser el servidor real del
    negocio.
+6. **DNS roto heredado de la plantilla base (2026-09-23, primer `terraform apply` real)**:
+   tanto el propio host Proxmox como las 4 VMs recién creadas traían un `nameserver`
+   inválido (`192.168.100.1`) y un dominio de búsqueda ajeno (`search getlabdone.local`),
+   resabio de la plataforma de laboratorio con la que se instaló Proxmox. Causaba
+   `apt`/`wget` colgados o con "Name or service not known" — no un problema de red (el
+   `ping` a `8.8.8.8` funcionaba). Diagnosticado aislando capas (`ping` → `getent` →
+   `resolvectl query` → `curl -4` directo) hasta ubicar el resolver roto. Resuelto
+   agregando DNS explícito (`8.8.8.8`/`1.1.1.1`) vía el bloque `dns` de `cloud-init` en
+   Terraform, y reemplazando `/etc/resolv.conf` por un archivo estático en los nodos
+   donde el stub de `systemd-resolved` seguía resolviendo solo IPv6 para `apt`.
+7. **Disco de la plantilla cloud-init insuficiente (2GB)**: la plantilla Ubuntu trae un
+   disco de 2GB, suficiente para arrancar pero no para `apt update`/instalar paquetes.
+   Síntoma engañoso: parecía un cuelgue de red, pero el log real decía
+   "No space left on device". Resuelto agregando un bloque `disk` en Terraform (8GB
+   borde, 25GB núcleo) sobre el storage `local-lvm` (thin-provisioned, permite asignar
+   más espacio virtual del que se usa realmente), seguido de `growpart`/`resize2fs`
+   dentro de cada VM.
+8. **Aislamiento total de `crm-core` incompatible con el aprovisionamiento real**: el
+   diseño original decía "sin salida a Internet" para el núcleo, pero Ansible necesita
+   que `crm-core` instale Docker y clone el repo — ambos requieren Internet. Se
+   distinguió aislamiento de **entrada** (nadie de la LAN llega a `crm-core`, se
+   mantiene) de aislamiento de **salida** (relajado deliberadamente): se habilitó NAT de
+   solo-salida en el host Proxmox (`iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o
+   vmbr0 -j MASQUERADE` + `ip_forward=1`, persistente vía `iptables-persistent`) — mismo
+   patrón que una subred privada con NAT gateway en la nube.
+9. **`docker-compose-plugin` no existe en los repos base de Ubuntu**: el rol de Ansible
+   asumía que venía con `docker.io`, pero ese paquete específico solo existe en el
+   repositorio oficial de Docker (`download.docker.com`). Resuelto agregando el
+   repositorio oficial (llave GPG + `apt_repository`) antes de instalar
+   `docker-ce`/`docker-compose-plugin`.
+10. **`git clone` no puede clonar sobre un directorio no vacío**: el runbook copiaba el
+    `.env` antes de clonar, dejando el directorio destino no vacío y sin ser aún un
+    repositorio git — `ansible.builtin.git` no lo resuelve solo. Corregido el orden real
+    de operación (clonar primero, copiar `.env`/certificados después) para la ejecución
+    manual; documentado como corrección al runbook de `infra/ansible/README.md`.
+11. **Permisos del `$HOME` bloqueaban a Nginx (`crm-edge`)**: `/home/cesar` traía permisos
+    `750` por defecto (Ubuntu), y Nginx corre como `www-data` — no podía ni atravesar el
+    directorio para servir `frontend/index.html`, aunque los archivos internos sí eran
+    legibles. Síntoma: `500 Internal Server Error` con "Permission denied" en el log,
+    pese a que el proxy hacia `crm-core` funcionaba bien. Resuelto con `chmod o+x
+    /home/cesar` en ambos nodos de borde.
 
 ## 7. Otros documentos de referencia
 
@@ -171,9 +212,24 @@ evidencia auténtica de gestión de incidentes, no simulada:
 2. ~~Rediseñar para redundancia~~ — **hecho el 2026-09-20**: Terraform ahora define 4 VMs
    (`crm-edge`/`crm-edge-b` con Keepalived/VRRP; `crm-core`/`crm-core-b` con réplica de
    Postgres cada 15 min y promoción manual documentada). Ver sección 4.
-3. **Ejecutar `terraform apply`** sobre `infra/proxmox-terraform/` (ahora 4 VMs) y luego
-   `ansible-playbook playbook.yml` desde `crm-edge` — nada de esto se ha corrido todavía
-   contra Proxmox real.
+3. ~~Ejecutar `terraform apply` y `ansible-playbook playbook.yml`~~ — **hecho el
+   2026-09-23**: las 4 VMs están arriba contra el Proxmox real, con `PLAY RECAP
+   failed=0` en los 4 hosts. Verificado end-to-end: `http://192.168.1.62` (la IP
+   virtual, no `crm-edge` directamente) sirve el login del CRM, el proxy hacia
+   `crm-core` responde (`/api/auth/docs` con 200), y los 9 contenedores de Docker
+   (6 microservicios + gateway + frontend + Postgres) están `Up`/`healthy`. El camino
+   no fue directo — ver los incidentes 6 a 11 de la sección 6 (DNS heredado, disco de
+   2GB insuficiente, aislamiento de `crm-core` incompatible con aprovisionamiento real,
+   `docker-compose-plugin` fuera de los repos base, orden de `git clone` vs. copiar
+   `.env`, permisos de `$HOME` bloqueando a Nginx) — cada uno con su causa raíz real,
+   diagnosticada y documentada, no solo "funcionó a la segunda".
+   **Pendiente inmediato, no bloqueante**: la plantilla Nginx de `crm-edge`
+   (`nginx-crm-edge.conf.j2`) solo tiene `listen 80` — nunca se le agregó HTTPS. Es
+   el mismo tema que quedó en pausa en `pendiente_https_multidispositivo` (memoria);
+   ahora que ya se sabe que el CRM vive en Proxmox, se puede retomar.
+   **Aún no probado**: el failover real de Keepalived (apagar `crm-edge` y confirmar
+   que `192.168.1.62` sigue respondiendo vía `crm-edge-b`) — es la evidencia central
+   del plan de redundancia y todavía no se ha ejecutado la prueba.
 4. **Monitoreo** (Uptime Kuma + gráficos nativos de Proxmox) — la acción con más
    respaldo cruzado: cierra la supervisión de continuidad operacional del perfil de
    egreso, el RA 1.4 de ITIL, y el pilar "Performance" de FCAPS (Diseño y Arquitectura

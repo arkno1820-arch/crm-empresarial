@@ -34,16 +34,26 @@ Desde tu PC Windows:
 scp -r infra/ansible cesar@192.168.1.60:~/ansible
 ```
 
-## 3. Copiar el `.env` real a AMBAS VMs del núcleo (paso manual, nunca por Ansible ni por git)
+## 3. Copiar el `.env` y los certificados reales a AMBAS VMs del núcleo (paso manual, nunca por Ansible ni por git)
+
+**Orden importante**: corre primero el paso 4 (el playbook clona el repo), y
+recién después copia `.env` y `certs/` — `git clone` se niega a clonar sobre
+un directorio no vacío. Si ya creaste el directorio a mano antes de clonar,
+mueve su contenido afuera, deja que el playbook clone, y devuélvelo (con
+`sudo`, porque el clon queda con dueño `root`).
 
 ```powershell
 scp -o ProxyJump=cesar@192.168.1.60 .env cesar@10.10.10.10:/home/cesar/crm-empresarial/.env
 scp -o ProxyJump=cesar@192.168.1.60 .env cesar@10.10.10.11:/home/cesar/crm-empresarial/.env
+scp -o ProxyJump=cesar@192.168.1.60 frontend/certs/*.crt frontend/certs/*.key cesar@10.10.10.10:/home/cesar/crm-empresarial/frontend/certs/
+scp -o ProxyJump=cesar@192.168.1.60 frontend/certs/*.crt frontend/certs/*.key cesar@10.10.10.11:/home/cesar/crm-empresarial/frontend/certs/
+scp -o ProxyJump=cesar@192.168.1.60 gateway/certs/*.crt gateway/certs/*.key cesar@10.10.10.10:/home/cesar/crm-empresarial/gateway/certs/
+scp -o ProxyJump=cesar@192.168.1.60 gateway/certs/*.crt gateway/certs/*.key cesar@10.10.10.11:/home/cesar/crm-empresarial/gateway/certs/
 ```
 
-Si `crm-empresarial` todavía no existe en alguna de las dos, créala vacía
-primero (`mkdir -p crm-empresarial` por SSH) — el playbook clona el repo ahí
-mismo en el siguiente paso.
+`frontend/certs/` y `gateway/certs/` están en `.gitignore` (nunca viajan por
+git), así que el `docker compose build` del frontend falla con "COPY certs/:
+not found" si no los copias antes de correr el playbook completo.
 
 ## 4. Correr el playbook
 
@@ -56,6 +66,17 @@ ansible-playbook playbook.yml
 
 Verifica: `PLAY RECAP` debe mostrar `failed=0` para los 4 hosts
 (`localhost` = crm-edge, `crm-edge-b`, `crm-core`, `crm-core-b`).
+
+## 4.5. Si `crm-edge`/`crm-edge-b` sirven un 500 al abrir la IP virtual
+
+Si el proxy hacia `crm-core` funciona pero la página principal da `500` con
+"Permission denied" en `/var/log/nginx/error.log`, es que `/home/cesar` trae
+los permisos por defecto de Ubuntu (`750`) y Nginx (usuario `www-data`) no
+puede ni atravesar el directorio. Se corrige una vez por VM:
+
+```bash
+sudo chmod o+x /home/cesar
+```
 
 ## 5. Verificar
 
