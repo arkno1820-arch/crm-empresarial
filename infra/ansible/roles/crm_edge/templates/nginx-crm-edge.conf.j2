@@ -15,3 +15,24 @@ server {
         try_files $uri $uri/ /index.html;
     }
 }
+
+server {
+    listen 443 ssl;
+
+    ssl_certificate     /etc/ssl/certs/crm-edge.crt;
+    ssl_certificate_key /etc/ssl/private/crm-edge.key;
+
+{% for m in microservicios %}
+    location /api/{{ m.nombre }}/ {
+        proxy_pass http://{{ crm_core_ip }}:{{ m.puerto }}/;
+{% if m.nombre == 'chat' %}
+        client_max_body_size 30M;
+{% endif %}
+    }
+{% endfor %}
+
+    root {{ repo_dest }}/frontend;
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

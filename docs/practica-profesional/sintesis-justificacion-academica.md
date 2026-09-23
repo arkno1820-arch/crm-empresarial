@@ -244,10 +244,16 @@ evidencia auténtica de gestión de incidentes, no simulada:
    `docker-compose-plugin` fuera de los repos base, orden de `git clone` vs. copiar
    `.env`, permisos de `$HOME` bloqueando a Nginx) — cada uno con su causa raíz real,
    diagnosticada y documentada, no solo "funcionó a la segunda".
-   **Pendiente inmediato, no bloqueante**: la plantilla Nginx de `crm-edge`
-   (`nginx-crm-edge.conf.j2`) solo tiene `listen 80` — nunca se le agregó HTTPS. Es
-   el mismo tema que quedó en pausa en `pendiente_https_multidispositivo` (memoria);
-   ahora que ya se sabe que el CRM vive en Proxmox, se puede retomar.
+   ~~HTTPS en la plantilla Nginx de `crm-edge`~~ — **hecho el 2026-09-23**: el rol
+   `crm_edge` ahora genera un certificado autofirmado por VM (`openssl req -x509`,
+   idempotente vía `creates:`) con SAN cubriendo la IP virtual y ambas IPs de borde
+   (`192.168.1.62/60/61`) más los hostnames, y la plantilla Nginx agrega un segundo
+   `server { listen 443 ssl; }` en paralelo al puerto 80 (mismo patrón que el resto
+   del proyecto: HTTP y HTTPS conviven, sin redirect forzado). Verificado con
+   `https://192.168.1.62` sirviendo el login y el proxy a la API, y con el mismo
+   certificado válido si responde `crm-edge-b`. Cierra el tema que estaba en pausa en
+   `pendiente_https_multidispositivo` (memoria) — ya no aplica al Docker Compose local
+   (que ya tenía su propio HTTPS), sino al Nginx nativo de la VM de borde.
    ~~Probar el failover real de Keepalived~~ — **hecho el 2026-09-23**: ver sección 4.4
    para los tiempos exactos. Apagado abrupto de `crm-edge`, `crm-edge-b` tomó la VIP
    en menos de 10 segundos sin caída visible del servicio, y `crm-edge` la reclamó

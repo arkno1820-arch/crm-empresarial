@@ -81,9 +81,13 @@ sudo chmod o+x /home/cesar
 ## 5. Verificar
 
 Desde cualquier equipo de la LAN: `http://192.168.1.62` (la **IP virtual**,
-no la de `crm-edge` directamente) debe mostrar el login del CRM. Apaga
-`crm-edge` un momento y confirma que `192.168.1.62` sigue respondiendo (ahora
-servido por `crm-edge-b`) — esa es la prueba real de que Keepalived funciona.
+no la de `crm-edge` directamente) debe mostrar el login del CRM. También
+responde en `https://192.168.1.62` con un certificado autofirmado propio
+(cada nodo genera el suyo al primer arranque del rol `crm_edge`, cubriendo
+la VIP y ambos nodos como SAN — acepta la advertencia del navegador la
+primera vez, es autofirmado a propósito). Apaga `crm-edge` un momento y
+confirma que `192.168.1.62` sigue respondiendo (ahora servido por
+`crm-edge-b`) — esa es la prueba real de que Keepalived funciona.
 
 ---
 

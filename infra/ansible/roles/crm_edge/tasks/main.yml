@@ -14,6 +14,23 @@
     version: main
     force: true
 
+- name: Crear directorio para la llave privada del certificado
+  ansible.builtin.file:
+    path: /etc/ssl/private
+    state: directory
+    mode: "0710"
+
+- name: Generar certificado autofirmado para HTTPS (una vez por VM, cubre la VIP y ambos nodos)
+  ansible.builtin.command:
+    cmd: >
+      openssl req -x509 -nodes -newkey rsa:2048
+      -keyout /etc/ssl/private/crm-edge.key
+      -out /etc/ssl/certs/crm-edge.crt
+      -days 3650
+      -subj "/CN={{ keepalived_vip }}"
+      -addext "subjectAltName=IP:{{ keepalived_vip }},IP:192.168.1.60,IP:192.168.1.61,DNS:crm-edge,DNS:crm-edge-b"
+    creates: /etc/ssl/certs/crm-edge.crt
+
 - name: Desplegar la configuracion de Nginx (proxy hacia crm-core)
   ansible.builtin.template:
     src: nginx-crm-edge.conf.j2
