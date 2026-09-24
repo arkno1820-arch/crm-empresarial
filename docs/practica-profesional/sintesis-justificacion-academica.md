@@ -118,6 +118,17 @@ ordenado, para simular una falla real y no una degradación graciosa):
 Esta es la evidencia central del plan de redundancia: no es una afirmación
 de diseño, es un resultado medido contra el Proxmox real.
 
+**Prueba complementaria: failover manual del núcleo (2026-09-24).** A diferencia del
+borde, la promoción de `crm-core-b` es deliberadamente manual (ver runbook en
+`infra/ansible/README.md`). Se ejecutó también contra la infraestructura real:
+apagado abrupto de `crm-core` (21:23:00) → la API del CRM responde `502 Bad Gateway`
+(Nginx seguía apuntando al núcleo caído) → promoción manual cambiando `crm_core_ip`
+a `10.10.10.11` y re-aplicando Ansible (21:25:00) → la API vuelve a responder,
+ahora servida por `crm-core-b` → tras encender `crm-core` de nuevo y esperar a que
+el stack de Docker levantara, se revirtió la promoción y el sistema quedó en su
+estado normal. Capturas y detalle completo en el informe de práctica profesional
+(ver sección 7).
+
 ### 4.5 Qué no cambia con este plan
 
 La redundancia de VMs descrita en 4.2 protege contra fallas de software/VM. **No**
@@ -227,6 +238,14 @@ evidencia auténtica de gestión de incidentes, no simulada:
 
 ## 7. Otros documentos de referencia
 
+- **`Informe_Practica_Profesional_CRM_Empresarial.docx`** (esta carpeta): informe
+  integral tipo tesis (23 páginas), con diagramas de arquitectura en 3 niveles
+  (contexto, contenedores, secuencia), la vista de infraestructura, los 6 artefactos
+  formales de Gestión de Proyectos (Acta de Constitución, EDT, cronograma real,
+  RACI, registro de riesgos, EVM/Curva S) construidos a partir del historial real de
+  git, la bitácora completa de incidentes, y evidencia fotográfica de las pruebas de
+  failover (borde y núcleo), HTTPS/CA privada y GitHub. Generado con `docx` (Node.js)
+  desde `generar-informe.js`; diagramas fuente en `diagramas/` (SVG + PNG).
 - Dossier de práctica profesional (publicado como Artifact, mapea las 8 funciones del
   perfil de egreso una por una): revisar con César el enlace vigente.
 - `guia-proxmox-vms.md` (esta carpeta): guía paso a paso de la arquitectura de 2 VMs.

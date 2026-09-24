@@ -1,0 +1,72 @@
+<svg viewBox="0 0 1050 480" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1050" height="480" fill="#f4f5f2"/>
+  <text x="525" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#161b1a">Cronograma real del proyecto (Gantt) — 25 ago a 24 sep 2026</text>
+  <text x="525" y="54" text-anchor="middle" font-size="12" fill="#535e5c">Basado en fechas reales de commits y archivos del repositorio git, no estimado</text>
+
+  <!-- Timeline axis: day 0 = Aug 25, day 30 = Sep 24. Scale: x = 90 + day*29 -->
+  <!-- Week gridlines every ~7 days -->
+  <g stroke="#d9dbd3" stroke-width="1">
+    <line x1="90" y1="90" x2="90" y2="430"/>
+    <line x1="293" y1="90" x2="293" y2="430"/>
+    <line x1="496" y1="90" x2="496" y2="430"/>
+    <line x1="699" y1="90" x2="699" y2="430"/>
+    <line x1="902" y1="90" x2="902" y2="430"/>
+    <line x1="960" y1="90" x2="960" y2="430"/>
+  </g>
+  <g font-size="10" fill="#666">
+    <text x="90" y="82">25 ago</text>
+    <text x="293" y="82">1 sep</text>
+    <text x="496" y="82">8 sep</text>
+    <text x="699" y="82">15 sep</text>
+    <text x="902" y="82">22 sep</text>
+    <text x="960" y="82">24 sep</text>
+  </g>
+
+  <!-- Phase bars: x=90+day*29, width=dur*29 -->
+  <!-- F1: day 0-1 -->
+  <rect x="90" y="100" width="30" height="26" rx="4" fill="#1f6f68"/>
+  <text x="10" y="118" font-size="11" fill="#161b1a">F1 Núcleo</text>
+
+  <!-- F2: day 2-10 (Aug 27 - Sep 4) -->
+  <rect x="148" y="140" width="261" height="26" rx="4" fill="#2a8a80"/>
+  <text x="10" y="158" font-size="11" fill="#161b1a">F2 Negocio</text>
+
+  <!-- F3: day 11-19 (Sep 5-13) -->
+  <rect x="409" y="180" width="261" height="26" rx="4" fill="#3ba599"/>
+  <text x="10" y="198" font-size="11" fill="#161b1a">F3 Seguridad/Legal</text>
+
+  <!-- F4: day 20-25 (Sep 14-19) -->
+  <rect x="670" y="220" width="174" height="26" rx="4" fill="#8a5a1c"/>
+  <text x="10" y="238" font-size="11" fill="#161b1a">F4 Pivote infra</text>
+
+  <!-- F5: day 26-27 (Sep 20-21) -->
+  <rect x="844" y="260" width="58" height="26" rx="4" fill="#b57a2e"/>
+  <text x="10" y="278" font-size="11" fill="#161b1a">F5 Automatización</text>
+
+  <!-- F6: day 29 (Sep 23) -->
+  <rect x="902" y="300" width="29" height="26" rx="4" fill="#9b3b47"/>
+  <text x="10" y="318" font-size="11" fill="#161b1a">F6 Despliegue real</text>
+
+  <!-- F7: day 29-30 (Sep 23-24) -->
+  <rect x="902" y="340" width="58" height="26" rx="4" fill="#c0524f"/>
+  <text x="10" y="358" font-size="11" fill="#161b1a">F7 Hardening/monitoreo</text>
+
+  <!-- Milestones -->
+  <g>
+    <polygon points="120,395 128,387 136,395 128,403" fill="#161b1a"/>
+    <text x="128" y="420" text-anchor="middle" font-size="9" fill="#161b1a">Commit inicial</text>
+    <text x="128" y="432" text-anchor="middle" font-size="8.5" fill="#666">26 ago</text>
+  </g>
+  <g>
+    <polygon points="902,395 910,387 918,395 910,403" fill="#161b1a"/>
+    <text x="880" y="420" text-anchor="middle" font-size="9" fill="#161b1a">4 VMs en prod.</text>
+    <text x="880" y="432" text-anchor="middle" font-size="8.5" fill="#666">(23 sep)</text>
+  </g>
+  <g>
+    <polygon points="960,395 968,387 976,395 968,403" fill="#161b1a"/>
+    <text x="1000" y="420" text-anchor="middle" font-size="9" fill="#161b1a">Login + monitoreo</text>
+    <text x="1000" y="432" text-anchor="middle" font-size="8.5" fill="#666">OK (24 sep)</text>
+  </g>
+
+  <text x="60" y="460" font-size="9.5" fill="#8a8f8a">Los huecos entre fases (ej. F1→F2, F3→F4) son jornadas sin cambios registrados en el repositorio -- normal en un practicante con otras obligaciones simultáneas.</text>
+</svg>

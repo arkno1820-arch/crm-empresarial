@@ -1,0 +1,128 @@
+<svg viewBox="0 0 1100 780" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1100" height="780" fill="#f4f5f2"/>
+
+  <text x="550" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#161b1a">Diagrama de Módulos / Contenedores (Nivel 2) — Docker Compose</text>
+  <text x="550" y="60" text-anchor="middle" font-size="13" fill="#535e5c">9 contenedores, patrón "database per service" sobre una única instancia PostgreSQL</text>
+
+  <!-- Browser -->
+  <g>
+    <rect x="460" y="85" width="180" height="55" rx="10" fill="#ffffff" stroke="#535e5c" stroke-width="2"/>
+    <text x="550" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="#161b1a">Navegador</text>
+    <text x="550" y="127" text-anchor="middle" font-size="10" fill="#535e5c">PC / tablet / celular</text>
+  </g>
+  <line x1="550" y1="140" x2="550" y2="170" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Gateway container -->
+  <g>
+    <rect x="420" y="172" width="260" height="70" rx="10" fill="#e2efec" stroke="#1f6f68" stroke-width="2"/>
+    <text x="550" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#0f403c">gateway</text>
+    <text x="550" y="212" text-anchor="middle" font-size="10" fill="#535e5c">nginx:alpine — puertos 8080 / 8443</text>
+    <text x="550" y="227" text-anchor="middle" font-size="9.5" fill="#666">Proxy reverso: enruta /api/&lt;servicio&gt;/</text>
+  </g>
+
+  <!-- Frontend container (separate, static SPA) -->
+  <g>
+    <rect x="80" y="172" width="230" height="70" rx="10" fill="#fdf4e9" stroke="#8a5a1c" stroke-width="2"/>
+    <text x="195" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#161b1a">frontend</text>
+    <text x="195" y="212" text-anchor="middle" font-size="10" fill="#535e5c">nginx:alpine — puertos 3000 / 3443</text>
+    <text x="195" y="227" text-anchor="middle" font-size="9.5" fill="#666">SPA en JS plano (sin framework)</text>
+  </g>
+  <line x1="460" y1="107" x2="310" y2="200" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="380" y="160" font-size="9.5" fill="#666">sirve HTML/CSS/JS</text>
+
+  <line x1="550" y1="242" x2="550" y2="268" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- 6 microservices row -->
+  <g id="services">
+    <!-- template repeated -->
+  </g>
+
+  <!-- auth-service -->
+  <rect x="30" y="270" width="150" height="95" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="105" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#161b1a">auth-service</text>
+  <text x="105" y="308" text-anchor="middle" font-size="9.5" fill="#535e5c">FastAPI · :8001</text>
+  <text x="105" y="323" text-anchor="middle" font-size="9" fill="#666">JWT, login,</text>
+  <text x="105" y="336" text-anchor="middle" font-size="9" fill="#666">roles y permisos</text>
+  <text x="105" y="352" text-anchor="middle" font-size="8.5" fill="#8a5a1c" font-weight="600">DB: auth_db</text>
+
+  <!-- empleados-service -->
+  <rect x="200" y="270" width="150" height="95" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="275" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#161b1a">empleados</text>
+  <text x="275" y="308" text-anchor="middle" font-size="9.5" fill="#535e5c">FastAPI · :8002</text>
+  <text x="275" y="323" text-anchor="middle" font-size="9" fill="#666">Datos sensibles</text>
+  <text x="275" y="336" text-anchor="middle" font-size="9" fill="#666">cifrados + auditoría</text>
+  <text x="275" y="352" text-anchor="middle" font-size="8.5" fill="#8a5a1c" font-weight="600">DB: empleados_db</text>
+
+  <!-- calendario-service -->
+  <rect x="370" y="270" width="150" height="95" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="445" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#161b1a">calendario</text>
+  <text x="445" y="308" text-anchor="middle" font-size="9.5" fill="#535e5c">FastAPI · :8003</text>
+  <text x="445" y="323" text-anchor="middle" font-size="9" fill="#666">Eventos y turnos</text>
+  <text x="445" y="352" text-anchor="middle" font-size="8.5" fill="#8a5a1c" font-weight="600">DB: calendario_db</text>
+
+  <!-- inventario-service -->
+  <rect x="540" y="270" width="150" height="95" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="615" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#161b1a">inventario</text>
+  <text x="615" y="308" text-anchor="middle" font-size="9.5" fill="#535e5c">FastAPI · :8004</text>
+  <text x="615" y="323" text-anchor="middle" font-size="9" fill="#666">Stock y productos</text>
+  <text x="615" y="352" text-anchor="middle" font-size="8.5" fill="#8a5a1c" font-weight="600">DB: inventario_db</text>
+
+  <!-- reservas-service -->
+  <rect x="710" y="270" width="150" height="95" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="785" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#161b1a">reservas</text>
+  <text x="785" y="308" text-anchor="middle" font-size="9.5" fill="#535e5c">FastAPI · :8005</text>
+  <text x="785" y="323" text-anchor="middle" font-size="9" fill="#666">Reserva de recursos</text>
+  <text x="785" y="352" text-anchor="middle" font-size="8.5" fill="#8a5a1c" font-weight="600">DB: reservas_db</text>
+
+  <!-- chat-service -->
+  <rect x="880" y="270" width="150" height="95" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="955" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#161b1a">chat-service</text>
+  <text x="955" y="308" text-anchor="middle" font-size="9.5" fill="#535e5c">FastAPI · :8006</text>
+  <text x="955" y="323" text-anchor="middle" font-size="9" fill="#666">Mensajería interna</text>
+  <text x="955" y="336" text-anchor="middle" font-size="9" fill="#666">con aviso legal</text>
+  <text x="955" y="352" text-anchor="middle" font-size="8.5" fill="#8a5a1c" font-weight="600">DB: chat_db</text>
+
+  <!-- arrows gateway -> services -->
+  <line x1="490" y1="242" x2="105" y2="270" stroke="#666" stroke-width="1.3"/>
+  <line x1="510" y1="242" x2="275" y2="270" stroke="#666" stroke-width="1.3"/>
+  <line x1="535" y1="242" x2="445" y2="270" stroke="#666" stroke-width="1.3"/>
+  <line x1="565" y1="242" x2="615" y2="270" stroke="#666" stroke-width="1.3"/>
+  <line x1="590" y1="242" x2="785" y2="270" stroke="#666" stroke-width="1.3"/>
+  <line x1="610" y1="242" x2="955" y2="270" stroke="#666" stroke-width="1.3"/>
+
+  <!-- arrows to postgres -->
+  <line x1="105" y1="365" x2="480" y2="440" stroke="#333" stroke-width="1.2"/>
+  <line x1="275" y1="365" x2="490" y2="440" stroke="#333" stroke-width="1.2"/>
+  <line x1="445" y1="365" x2="510" y2="440" stroke="#333" stroke-width="1.2"/>
+  <line x1="615" y1="365" x2="560" y2="440" stroke="#333" stroke-width="1.2"/>
+  <line x1="785" y1="365" x2="590" y2="440" stroke="#333" stroke-width="1.2"/>
+  <line x1="955" y1="365" x2="620" y2="440" stroke="#333" stroke-width="1.2"/>
+
+  <!-- Postgres -->
+  <g>
+    <rect x="380" y="442" width="340" height="110" rx="12" fill="#fbeff0" stroke="#9b3b47" stroke-width="2"/>
+    <text x="550" y="470" text-anchor="middle" font-size="14" font-weight="700" fill="#161b1a">postgres:16-alpine</text>
+    <text x="550" y="488" text-anchor="middle" font-size="10" fill="#535e5c">Una sola instancia — puerto 5432</text>
+    <text x="550" y="508" text-anchor="middle" font-size="9.5" fill="#666">6 bases de datos lógicas separadas (una por servicio)</text>
+    <text x="550" y="524" text-anchor="middle" font-size="9.5" fill="#666">init-db/init-multiple-dbs.sh las crea al primer arranque</text>
+    <text x="550" y="540" text-anchor="middle" font-size="9" fill="#9b3b47" font-weight="600">Volumen persistente Docker (no se pierde al recrear contenedores)</text>
+  </g>
+
+  <!-- Bottom notes: patterns -->
+  <rect x="30" y="590" width="1040" height="160" rx="10" fill="#eceee8" stroke="#d9dbd3" stroke-width="1"/>
+  <text x="50" y="615" font-size="13" font-weight="700" fill="#161b1a">Patrones aplicados en este nivel</text>
+  <text x="50" y="637" font-size="10.5" fill="#333">• <tspan font-weight="600">Database per service</tspan>: cada microservicio es dueño exclusivo de su base — nadie hace join directo entre bases de otro servicio.</text>
+  <text x="50" y="656" font-size="10.5" fill="#333">• <tspan font-weight="600">Gateway pattern</tspan>: el navegador nunca habla directo con un microservicio — todo pasa por el gateway, que resuelve DNS interno de Docker</text>
+  <text x="65" y="672" font-size="10.5" fill="#333">dinámicamente (`resolver 127.0.0.11`) para tolerar que los contenedores se reconstruyan con IPs nuevas.</text>
+  <text x="50" y="692" font-size="10.5" fill="#333">• <tspan font-weight="600">Autenticación centralizada</tspan>: solo `auth-service` conoce contraseñas/JWT — los demás servicios validan el token, no lo emiten.</text>
+  <text x="50" y="711" font-size="10.5" fill="#333">• <tspan font-weight="600">Cifrado a nivel de aplicación</tspan>: `empleados-service` cifra campos sensibles (Fernet) antes de escribir en Postgres — ni con acceso</text>
+  <text x="65" y="727" font-size="10.5" fill="#333">directo a la base se leen los datos en texto plano.</text>
+  <text x="50" y="745" font-size="9.5" fill="#666">Nota: en el despliegue sobre Proxmox (ver diagrama de infraestructura), estos 9 contenedores corren dentro de la VM `crm-core` — este</text>
+  <text x="65" y="759" font-size="9.5" fill="#666">diagrama es la vista lógica de la aplicación, independiente de si vive en Docker Compose local o en una VM.</text>
+
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#333"/>
+    </marker>
+  </defs>
+</svg>
