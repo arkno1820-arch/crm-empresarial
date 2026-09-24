@@ -1,0 +1,138 @@
+========================================================================
+ CRM EMPRESARIAL - COMO APAGAR Y ENCENDER TODO CORRECTAMENTE
+ (infraestructura en Proxmox: 4 VMs sobre el PC fisico Ryzen 7)
+ Escrita para que la sigas paso a paso aunque hayas olvidado todo el resto.
+ Creada: 24-09-2026
+========================================================================
+
+--------------------------------------------------------------------
+1. QUE ES ESTO Y POR QUE EL ORDEN IMPORTA
+--------------------------------------------------------------------
+El CRM ya no vive en un Docker Compose suelto en tu PC (esa epoca
+termino). Ahora vive en 4 maquinas virtuales (VMs) dentro de Proxmox,
+que a su vez corre dentro de una VM de VMware, en tu PC fisico.
+
+Las 4 VMs son:
+  - crm-edge      (192.168.1.60)  -- el "bastion": es la UNICA forma
+                                     de llegar por SSH a crm-core y
+                                     crm-core-b, que estan en una red
+                                     interna sin acceso directo desde
+                                     tu PC.
+  - crm-edge-b    (192.168.1.61)  -- borde en espera (respaldo)
+  - crm-core      (10.10.10.10)   -- el CRM completo (Docker), solo
+                                     alcanzable a traves de crm-edge
+  - crm-core-b    (10.10.10.11)   -- replica pasiva del anterior
+
+IMPORTANTE: si apagas crm-edge ANTES que crm-core/crm-core-b, pierdes
+el unico camino para apagarlas con cuidado (te quedarian solo
+accesibles por la consola de Proxmox, mas lento e incomodo). Por eso
+el orden de apagado es "de adentro hacia afuera", y el de encendido es
+al reves.
+
+Necesitas tu llave SSH: C:\Users\HP\.ssh\id_ed25519_crm
+(si no existe en tu PC, avisale a Claude para regenerarla)
+
+
+--------------------------------------------------------------------
+2. COMO APAGAR TODO (en este orden, no lo cambies)
+--------------------------------------------------------------------
+
+Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
+
+  PASO 1 - Apagar crm-core-b (la replica, primero porque es menos
+  critica):
+
+    ssh -i ~/.ssh/id_ed25519_crm cesar@192.168.1.60 "ssh cesar@10.10.10.11 'sudo shutdown -h now'"
+
+  PASO 2 - Apagar crm-core (el CRM activo):
+
+    ssh -i ~/.ssh/id_ed25519_crm cesar@192.168.1.60 "ssh cesar@10.10.10.10 'sudo shutdown -h now'"
+
+  Espera unos 10 segundos. Confirma en la consola de Proxmox
+  (https://192.168.1.147:8006) que crm-core y crm-core-b ya dicen
+  "detenido" / apagado (icono gris) antes de seguir.
+
+  PASO 3 - Apagar crm-edge-b:
+
+    ssh -i ~/.ssh/id_ed25519_crm cesar@192.168.1.61 "sudo shutdown -h now"
+
+  PASO 4 - Apagar crm-edge AL FINAL (es el bastion, se apaga ultimo):
+
+    ssh -i ~/.ssh/id_ed25519_crm cesar@192.168.1.60 "sudo shutdown -h now"
+
+  PASO 5 - Confirma en Proxmox que las 4 VMs dicen apagado.
+
+  PASO 6 (opcional, solo si vas a mover o apagar el PC fisico) -
+  Apagar Proxmox mismo: en su consola web, junto al nombre del nodo
+  "pve", boton de apagado -> "Shutdown" (NO "Stop", eso es un apagon
+  brusco).
+
+  PASO 7 (opcional) - Si vas a apagar el PC fisico completo: espera
+  que Proxmox termine de apagarse, cierra VMware Workstation, y recien
+  ahi apaga Windows normal.
+
+  NOTA: los pasos 6 y 7 dejan el CRM completamente inaccesible hasta
+  que vuelvas a prender el PC fisico y hacer todo el encendido de la
+  seccion 3 de nuevo, incluyendo prender Proxmox a mano. Solo hazlo si
+  de verdad necesitas apagar o mover el PC fisico.
+
+
+--------------------------------------------------------------------
+3. COMO ENCENDER TODO DE NUEVO (orden inverso)
+--------------------------------------------------------------------
+
+  PASO 1 - Si apagaste el PC fisico: prendelo, abre VMware Workstation,
+  y prende la VM de Proxmox ahi dentro. Espera a que la consola web
+  (https://192.168.1.147:8006) responda.
+
+  PASO 2 - Prende las 4 VMs desde la consola de Proxmox (clic en cada
+  una -> boton "Start"), EN ESTE ORDEN:
+
+    1. crm-edge     (primero -- sin el no puedes llegar a las otras)
+    2. crm-edge-b
+    3. crm-core
+    4. crm-core-b
+
+  PASO 3 - Espera. crm-core y crm-core-b tardan varios minutos en
+  quedar listos de verdad, porque adentro tienen que arrancar Docker y
+  los 9 contenedores del CRM. No te preocupes si no responden altiro.
+
+  PASO 4 - Verifica que todo funcione entrando a:
+
+    https://192.168.1.62
+
+  (esa es la IP virtual -- el sistema deberia mostrar la pantalla de
+  login sin que tengas que hacer nada mas. Nginx, Keepalived, Docker y
+  Uptime Kuma arrancan solos en cada VM, no hay que iniciar nada a
+  mano).
+
+  PASO 5 - Revisa el monitoreo en http://192.168.1.60:3001 (Uptime
+  Kuma) -- los 6 monitores deberian ponerse verdes en un par de
+  minutos.
+
+
+--------------------------------------------------------------------
+4. SI ALGO NO VUELVE BIEN
+--------------------------------------------------------------------
+- Si https://192.168.1.62 no responde pero las VMs dicen "corriendo"
+  en Proxmox: dale unos minutos mas, sobre todo si acabas de prender
+  crm-core (Docker tarda en levantar los 9 contenedores).
+
+- Si crm-core no vuelve a prender nunca (falla real de hardware/disco):
+  existe un procedimiento de promocion manual de crm-core-b como
+  reemplazo temporal. Esta documentado en
+  infra/ansible/README.md, seccion "Que hacer si crm-core falla".
+
+- Para cualquier duda, dile a Claude "revisa el estado de las VMs" y
+  te confirma que este todo bien antes de seguir.
+
+
+--------------------------------------------------------------------
+5. RELACION CON LA OTRA GUIA (RESPALDO DE DATOS)
+--------------------------------------------------------------------
+Este archivo es solo sobre APAGAR/ENCENDER las maquinas. Para
+respaldar y recuperar los DATOS del CRM (la base de datos), esa es
+otra guia -- scripts/INSTRUCCIONES_RESPALDO.txt -- que todavia describe
+el mundo viejo de Docker Compose en tu PC directamente y necesita
+actualizarse para el mundo de las VMs en Proxmox. Pendiente, avisale a
+Claude cuando quieras que se actualice.
