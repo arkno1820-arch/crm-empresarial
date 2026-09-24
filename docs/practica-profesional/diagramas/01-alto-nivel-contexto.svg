@@ -1,46 +1,46 @@
 <svg viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
   <rect x="0" y="0" width="1000" height="620" fill="#f4f5f2"/>
 
-  <text x="500" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#161b1a">Diagrama de Contexto (Nivel 1) — CRM Empresarial</text>
-  <text x="500" y="64" text-anchor="middle" font-size="13" fill="#535e5c">Quién usa el sistema y con qué interactúa — vista de más alto nivel, sin detalle técnico</text>
+  <text x="500" y="42" text-anchor="middle" font-size="29.7" font-weight="700" fill="#161b1a">Diagrama de Contexto (Nivel 1) — CRM Empresarial</text>
+  <text x="500" y="64" text-anchor="middle" font-size="17.6" fill="#535e5c">Quién usa el sistema y con qué interactúa — vista de más alto nivel, sin detalle técnico</text>
 
   <!-- Actors -->
   <g>
     <rect x="60" y="140" width="200" height="90" rx="12" fill="#ffffff" stroke="#535e5c" stroke-width="2"/>
-    <text x="160" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">Administrador</text>
-    <text x="160" y="192" text-anchor="middle" font-size="11" fill="#535e5c">Dueño/gerente de la pyme</text>
-    <text x="160" y="208" text-anchor="middle" font-size="10.5" fill="#666">Crea usuarios, ve auditoría</text>
+    <text x="160" y="172" text-anchor="middle" font-size="20.3" font-weight="700" fill="#161b1a">Administrador</text>
+    <text x="160" y="192" text-anchor="middle" font-size="14.9" fill="#535e5c">Dueño/gerente de la pyme</text>
+    <text x="160" y="208" text-anchor="middle" font-size="14.2" fill="#666">Crea usuarios, ve auditoría</text>
   </g>
 
   <g>
     <rect x="60" y="270" width="200" height="90" rx="12" fill="#ffffff" stroke="#535e5c" stroke-width="2"/>
-    <text x="160" y="302" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">Empleado</text>
-    <text x="160" y="322" text-anchor="middle" font-size="11" fill="#535e5c">Equipo de trabajo</text>
-    <text x="160" y="338" text-anchor="middle" font-size="10.5" fill="#666">Calendario, inventario, chat</text>
+    <text x="160" y="302" text-anchor="middle" font-size="20.3" font-weight="700" fill="#161b1a">Empleado</text>
+    <text x="160" y="322" text-anchor="middle" font-size="14.9" fill="#535e5c">Equipo de trabajo</text>
+    <text x="160" y="338" text-anchor="middle" font-size="14.2" fill="#666">Calendario, inventario, chat</text>
   </g>
 
   <g>
     <rect x="60" y="400" width="200" height="90" rx="12" fill="#ffffff" stroke="#535e5c" stroke-width="2"/>
-    <text x="160" y="432" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">César (DevOps)</text>
-    <text x="160" y="452" text-anchor="middle" font-size="11" fill="#535e5c">Practicante / desarrollador</text>
-    <text x="160" y="468" text-anchor="middle" font-size="10.5" fill="#666">Despliega, mantiene, audita</text>
+    <text x="160" y="432" text-anchor="middle" font-size="20.3" font-weight="700" fill="#161b1a">César (DevOps)</text>
+    <text x="160" y="452" text-anchor="middle" font-size="14.9" fill="#535e5c">Practicante / desarrollador</text>
+    <text x="160" y="468" text-anchor="middle" font-size="14.2" fill="#666">Despliega, mantiene, audita</text>
   </g>
 
   <!-- Arrows to system -->
   <line x1="260" y1="185" x2="380" y2="290" stroke="#1f6f68" stroke-width="2" marker-end="url(#arrowh)"/>
   <line x1="260" y1="315" x2="380" y2="310" stroke="#1f6f68" stroke-width="2" marker-end="url(#arrowh)"/>
   <line x1="260" y1="445" x2="380" y2="330" stroke="#1f6f68" stroke-width="2" marker-end="url(#arrowh)"/>
-  <text x="300" y="255" font-size="10" fill="#1f6f68">HTTPS</text>
-  <text x="300" y="405" font-size="10" fill="#1f6f68">SSH / Terraform / Ansible</text>
+  <text x="300" y="255" font-size="13.5" fill="#1f6f68">HTTPS</text>
+  <text x="300" y="405" font-size="13.5" fill="#1f6f68">SSH / Terraform / Ansible</text>
 
   <!-- Central system -->
   <g>
     <rect x="380" y="230" width="280" height="160" rx="14" fill="#0f403c" stroke="#0f403c" stroke-width="2"/>
-    <text x="520" y="280" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">CRM Empresarial</text>
-    <text x="520" y="305" text-anchor="middle" font-size="11" fill="#cfe9e5">Sistema de gestión interna</text>
-    <text x="520" y="325" text-anchor="middle" font-size="10.5" fill="#cfe9e5">Empleados · Calendario</text>
-    <text x="520" y="341" text-anchor="middle" font-size="10.5" fill="#cfe9e5">Inventario · Reservas · Chat</text>
-    <text x="520" y="365" text-anchor="middle" font-size="10" fill="#a8d8d2">6 microservicios + gateway</text>
+    <text x="520" y="280" text-anchor="middle" font-size="24.3" font-weight="700" fill="#ffffff">CRM Empresarial</text>
+    <text x="520" y="305" text-anchor="middle" font-size="14.9" fill="#cfe9e5">Sistema de gestión interna</text>
+    <text x="520" y="325" text-anchor="middle" font-size="14.2" fill="#cfe9e5">Empleados · Calendario</text>
+    <text x="520" y="341" text-anchor="middle" font-size="14.2" fill="#cfe9e5">Inventario · Reservas · Chat</text>
+    <text x="520" y="365" text-anchor="middle" font-size="13.5" fill="#a8d8d2">6 microservicios + gateway</text>
   </g>
 
   <!-- External connections -->
@@ -49,23 +49,23 @@
 
   <g>
     <rect x="800" y="215" width="160" height="80" rx="12" fill="#fff8ec" stroke="#8a5a1c" stroke-width="2"/>
-    <text x="880" y="245" text-anchor="middle" font-size="13" font-weight="700" fill="#161b1a">GitHub</text>
-    <text x="880" y="263" text-anchor="middle" font-size="10" fill="#535e5c">Repositorio de código</text>
-    <text x="880" y="278" text-anchor="middle" font-size="10" fill="#535e5c">arkno1820-arch/crm-empresarial</text>
+    <text x="880" y="245" text-anchor="middle" font-size="17.6" font-weight="700" fill="#161b1a">GitHub</text>
+    <text x="880" y="263" text-anchor="middle" font-size="13.5" fill="#535e5c">Repositorio de código</text>
+    <text x="880" y="278" text-anchor="middle" font-size="13.5" fill="#535e5c">arkno1820-arch/crm-empresarial</text>
   </g>
 
   <g>
     <rect x="800" y="345" width="160" height="80" rx="12" fill="#fff8ec" stroke="#8a5a1c" stroke-width="2"/>
-    <text x="880" y="375" text-anchor="middle" font-size="13" font-weight="700" fill="#161b1a">Servidor físico</text>
-    <text x="880" y="393" text-anchor="middle" font-size="10" fill="#535e5c">Proxmox VE (Ryzen 7/20GB)</text>
-    <text x="880" y="408" text-anchor="middle" font-size="10" fill="#535e5c">4 VMs redundantes</text>
+    <text x="880" y="375" text-anchor="middle" font-size="17.6" font-weight="700" fill="#161b1a">Servidor físico</text>
+    <text x="880" y="393" text-anchor="middle" font-size="13.5" fill="#535e5c">Proxmox VE (Ryzen 7/20GB)</text>
+    <text x="880" y="408" text-anchor="middle" font-size="13.5" fill="#535e5c">4 VMs redundantes</text>
   </g>
 
   <!-- Legend / note -->
   <rect x="60" y="520" width="900" height="70" rx="8" fill="#eceee8" stroke="#d9dbd3" stroke-width="1"/>
-  <text x="80" y="545" font-size="12" font-weight="700" fill="#161b1a">Nota de alcance</text>
-  <text x="80" y="563" font-size="10.5" fill="#535e5c">El sistema no tiene integraciones externas (sin pasarela de pago, sin API pública, sin SSO de terceros) — es un CRM interno,</text>
-  <text x="80" y="578" font-size="10.5" fill="#535e5c">autocontenido, para una sola empresa. Su única dependencia externa real es GitHub (control de versiones) y el servidor físico donde vive.</text>
+  <text x="80" y="545" font-size="16.2" font-weight="700" fill="#161b1a">Nota de alcance</text>
+  <text x="80" y="563" font-size="14.2" fill="#535e5c">El sistema no tiene integraciones externas (sin pasarela de pago, sin API pública, sin SSO de terceros) — es un CRM interno,</text>
+  <text x="80" y="578" font-size="14.2" fill="#535e5c">autocontenido, para una sola empresa. Su única dependencia externa real es GitHub (control de versiones) y el servidor físico donde vive.</text>
 
   <defs>
     <marker id="arrowh" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">

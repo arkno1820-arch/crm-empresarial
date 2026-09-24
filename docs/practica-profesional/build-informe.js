@@ -4,8 +4,16 @@ const {
   Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
   ImageRun, PageBreak, LevelFormat, TableOfContents, Header, Footer,
-  PageNumber, VerticalAlign, convertInchesToTwip
+  PageNumber, VerticalAlign, convertInchesToTwip, PageOrientation, TabStopType, TabStopPosition
 } = require("docx");
+
+// A4 en twips (1440 = 1 pulgada). Para landscape, docx-js intercambia
+// width/height solo, hay que pasar SIEMPRE las medidas en orientacion
+// portrait y el flag orientation: LANDSCAPE hace el swap internamente.
+const A4_WIDTH = 11906;
+const A4_HEIGHT = 16838;
+const MARGIN_PORTRAIT = { top: 1000, bottom: 1000, left: 1100, right: 1100 };
+const MARGIN_LANDSCAPE = { top: 700, bottom: 700, left: 700, right: 700 };
 
 const DIA = path.join(__dirname, "diagramas");
 const EVI = path.join(__dirname, "evidencia");
@@ -140,6 +148,53 @@ function codeBlock(lines) {
   });
 }
 
+function makeHeader() {
+  return new Header({
+    children: [new Paragraph({
+      alignment: AlignmentType.RIGHT,
+      children: [new TextRun({ text: "CHIC — CRM Empresarial · Informe de Práctica Profesional", size: 16, color: "999999" })],
+    })],
+  });
+}
+function makeFooter() {
+  return new Footer({
+    children: [new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [
+        new TextRun({ text: "Página ", size: 16, color: "999999" }),
+        new TextRun({ children: [PageNumber.CURRENT], size: 16, color: "999999" }),
+        new TextRun({ text: " de ", size: 16, color: "999999" }),
+        new TextRun({ children: [PageNumber.TOTAL_PAGES], size: 16, color: "999999" }),
+      ],
+    })],
+  });
+}
+
+// Cada llamada crea una NUEVA seccion de Word (salto de seccion = pagina nueva).
+// portraitSection/landscapeSection intercalados permiten que los diagramas
+// grandes vivan en hojas horizontales sin forzar todo el documento a landscape.
+function portraitSection(children) {
+  return {
+    properties: { page: { size: { width: A4_WIDTH, height: A4_HEIGHT }, margin: MARGIN_PORTRAIT } },
+    headers: { default: makeHeader() },
+    footers: { default: makeFooter() },
+    children,
+  };
+}
+function landscapeSection(children) {
+  return {
+    properties: {
+      page: {
+        size: { width: A4_WIDTH, height: A4_HEIGHT, orientation: PageOrientation.LANDSCAPE },
+        margin: MARGIN_LANDSCAPE,
+      },
+    },
+    headers: { default: makeHeader() },
+    footers: { default: makeFooter() },
+    children,
+  };
+}
+
 module.exports = {
   fs, path, Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
@@ -147,4 +202,5 @@ module.exports = {
   TEAL, TEAL_DARK, AMBER, RED, GRAY, LIGHT, LIGHT_AMBER,
   h1, h2, h3, p, pRich, bold, normal, italic, bullet, numbered, cell, makeTable,
   imageBlock, evidenceImage, pageBreak, codeBlock, DIA, EVI,
+  TableOfContents, portraitSection, landscapeSection, makeHeader, makeFooter,
 };

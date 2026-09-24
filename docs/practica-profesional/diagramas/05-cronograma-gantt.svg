@@ -1,72 +1,87 @@
-<svg viewBox="0 0 1050 480" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
-  <rect x="0" y="0" width="1050" height="480" fill="#f4f5f2"/>
-  <text x="525" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#161b1a">Cronograma real del proyecto (Gantt) — 25 ago a 24 sep 2026</text>
-  <text x="525" y="54" text-anchor="middle" font-size="12" fill="#535e5c">Basado en fechas reales de commits y archivos del repositorio git, no estimado</text>
+<svg viewBox="0 0 1080 560" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1080" height="560" fill="#f4f5f2"/>
+  <text x="540" y="38" text-anchor="middle" font-size="26" font-weight="700" fill="#161b1a">Cronograma de la Práctica Profesional (Gantt) — 360 horas</text>
+  <text x="540" y="60" text-anchor="middle" font-size="15" fill="#535e5c">28 de septiembre al 27 de noviembre de 2026 — jornada 09:00 a 17:30 hrs, lunes a viernes</text>
 
-  <!-- Timeline axis: day 0 = Aug 25, day 30 = Sep 24. Scale: x = 90 + day*29 -->
-  <!-- Week gridlines every ~7 days -->
+  <!-- Timeline axis: day 0 = 28-sep, day 60 = 27-nov. Scale: x = 90 + day*15.5 -->
   <g stroke="#d9dbd3" stroke-width="1">
-    <line x1="90" y1="90" x2="90" y2="430"/>
-    <line x1="293" y1="90" x2="293" y2="430"/>
-    <line x1="496" y1="90" x2="496" y2="430"/>
-    <line x1="699" y1="90" x2="699" y2="430"/>
-    <line x1="902" y1="90" x2="902" y2="430"/>
-    <line x1="960" y1="90" x2="960" y2="430"/>
+    <line x1="90" y1="85" x2="90" y2="440"/>
+    <line x1="245" y1="85" x2="245" y2="440"/>
+    <line x1="400" y1="85" x2="400" y2="440"/>
+    <line x1="555" y1="85" x2="555" y2="440"/>
+    <line x1="710" y1="85" x2="710" y2="440"/>
+    <line x1="865" y1="85" x2="865" y2="440"/>
+    <line x1="1020" y1="85" x2="1020" y2="440"/>
   </g>
-  <g font-size="10" fill="#666">
-    <text x="90" y="82">25 ago</text>
-    <text x="293" y="82">1 sep</text>
-    <text x="496" y="82">8 sep</text>
-    <text x="699" y="82">15 sep</text>
-    <text x="902" y="82">22 sep</text>
-    <text x="960" y="82">24 sep</text>
+  <g font-size="13" fill="#666">
+    <text x="90" y="78">28 sep</text>
+    <text x="245" y="78">8 oct</text>
+    <text x="400" y="78">18 oct</text>
+    <text x="555" y="78">29 oct</text>
+    <text x="710" y="78">8 nov</text>
+    <text x="865" y="78">18 nov</text>
+    <text x="1020" y="78">27 nov</text>
   </g>
 
-  <!-- Phase bars: x=90+day*29, width=dur*29 -->
-  <!-- F1: day 0-1 -->
-  <rect x="90" y="100" width="30" height="26" rx="4" fill="#1f6f68"/>
-  <text x="10" y="118" font-size="11" fill="#161b1a">F1 Núcleo</text>
+  <!-- Phase bars: x = 90 + day*15.5 -->
+  <!-- F1: dia 0-6, 30h -->
+  <rect x="90" y="95" width="93" height="28" rx="4" fill="#1f6f68"/>
+  <text x="8" y="114" font-size="14" fill="#161b1a">F1 Inducción y plan (30h)</text>
 
-  <!-- F2: day 2-10 (Aug 27 - Sep 4) -->
-  <rect x="148" y="140" width="261" height="26" rx="4" fill="#2a8a80"/>
-  <text x="10" y="158" font-size="11" fill="#161b1a">F2 Negocio</text>
+  <!-- F2: dia 7-13, 40h -->
+  <rect x="198" y="133" width="93" height="28" rx="4" fill="#2a8a80"/>
+  <text x="8" y="152" font-size="14" fill="#161b1a">F2 Validación de la aplicación (40h)</text>
 
-  <!-- F3: day 11-19 (Sep 5-13) -->
-  <rect x="409" y="180" width="261" height="26" rx="4" fill="#3ba599"/>
-  <text x="10" y="198" font-size="11" fill="#161b1a">F3 Seguridad/Legal</text>
+  <!-- F3: dia 14-20, 45h -->
+  <rect x="307" y="171" width="93" height="28" rx="4" fill="#3ba599"/>
+  <text x="8" y="190" font-size="14" fill="#161b1a">F3 Validación de infraestructura y pruebas (45h)</text>
 
-  <!-- F4: day 20-25 (Sep 14-19) -->
-  <rect x="670" y="220" width="174" height="26" rx="4" fill="#8a5a1c"/>
-  <text x="10" y="238" font-size="11" fill="#161b1a">F4 Pivote infra</text>
+  <!-- F4: dia 21-34, 65h -->
+  <rect x="416" y="209" width="201" height="28" rx="4" fill="#8a5a1c"/>
+  <text x="8" y="228" font-size="14" fill="#161b1a">F4 Respaldo offsite en Oracle Cloud (65h)</text>
 
-  <!-- F5: day 26-27 (Sep 20-21) -->
-  <rect x="844" y="260" width="58" height="26" rx="4" fill="#b57a2e"/>
-  <text x="10" y="278" font-size="11" fill="#161b1a">F5 Automatización</text>
+  <!-- F5: dia 35-41, 30h -->
+  <rect x="633" y="247" width="93" height="28" rx="4" fill="#b57a2e"/>
+  <text x="8" y="266" font-size="14" fill="#161b1a">F5 Cotización formal de servidor (30h)</text>
 
-  <!-- F6: day 29 (Sep 23) -->
-  <rect x="902" y="300" width="29" height="26" rx="4" fill="#9b3b47"/>
-  <text x="10" y="318" font-size="11" fill="#161b1a">F6 Despliegue real</text>
+  <!-- F6: dia 42-48, 45h -->
+  <rect x="742" y="285" width="93" height="28" rx="4" fill="#9b3b47"/>
+  <text x="8" y="304" font-size="14" fill="#161b1a">F6 Pruebas integrales end-to-end (45h)</text>
 
-  <!-- F7: day 29-30 (Sep 23-24) -->
-  <rect x="902" y="340" width="58" height="26" rx="4" fill="#c0524f"/>
-  <text x="10" y="358" font-size="11" fill="#161b1a">F7 Hardening/monitoreo</text>
+  <!-- F7: dia 49-55, 45h -->
+  <rect x="851" y="323" width="93" height="28" rx="4" fill="#c0524f"/>
+  <text x="8" y="342" font-size="14" fill="#161b1a">F7 Documentación e informe final (45h)</text>
+
+  <!-- F8: dia 56-60, 60h -->
+  <rect x="958" y="361" width="62" height="28" rx="4" fill="#6b3fa0"/>
+  <text x="8" y="380" font-size="14" fill="#161b1a">F8 PPT, video y entrega final (60h)</text>
 
   <!-- Milestones -->
   <g>
-    <polygon points="120,395 128,387 136,395 128,403" fill="#161b1a"/>
-    <text x="128" y="420" text-anchor="middle" font-size="9" fill="#161b1a">Commit inicial</text>
-    <text x="128" y="432" text-anchor="middle" font-size="8.5" fill="#666">26 ago</text>
+    <polygon points="400,415 409,406 418,415 409,424" fill="#161b1a"/>
+    <text x="409" y="440" text-anchor="middle" font-size="12.5" fill="#161b1a">1er informe</text>
+    <text x="409" y="453" text-anchor="middle" font-size="11" fill="#666">de avance (18 oct)</text>
   </g>
   <g>
-    <polygon points="902,395 910,387 918,395 910,403" fill="#161b1a"/>
-    <text x="880" y="420" text-anchor="middle" font-size="9" fill="#161b1a">4 VMs en prod.</text>
-    <text x="880" y="432" text-anchor="middle" font-size="8.5" fill="#666">(23 sep)</text>
+    <polygon points="710,415 719,406 728,415 719,424" fill="#161b1a"/>
+    <text x="719" y="440" text-anchor="middle" font-size="12.5" fill="#161b1a">2do informe</text>
+    <text x="719" y="453" text-anchor="middle" font-size="11" fill="#666">de avance (8 nov)</text>
   </g>
   <g>
-    <polygon points="960,395 968,387 976,395 968,403" fill="#161b1a"/>
-    <text x="1000" y="420" text-anchor="middle" font-size="9" fill="#161b1a">Login + monitoreo</text>
-    <text x="1000" y="432" text-anchor="middle" font-size="8.5" fill="#666">OK (24 sep)</text>
+    <polygon points="944,415 953,406 962,415 953,424" fill="#161b1a"/>
+    <text x="953" y="440" text-anchor="middle" font-size="12.5" fill="#161b1a">3er informe</text>
+    <text x="953" y="453" text-anchor="middle" font-size="11" fill="#666">de avance (22 nov)</text>
+  </g>
+  <g>
+    <polygon points="1020,415 1029,406 1038,415 1029,424" fill="#161b1a"/>
+    <text x="1029" y="440" text-anchor="middle" font-size="12.5" fill="#161b1a">Entrega final</text>
+    <text x="1029" y="453" text-anchor="middle" font-size="11" fill="#666">(27 nov)</text>
   </g>
 
-  <text x="60" y="460" font-size="9.5" fill="#8a8f8a">Los huecos entre fases (ej. F1→F2, F3→F4) son jornadas sin cambios registrados en el repositorio -- normal en un practicante con otras obligaciones simultáneas.</text>
+  <!-- Pie explicativo -->
+  <rect x="40" y="470" width="1000" height="75" rx="8" fill="#eceee8" stroke="#d9dbd3" stroke-width="1"/>
+  <text x="60" y="492" font-size="13.5" font-weight="700" fill="#161b1a">Qué muestra este diagrama</text>
+  <text x="60" y="510" font-size="12" fill="#535e5c">Distribuye las 360 horas oficiales de la práctica profesional en 8 fases dentro del periodo real (28-sep al 27-nov-2026). Las fases F2 y F3</text>
+  <text x="60" y="525" font-size="12" fill="#535e5c">formalizan y validan el desarrollo técnico ya construido (aplicación e infraestructura); F4 y F5 son el trabajo pendiente genuino (backup</text>
+  <text x="60" y="540" font-size="12" fill="#535e5c">offsite y cotización de servidor); F6-F8 cierran con pruebas finales y las entregas académicas (3 informes de avance, informe final, PPT, video).</text>
 </svg>

@@ -7,11 +7,24 @@ simulado.
 
 ## 1. Qué es el proyecto
 
-CRM Empresarial es un sistema de gestión interna (empleados, calendario, inventario,
-reservas, chat) construido como 7 servicios independientes en Docker Compose detrás de
+CRM Empresarial es la solución de software diseñada para el **Centro CHIC**, institución
+que contrató al alumno en práctica para resolver un problema real: sus trabajadores no
+contaban con un sistema unificado que agrupara sus necesidades operativas (gestión de
+personal, calendario, inventario, reservas, comunicación interna). Es un sistema de
+gestión interna construido como 7 servicios independientes en Docker Compose detrás de
 un gateway Nginx, con patrón "una base de datos por servicio" sobre una única instancia
 PostgreSQL. Incluye HTTPS con certificados propios, RBAC granular, cifrado de campo para
 datos sensibles (Ley 21.719), auditoría, y una mensajería interna auditable.
+
+**Metodología instruida por la jefatura del proyecto**: diseñar y validar primero en un
+entorno de simulación (Proxmox anidado sobre VMware) para adquirir experiencia operativa,
+antes de migrar a producción sobre el servidor físico real de CHIC en modo nativo (bare
+metal). El servidor físico Ryzen 7/20GB donde corre todo hoy es parte de la infraestructura
+propia de CHIC, no un equipo personal del alumno. Esta distinción es importante para el
+informe de práctica: el trabajo documentado hasta ahora corresponde a la fase de
+simulación, ya validada con pruebas reales; la migración a producción bare metal y la
+redundancia entre dos servidores físicos son la fase siguiente, formalmente planificada
+dentro del cronograma de 360 horas de la práctica (ver `Informe_Practica_Profesional_CRM_Empresarial.docx`).
 
 ## 2. Decisión de despliegue: Proxmox antes que la nube
 
@@ -324,8 +337,17 @@ evidencia auténtica de gestión de incidentes, no simulada:
 7. Formalizar un **informe de auditoría de seguridad** sobre la prueba de aislamiento de
    red — mejora adicional para maximizar cobertura, no bloqueante.
 
-**Explícitamente en pausa (a petición del usuario, no retomar sin que lo pida):**
-**Backup offsite en la nube.** Arquitectura ya acordada para cuando se retome: `crm-core`
-(aislado) → SSH interno → `crm-edge` (bastión) → sube el respaldo → Oracle Cloud.
-`crm-core` nunca necesita ruta a internet. Falta decidir Object Storage vs. una VM del
-lado de Oracle — no asumir una respuesta.
+**Retomado activamente (2026-09-24), ya no está en pausa:**
+**Backup offsite en la nube.** Decisión tomada: **una instancia de cómputo** en Oracle
+Cloud Always Free (no Object Storage). Arquitectura acordada: `crm-core` (aislado) → SSH
+interno → `crm-edge` (bastión) → sube el respaldo cifrado → la instancia en Oracle.
+`crm-core` nunca necesita ruta a internet para esto. Bloqueante actual: el usuario aún no
+tiene cuenta de Oracle Cloud creada — paso que debe hacer él mismo. Planificado como Fase
+F4 del cronograma de la práctica (19 oct - 1 nov 2026, ver el informe tesis).
+
+**Cotización formal de servidor físico: YA REALIZADA (2026-09-24).** Dos alternativas
+reales cotizadas en distribuidores chilenos: Dell PowerEdge T150 ($1.851.750 CLP,
+recomendado) y HPE ProLiant ML110 Gen11 ($6.671.150 CLP). Ambas con soporte completo
+Intel VT-x/VT-d/EPT y memoria ECC. Detalle completo en la sección 5.8 del informe tesis
+(`Informe_Practica_Profesional_CRM_Empresarial.docx`). Planificado como Fase F5 del
+cronograma (2-8 nov 2026).

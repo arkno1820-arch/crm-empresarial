@@ -1,77 +1,63 @@
-<svg viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
-  <rect x="0" y="0" width="900" height="560" fill="#f4f5f2"/>
-  <text x="450" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#161b1a">Curva S — Valor Ganado (EVM) por fase</text>
-  <text x="450" y="54" text-anchor="middle" font-size="12" fill="#535e5c">Horas estimadas por fase (no hay registro exacto de horas trabajadas) — aproximación con fines de análisis EVM</text>
+<svg viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="620" fill="#f4f5f2"/>
+  <text x="500" y="36" text-anchor="middle" font-size="26" font-weight="700" fill="#161b1a">Línea Base de Valor Planificado (PV) — 360 horas de práctica</text>
+  <text x="500" y="58" text-anchor="middle" font-size="15" fill="#535e5c">Informe entregado antes del inicio de la práctica (28-sep-2026): solo existe PV, EV y AC se actualizan en cada informe de avance</text>
 
   <!-- Axes -->
-  <line x1="80" y1="440" x2="850" y2="440" stroke="#333" stroke-width="1.5"/>
-  <line x1="80" y1="80" x2="80" y2="440" stroke="#333" stroke-width="1.5"/>
-  <text x="465" y="475" text-anchor="middle" font-size="11" fill="#535e5c">Fase del proyecto</text>
-  <text x="30" y="260" text-anchor="middle" font-size="11" fill="#535e5c" transform="rotate(-90 30 260)">Horas acumuladas</text>
+  <line x1="90" y1="470" x2="920" y2="470" stroke="#333" stroke-width="1.5"/>
+  <line x1="90" y1="90" x2="90" y2="470" stroke="#333" stroke-width="1.5"/>
+  <text x="505" y="505" text-anchor="middle" font-size="14" fill="#535e5c">Fase de la práctica (F1-F8)</text>
+  <text x="35" y="280" text-anchor="middle" font-size="14" fill="#535e5c" transform="rotate(-90 35 280)">Horas acumuladas</text>
 
-  <!-- Y gridlines/labels: 0 to 110h -->
-  <g font-size="9.5" fill="#666">
-    <text x="70" y="443" text-anchor="end">0</text>
-    <text x="70" y="373" text-anchor="end">20</text>
-    <text x="70" y="303" text-anchor="end">40</text>
-    <text x="70" y="233" text-anchor="end">60</text>
-    <text x="70" y="163" text-anchor="end">80</text>
-    <text x="70" y="93" text-anchor="end">100</text>
+  <!-- Y gridlines/labels: 0 to 360h -->
+  <g font-size="13" fill="#666">
+    <text x="80" y="473" text-anchor="end">0</text>
+    <text x="80" y="410" text-anchor="end">60</text>
+    <text x="80" y="346" text-anchor="end">120</text>
+    <text x="80" y="283" text-anchor="end">180</text>
+    <text x="80" y="219" text-anchor="end">240</text>
+    <text x="80" y="156" text-anchor="end">300</text>
+    <text x="80" y="93" text-anchor="end">360</text>
   </g>
   <g stroke="#e5e5e0" stroke-width="1">
-    <line x1="80" y1="373" x2="850" y2="373"/>
-    <line x1="80" y1="303" x2="850" y2="303"/>
-    <line x1="80" y1="233" x2="850" y2="233"/>
-    <line x1="80" y1="163" x2="850" y2="163"/>
-    <line x1="80" y1="93" x2="850" y2="93"/>
+    <line x1="90" y1="410" x2="920" y2="410"/>
+    <line x1="90" y1="346" x2="920" y2="346"/>
+    <line x1="90" y1="283" x2="920" y2="283"/>
+    <line x1="90" y1="219" x2="920" y2="219"/>
+    <line x1="90" y1="156" x2="920" y2="156"/>
+    <line x1="90" y1="93" x2="920" y2="93"/>
   </g>
 
-  <!-- X labels: 7 phases -->
-  <g font-size="10" fill="#333">
-    <text x="150" y="458" text-anchor="middle">F1</text>
-    <text x="260" y="458" text-anchor="middle">F2</text>
-    <text x="370" y="458" text-anchor="middle">F3</text>
-    <text x="480" y="458" text-anchor="middle">F4</text>
-    <text x="590" y="458" text-anchor="middle">F5</text>
-    <text x="700" y="458" text-anchor="middle">F6</text>
-    <text x="810" y="458" text-anchor="middle">F7</text>
+  <!-- X labels: 8 phases -->
+  <g font-size="13" fill="#333">
+    <text x="140" y="488" text-anchor="middle">F1</text>
+    <text x="240" y="488" text-anchor="middle">F2</text>
+    <text x="340" y="488" text-anchor="middle">F3</text>
+    <text x="480" y="488" text-anchor="middle">F4</text>
+    <text x="580" y="488" text-anchor="middle">F5</text>
+    <text x="680" y="488" text-anchor="middle">F6</text>
+    <text x="780" y="488" text-anchor="middle">F7</text>
+    <text x="880" y="488" text-anchor="middle">F8</text>
   </g>
 
-  <!-- Cumulative data. scale: y = 440 - h*3.5 -->
-  <!-- PV cumulative: 20,35,47,57,72,80,90 -->
-  <!-- EV cumulative: 20,35,47,57,72,80,90 (100% del alcance se completo) -->
-  <!-- AC cumulative: 18,34,48,68,83,97,107 -->
-
-  <polyline points="150,370 260,317.5 370,275.5 480,240.5 590,188 700,160 810,125"
-            fill="none" stroke="#1f6f68" stroke-width="3"/>
-  <polyline points="150,370 260,317.5 370,275.5 480,240.5 590,188 700,160 810,125"
-            fill="none" stroke="#1f6f68" stroke-width="0" stroke-dasharray="0"/>
-
-  <polyline points="150,376 260,321 370,272 480,202 590,150.5 700,101.5 810,65.5"
-            fill="none" stroke="#9b3b47" stroke-width="3" stroke-dasharray="7,4"/>
-
-  <!-- markers -->
+  <!-- Cumulative PV: 30,70,115,180,210,255,300,360 sobre 360 -> y = 470 - h*1.0556 -->
+  <polyline points="90,470 140,438.3 240,396.4 340,349.1 480,280.0 580,248.3 680,201.1 780,154.0 880,90.0"
+            fill="none" stroke="#1f6f68" stroke-width="3.5"/>
   <g fill="#1f6f68">
-    <circle cx="150" cy="370" r="4"/><circle cx="260" cy="317.5" r="4"/><circle cx="370" cy="275.5" r="4"/>
-    <circle cx="480" cy="240.5" r="4"/><circle cx="590" cy="188" r="4"/><circle cx="700" cy="160" r="4"/><circle cx="810" cy="125" r="4"/>
-  </g>
-  <g fill="#9b3b47">
-    <circle cx="150" cy="376" r="4"/><circle cx="260" cy="321" r="4"/><circle cx="370" cy="272" r="4"/>
-    <circle cx="480" cy="202" r="4"/><circle cx="590" cy="150.5" r="4"/><circle cx="700" cy="101.5" r="4"/><circle cx="810" cy="65.5" r="4"/>
+    <circle cx="140" cy="438.3" r="5"/><circle cx="240" cy="396.4" r="5"/><circle cx="340" cy="349.1" r="5"/>
+    <circle cx="480" cy="280.0" r="5"/><circle cx="580" cy="248.3" r="5"/><circle cx="680" cy="201.1" r="5"/>
+    <circle cx="780" cy="154.0" r="5"/><circle cx="880" cy="90.0" r="5"/>
   </g>
 
   <!-- Legend -->
-  <g font-size="10.5">
-    <line x1="610" y1="497" x2="640" y2="497" stroke="#1f6f68" stroke-width="3"/>
-    <text x="646" y="501" fill="#161b1a">PV = EV (Planificado = Ganado, 90h)</text>
-    <line x1="610" y1="517" x2="640" y2="517" stroke="#9b3b47" stroke-width="3" stroke-dasharray="7,4"/>
-    <text x="646" y="521" fill="#161b1a">AC (Costo Real, 107h)</text>
-    <text x="610" y="540" font-size="9.5" fill="#666">100% del alcance completado</text>
+  <g font-size="13.5">
+    <line x1="650" y1="530" x2="685" y2="530" stroke="#1f6f68" stroke-width="3.5"/>
+    <text x="692" y="534" fill="#161b1a">PV — Valor Planificado (línea base, 360h totales)</text>
   </g>
 
-  <!-- KPI box -->
-  <rect x="80" y="495" width="480" height="55" rx="8" fill="#eceee8" stroke="#d9dbd3" stroke-width="1"/>
-  <text x="95" y="513" font-size="11" font-weight="700" fill="#161b1a">CPI = EV/AC = 90/107 ≈ 0.84</text>
-  <text x="95" y="530" font-size="11" font-weight="700" fill="#161b1a">SPI = EV/PV = 90/90 = 1.00</text>
-  <text x="95" y="545" font-size="9" fill="#535e5c">Alcance 100% cumplido a tiempo, con ~19% más esfuerzo del estimado</text>
+  <!-- Pie explicativo -->
+  <rect x="60" y="550" width="880" height="60" rx="8" fill="#eceee8" stroke="#d9dbd3" stroke-width="1"/>
+  <text x="80" y="570" font-size="13.5" font-weight="700" fill="#161b1a">Qué muestra este diagrama</text>
+  <text x="80" y="588" font-size="12" fill="#535e5c">La línea base de horas planificadas (PV) por fase, acumulada hasta las 360h totales de la práctica. El Valor Ganado (EV) y el Costo</text>
+  <text x="80" y="603" font-size="12" fill="#535e5c">Real (AC) — y por tanto el CPI/SPI — se calcularán y agregarán en cada uno de los 3 informes de avance, a medida que exista ejecución real.</text>
 </svg>

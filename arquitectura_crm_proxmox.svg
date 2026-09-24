@@ -2,53 +2,53 @@
   <rect x="0" y="0" width="1200" height="900" fill="#f4f5f2"/>
 
   <!-- Title -->
-  <text x="600" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#161b1a">CRM Empresarial — Arquitectura de Virtualización y Redundancia</text>
-  <text x="600" y="60" text-anchor="middle" font-size="13" fill="#535e5c">Proxmox VE 9.2 (anidado en VMware) — PC físico Ryzen 7 / 20GB RAM — un solo servidor físico</text>
+  <text x="600" y="38" text-anchor="middle" font-size="29.7" font-weight="700" fill="#161b1a">CRM Empresarial — Arquitectura de Virtualización y Redundancia</text>
+  <text x="600" y="60" text-anchor="middle" font-size="17.6" fill="#535e5c">Proxmox VE 9.2 (anidado en VMware) — PC físico Ryzen 7 / 20GB RAM — un solo servidor físico</text>
 
   <!-- Internet / Router -->
   <ellipse cx="600" cy="108" rx="75" ry="30" fill="#ffffff" stroke="#8a8f8a" stroke-width="1.5"/>
-  <text x="600" y="104" text-anchor="middle" font-size="13" fill="#333">Router / LAN</text>
-  <text x="600" y="119" text-anchor="middle" font-size="11" fill="#666">Empleados, dispositivos</text>
+  <text x="600" y="104" text-anchor="middle" font-size="17.6" fill="#333">Router / LAN</text>
+  <text x="600" y="119" text-anchor="middle" font-size="14.9" fill="#666">Empleados, dispositivos</text>
   <line x1="600" y1="138" x2="600" y2="180" stroke="#4b5563" stroke-width="2"/>
-  <text x="616" y="164" font-size="11" fill="#4b5563">192.168.1.0/24</text>
+  <text x="616" y="164" font-size="14.9" fill="#4b5563">192.168.1.0/24</text>
 
   <!-- Proxmox outer box -->
   <rect x="50" y="180" width="1100" height="670" rx="14" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
-  <text x="70" y="207" font-size="14" font-weight="700" fill="#0f403c">Proxmox VE — hipervisor (un solo host físico)</text>
+  <text x="70" y="207" font-size="18.9" font-weight="700" fill="#0f403c">Proxmox VE — hipervisor (un solo host físico)</text>
 
   <!-- vmbr0 bridge -->
   <rect x="90" y="224" width="1020" height="32" rx="6" fill="#e2efec" stroke="#1f6f68" stroke-width="1"/>
-  <text x="110" y="245" font-size="12.5" fill="#0f403c" font-weight="600">vmbr0 — puente hacia la LAN (conectado a la placa física)</text>
+  <text x="110" y="245" font-size="16.9" fill="#0f403c" font-weight="600">vmbr0 — puente hacia la LAN (conectado a la placa física)</text>
   <line x1="600" y1="256" x2="600" y2="292" stroke="#1f6f68" stroke-width="2"/>
 
   <!-- ══ Par de borde ══ -->
-  <text x="600" y="284" text-anchor="middle" font-size="11" fill="#0f403c" font-weight="700">PAR DE BORDE — redundante con Keepalived/VRRP</text>
+  <text x="600" y="284" text-anchor="middle" font-size="14.9" fill="#0f403c" font-weight="700">PAR DE BORDE — redundante con Keepalived/VRRP</text>
 
   <!-- crm-edge -->
   <rect x="110" y="296" width="330" height="150" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
-  <text x="275" y="320" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">crm-edge</text>
-  <text x="275" y="336" text-anchor="middle" font-size="11" fill="#535e5c">2 vCPU / 2 GB — ACTIVO (prioridad 150)</text>
+  <text x="275" y="320" text-anchor="middle" font-size="20.3" font-weight="700" fill="#161b1a">crm-edge</text>
+  <text x="275" y="336" text-anchor="middle" font-size="14.9" fill="#535e5c">2 vCPU / 2 GB — ACTIVO (prioridad 150)</text>
   <line x1="130" y1="344" x2="420" y2="344" stroke="#d9dbd3" stroke-width="1"/>
-  <text x="275" y="362" text-anchor="middle" font-size="11.5" fill="#333">Nginx (nativo) + frontend estático</text>
-  <text x="275" y="382" text-anchor="middle" font-size="10.5" fill="#666">eth0: 192.168.1.60 (vmbr0)</text>
-  <text x="275" y="398" text-anchor="middle" font-size="10.5" fill="#666">eth1: 10.10.10.2 (vmbr1)</text>
-  <text x="275" y="428" text-anchor="middle" font-size="10.5" fill="#0f403c" font-weight="600">Keepalived: MASTER</text>
+  <text x="275" y="362" text-anchor="middle" font-size="15.5" fill="#333">Nginx (nativo) + frontend estático</text>
+  <text x="275" y="382" text-anchor="middle" font-size="14.2" fill="#666">eth0: 192.168.1.60 (vmbr0)</text>
+  <text x="275" y="398" text-anchor="middle" font-size="14.2" fill="#666">eth1: 10.10.10.2 (vmbr1)</text>
+  <text x="275" y="428" text-anchor="middle" font-size="14.2" fill="#0f403c" font-weight="600">Keepalived: MASTER</text>
 
   <!-- crm-edge-b -->
   <rect x="760" y="296" width="330" height="150" rx="10" fill="#fbfbfa" stroke="#8a8f8a" stroke-width="2" stroke-dasharray="5,4"/>
-  <text x="925" y="320" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">crm-edge-b</text>
-  <text x="925" y="336" text-anchor="middle" font-size="11" fill="#535e5c">2 vCPU / 2 GB — EN ESPERA (prioridad 100)</text>
+  <text x="925" y="320" text-anchor="middle" font-size="20.3" font-weight="700" fill="#161b1a">crm-edge-b</text>
+  <text x="925" y="336" text-anchor="middle" font-size="14.9" fill="#535e5c">2 vCPU / 2 GB — EN ESPERA (prioridad 100)</text>
   <line x1="780" y1="344" x2="1070" y2="344" stroke="#d9dbd3" stroke-width="1"/>
-  <text x="925" y="362" text-anchor="middle" font-size="11.5" fill="#333">Nginx (nativo) + frontend estático</text>
-  <text x="925" y="382" text-anchor="middle" font-size="10.5" fill="#666">eth0: 192.168.1.61 (vmbr0)</text>
-  <text x="925" y="398" text-anchor="middle" font-size="10.5" fill="#666">eth1: 10.10.10.3 (vmbr1)</text>
-  <text x="925" y="428" text-anchor="middle" font-size="10.5" fill="#8a8f8a" font-weight="600">Keepalived: BACKUP</text>
+  <text x="925" y="362" text-anchor="middle" font-size="15.5" fill="#333">Nginx (nativo) + frontend estático</text>
+  <text x="925" y="382" text-anchor="middle" font-size="14.2" fill="#666">eth0: 192.168.1.61 (vmbr0)</text>
+  <text x="925" y="398" text-anchor="middle" font-size="14.2" fill="#666">eth1: 10.10.10.3 (vmbr1)</text>
+  <text x="925" y="428" text-anchor="middle" font-size="14.2" fill="#8a8f8a" font-weight="600">Keepalived: BACKUP</text>
 
   <!-- VIP indicator between edge pair -->
   <rect x="490" y="350" width="220" height="60" rx="8" fill="#e2efec" stroke="#1f6f68" stroke-width="1.5"/>
-  <text x="600" y="370" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f403c">IP virtual (VRRP)</text>
-  <text x="600" y="385" text-anchor="middle" font-size="12" font-weight="700" fill="#0f403c">192.168.1.62</text>
-  <text x="600" y="399" text-anchor="middle" font-size="9.5" fill="#535e5c">salta al nodo sano automáticamente</text>
+  <text x="600" y="370" text-anchor="middle" font-size="14.2" font-weight="700" fill="#0f403c">IP virtual (VRRP)</text>
+  <text x="600" y="385" text-anchor="middle" font-size="16.2" font-weight="700" fill="#0f403c">192.168.1.62</text>
+  <text x="600" y="399" text-anchor="middle" font-size="12.8" fill="#535e5c">salta al nodo sano automáticamente</text>
   <line x1="440" y1="380" x2="490" y2="380" stroke="#1f6f68" stroke-width="1.5"/>
   <line x1="710" y1="380" x2="760" y2="380" stroke="#8a8f8a" stroke-width="1.5" stroke-dasharray="4,3"/>
 
@@ -58,43 +58,43 @@
 
   <!-- vmbr1 bridge -->
   <rect x="90" y="480" width="1020" height="32" rx="6" fill="#f4e9d7" stroke="#8a5a1c" stroke-width="1"/>
-  <text x="110" y="501" font-size="12.5" fill="#8a5a1c" font-weight="600">vmbr1 — red interna (10.10.10.0/24), sin puerto físico ni salida a Internet</text>
+  <text x="110" y="501" font-size="16.9" fill="#8a5a1c" font-weight="600">vmbr1 — red interna (10.10.10.0/24), sin puerto físico ni salida a Internet</text>
 
   <!-- isolation mark -->
-  <text x="600" y="470" text-anchor="middle" font-size="22" fill="#c0392b">🔒</text>
+  <text x="600" y="470" text-anchor="middle" font-size="29.7" fill="#c0392b">🔒</text>
 
   <!-- ══ Par de núcleo ══ -->
-  <text x="600" y="540" text-anchor="middle" font-size="11" fill="#8a5a1c" font-weight="700">PAR DE NÚCLEO — réplica de Postgres, promoción manual</text>
+  <text x="600" y="540" text-anchor="middle" font-size="14.9" fill="#8a5a1c" font-weight="700">PAR DE NÚCLEO — réplica de Postgres, promoción manual</text>
 
   <line x1="275" y1="512" x2="275" y2="548" stroke="#8a5a1c" stroke-width="2"/>
   <line x1="925" y1="512" x2="925" y2="548" stroke="#8a5a1c" stroke-width="2" stroke-dasharray="4,3"/>
 
   <!-- crm-core -->
   <rect x="110" y="550" width="330" height="200" rx="10" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
-  <text x="275" y="576" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">crm-core</text>
-  <text x="275" y="592" text-anchor="middle" font-size="11" fill="#535e5c">4 vCPU / 6 GB — ACTIVO (primario)</text>
+  <text x="275" y="576" text-anchor="middle" font-size="20.3" font-weight="700" fill="#161b1a">crm-core</text>
+  <text x="275" y="592" text-anchor="middle" font-size="14.9" fill="#535e5c">4 vCPU / 6 GB — ACTIVO (primario)</text>
   <line x1="130" y1="600" x2="420" y2="600" stroke="#d9dbd3" stroke-width="1"/>
-  <text x="275" y="618" text-anchor="middle" font-size="11" fill="#333">Docker Compose completo:</text>
-  <text x="275" y="636" text-anchor="middle" font-size="10.5" fill="#333">auth · empleados · calendario</text>
-  <text x="275" y="652" text-anchor="middle" font-size="10.5" fill="#333">inventario · reservas · chat · postgres</text>
-  <text x="275" y="678" text-anchor="middle" font-size="10.5" fill="#666">eth0: 10.10.10.10 (vmbr1 — única interfaz)</text>
-  <text x="275" y="700" text-anchor="middle" font-size="10.5" fill="#8a5a1c" font-weight="600">cron pg_dump cada 15 min → crm-core-b</text>
-  <text x="275" y="718" text-anchor="middle" font-size="10.5" fill="#8a5a1c" font-weight="600">Sin ruta a la LAN ni a Internet</text>
+  <text x="275" y="618" text-anchor="middle" font-size="14.9" fill="#333">Docker Compose completo:</text>
+  <text x="275" y="636" text-anchor="middle" font-size="14.2" fill="#333">auth · empleados · calendario</text>
+  <text x="275" y="652" text-anchor="middle" font-size="14.2" fill="#333">inventario · reservas · chat · postgres</text>
+  <text x="275" y="678" text-anchor="middle" font-size="14.2" fill="#666">eth0: 10.10.10.10 (vmbr1 — única interfaz)</text>
+  <text x="275" y="700" text-anchor="middle" font-size="14.2" fill="#8a5a1c" font-weight="600">cron pg_dump cada 15 min → crm-core-b</text>
+  <text x="275" y="718" text-anchor="middle" font-size="14.2" fill="#8a5a1c" font-weight="600">Sin ruta a la LAN ni a Internet</text>
 
   <!-- crm-core-b -->
   <rect x="760" y="550" width="330" height="200" rx="10" fill="#fbfbfa" stroke="#8a8f8a" stroke-width="2" stroke-dasharray="5,4"/>
-  <text x="925" y="576" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">crm-core-b</text>
-  <text x="925" y="592" text-anchor="middle" font-size="11" fill="#535e5c">4 vCPU / 6 GB — RÉPLICA PASIVA</text>
+  <text x="925" y="576" text-anchor="middle" font-size="20.3" font-weight="700" fill="#161b1a">crm-core-b</text>
+  <text x="925" y="592" text-anchor="middle" font-size="14.9" fill="#535e5c">4 vCPU / 6 GB — RÉPLICA PASIVA</text>
   <line x1="780" y1="600" x2="1070" y2="600" stroke="#d9dbd3" stroke-width="1"/>
-  <text x="925" y="618" text-anchor="middle" font-size="11" fill="#333">Mismo Docker Compose completo,</text>
-  <text x="925" y="634" text-anchor="middle" font-size="10.5" fill="#333">recibiendo los volcados replicados</text>
-  <text x="925" y="678" text-anchor="middle" font-size="10.5" fill="#666">eth0: 10.10.10.11 (vmbr1 — única interfaz)</text>
-  <text x="925" y="700" text-anchor="middle" font-size="10.5" fill="#8a8f8a" font-weight="600">Promoción a primario: MANUAL</text>
-  <text x="925" y="718" text-anchor="middle" font-size="10.5" fill="#8a8f8a" font-weight="600">(runbook en infra/ansible/README.md)</text>
+  <text x="925" y="618" text-anchor="middle" font-size="14.9" fill="#333">Mismo Docker Compose completo,</text>
+  <text x="925" y="634" text-anchor="middle" font-size="14.2" fill="#333">recibiendo los volcados replicados</text>
+  <text x="925" y="678" text-anchor="middle" font-size="14.2" fill="#666">eth0: 10.10.10.11 (vmbr1 — única interfaz)</text>
+  <text x="925" y="700" text-anchor="middle" font-size="14.2" fill="#8a8f8a" font-weight="600">Promoción a primario: MANUAL</text>
+  <text x="925" y="718" text-anchor="middle" font-size="14.2" fill="#8a8f8a" font-weight="600">(runbook en infra/ansible/README.md)</text>
 
   <!-- replication arrow between core pair -->
   <path d="M 440 650 L 760 650" fill="none" stroke="#8a5a1c" stroke-width="2" marker-end="url(#arrow2)"/>
-  <text x="600" y="640" text-anchor="middle" font-size="10" fill="#8a5a1c">réplica cada 15 min</text>
+  <text x="600" y="640" text-anchor="middle" font-size="13.5" fill="#8a5a1c">réplica cada 15 min</text>
   <defs>
     <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L9,3 z" fill="#8a5a1c"/>
@@ -103,10 +103,10 @@
 
   <!-- Bastion / limits note -->
   <rect x="110" y="770" width="980" height="70" rx="8" fill="#eceee8" stroke="#d9dbd3" stroke-width="1"/>
-  <text x="130" y="792" font-size="12" font-weight="700" fill="#161b1a">Qué protege esta redundancia, y qué no</text>
-  <text x="130" y="810" font-size="10.5" fill="#535e5c">Protege contra fallas de software/VM (un servicio colgado, un bug, una VM caída) — no contra la falla del PC físico completo,</text>
-  <text x="130" y="826" font-size="10.5" fill="#535e5c">que sigue siendo un único servidor. Eso requiere el segundo servidor físico que la empresa está adquiriendo (migración en vivo real).</text>
+  <text x="130" y="792" font-size="16.2" font-weight="700" fill="#161b1a">Qué protege esta redundancia, y qué no</text>
+  <text x="130" y="810" font-size="14.2" fill="#535e5c">Protege contra fallas de software/VM (un servicio colgado, un bug, una VM caída) — no contra la falla del PC físico completo,</text>
+  <text x="130" y="826" font-size="14.2" fill="#535e5c">que sigue siendo un único servidor. Eso requiere el segundo servidor físico que la empresa está adquiriendo (migración en vivo real).</text>
 
-  <text x="70" y="868" font-size="10" fill="#8a8f8a">Insight: VMware (donde vive Proxmox) + Proxmox/KVM (donde viven las VMs) son dos tecnologías de virtualización distintas.</text>
-  <text x="70" y="884" font-size="10" fill="#8a8f8a">Actualizado 2026-09-21 — refleja el plan de redundancia (par de borde + par de núcleo), no solo las 2 VMs originales.</text>
+  <text x="70" y="868" font-size="13.5" fill="#8a8f8a">Insight: VMware (donde vive Proxmox) + Proxmox/KVM (donde viven las VMs) son dos tecnologías de virtualización distintas.</text>
+  <text x="70" y="884" font-size="13.5" fill="#8a8f8a">Actualizado 2026-09-21 — refleja el plan de redundancia (par de borde + par de núcleo), no solo las 2 VMs originales.</text>
 </svg>

@@ -1,0 +1,111 @@
+<svg viewBox="0 0 1300 760" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1300" height="760" fill="#f4f5f2"/>
+  <text x="650" y="34" text-anchor="middle" font-size="24" font-weight="700" fill="#161b1a">Justificación Académica Cruzada — 7 Asignaturas y el Proyecto Central</text>
+  <text x="650" y="55" text-anchor="middle" font-size="14" fill="#535e5c">Cómo cada asignatura se conecta técnicamente, y no solo temáticamente, con el CRM Empresarial en Proxmox VE</text>
+
+  <!-- Fila superior: 4 bloques -->
+  <!-- Redes Virtuales -->
+  <rect x="20" y="85" width="290" height="185" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="165" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">Redes Virtuales</text>
+  <rect x="35" y="122" width="260" height="130" rx="6" fill="#e2efec"/>
+  <text x="165" y="145" text-anchor="middle" font-size="12.5" fill="#161b1a">• Bridges vmbr0 / vmbr1</text>
+  <text x="165" y="165" text-anchor="middle" font-size="12.5" fill="#161b1a">• Segmentación LAN / red interna</text>
+  <text x="165" y="185" text-anchor="middle" font-size="12.5" fill="#161b1a">• Ansible + Git como IaC</text>
+  <text x="165" y="205" text-anchor="middle" font-size="12.5" fill="#161b1a">• Bastión SSH (crm-edge)</text>
+  <text x="165" y="230" text-anchor="middle" font-size="11.5" fill="#535e5c">Aporta el diseño y la</text>
+  <text x="165" y="245" text-anchor="middle" font-size="11.5" fill="#535e5c">automatización de las redes</text>
+
+  <!-- Virtualizacion -->
+  <rect x="335" y="85" width="290" height="185" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="480" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">Virtualización</text>
+  <rect x="350" y="122" width="260" height="130" rx="6" fill="#e2efec"/>
+  <text x="480" y="145" text-anchor="middle" font-size="12.5" fill="#161b1a">• Proxmox VE / KVM</text>
+  <text x="480" y="165" text-anchor="middle" font-size="12.5" fill="#161b1a">• 2 tecnologías: VMware + KVM</text>
+  <text x="480" y="185" text-anchor="middle" font-size="12.5" fill="#161b1a">• Aislamiento edge / core</text>
+  <text x="480" y="205" text-anchor="middle" font-size="12.5" fill="#161b1a">• Asignación de vCPU/RAM/disco</text>
+  <text x="480" y="230" text-anchor="middle" font-size="11.5" fill="#535e5c">Aporta el hipervisor donde</text>
+  <text x="480" y="245" text-anchor="middle" font-size="11.5" fill="#535e5c">viven las 4 VMs del sistema</text>
+
+  <!-- Diseño y Arquitectura de Redes -->
+  <rect x="650" y="85" width="290" height="185" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="795" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">Diseño y Arquitectura</text>
+  <text x="795" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">de Redes</text>
+  <rect x="665" y="140" width="260" height="112" rx="6" fill="#e2efec"/>
+  <text x="795" y="160" text-anchor="middle" font-size="12.5" fill="#161b1a">• Topología edge/core redundante</text>
+  <text x="795" y="180" text-anchor="middle" font-size="12.5" fill="#161b1a">• Estándar FCAPS (5 pilares)</text>
+  <text x="795" y="200" text-anchor="middle" font-size="12.5" fill="#161b1a">• Nginx como reverse proxy</text>
+  <text x="795" y="222" text-anchor="middle" font-size="11.5" fill="#535e5c">Aporta el diseño escalable</text>
+  <text x="795" y="237" text-anchor="middle" font-size="11.5" fill="#535e5c">y la documentación topológica</text>
+
+  <!-- Arquitectura Cloud -->
+  <rect x="965" y="85" width="290" height="185" rx="10" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="1110" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">Arquitectura Cloud</text>
+  <rect x="980" y="122" width="260" height="130" rx="6" fill="#e2efec"/>
+  <text x="1110" y="145" text-anchor="middle" font-size="12.5" fill="#161b1a">• Terraform (IaC)</text>
+  <text x="1110" y="165" text-anchor="middle" font-size="12.5" fill="#161b1a">• Proveedor bpg/proxmox + API</text>
+  <text x="1110" y="185" text-anchor="middle" font-size="12.5" fill="#161b1a">• Backup offsite (Oracle Cloud)</text>
+  <text x="1110" y="205" text-anchor="middle" font-size="12.5" fill="#161b1a">• Cotización de servidor físico</text>
+  <text x="1110" y="230" text-anchor="middle" font-size="11.5" fill="#535e5c">Aporta la automatización</text>
+  <text x="1110" y="245" text-anchor="middle" font-size="11.5" fill="#535e5c">del despliegue y la nube híbrida</text>
+
+  <!-- Fila inferior: 3 bloques -->
+  <!-- Gestion de Proyectos -->
+  <rect x="65" y="335" width="290" height="170" rx="10" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
+  <text x="210" y="360" text-anchor="middle" font-size="16" font-weight="700" fill="#8a5a1c">Gestión de Proyectos</text>
+  <rect x="80" y="372" width="260" height="115" rx="6" fill="#fdf4e9"/>
+  <text x="210" y="393" text-anchor="middle" font-size="12.5" fill="#161b1a">• Acta, EDT, cronograma (360h)</text>
+  <text x="210" y="413" text-anchor="middle" font-size="12.5" fill="#161b1a">• RACI, riesgos, Valor Ganado</text>
+  <text x="210" y="433" text-anchor="middle" font-size="12.5" fill="#161b1a">• Historial real de git</text>
+  <text x="210" y="458" text-anchor="middle" font-size="11.5" fill="#535e5c">Estructura y planifica</text>
+  <text x="210" y="473" text-anchor="middle" font-size="11.5" fill="#535e5c">todo el ciclo del proyecto</text>
+
+  <!-- ITIL -->
+  <rect x="380" y="335" width="290" height="170" rx="10" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
+  <text x="525" y="360" text-anchor="middle" font-size="16" font-weight="700" fill="#8a5a1c">Gestión de Servicios TI</text>
+  <text x="525" y="378" text-anchor="middle" font-size="13" fill="#8a5a1c">(ITIL)</text>
+  <rect x="395" y="388" width="260" height="99" rx="6" fill="#fdf4e9"/>
+  <text x="525" y="408" text-anchor="middle" font-size="12.5" fill="#161b1a">• Bitácora de 12 incidentes</text>
+  <text x="525" y="428" text-anchor="middle" font-size="12.5" fill="#161b1a">• Monitoreo con Uptime Kuma</text>
+  <text x="525" y="448" text-anchor="middle" font-size="12.5" fill="#161b1a">• Runbooks de recuperación</text>
+  <text x="525" y="472" text-anchor="middle" font-size="11.5" fill="#535e5c">Gobierna y asegura la operación</text>
+
+  <!-- Gestion de la Informacion TICs -->
+  <rect x="695" y="335" width="290" height="170" rx="10" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
+  <text x="840" y="360" text-anchor="middle" font-size="15.5" font-weight="700" fill="#8a5a1c">Gestión de la Información</text>
+  <text x="840" y="378" text-anchor="middle" font-size="13" fill="#8a5a1c">con TICs</text>
+  <rect x="710" y="388" width="260" height="99" rx="6" fill="#fdf4e9"/>
+  <text x="840" y="408" text-anchor="middle" font-size="12.5" fill="#161b1a">• Cumplimiento Ley 21.719</text>
+  <text x="840" y="428" text-anchor="middle" font-size="12.5" fill="#161b1a">• Cifrado de datos sensibles</text>
+  <text x="840" y="448" text-anchor="middle" font-size="12.5" fill="#161b1a">• Comparación de plataformas cloud</text>
+  <text x="840" y="472" text-anchor="middle" font-size="11.5" fill="#535e5c">Protege los datos según marco legal</text>
+
+  <!-- Central project -->
+  <rect x="450" y="600" width="400" height="130" rx="14" fill="#0f403c" stroke="#0f403c" stroke-width="2"/>
+  <text x="650" y="640" text-anchor="middle" font-size="19" font-weight="700" fill="#ffffff">Proyecto Central</text>
+  <text x="650" y="662" text-anchor="middle" font-size="15" fill="#cfe9e5">CRM Empresarial en Proxmox VE</text>
+  <text x="650" y="684" text-anchor="middle" font-size="12" fill="#a8d8d2">4 VMs redundantes · HTTPS con CA privada</text>
+  <text x="650" y="702" text-anchor="middle" font-size="12" fill="#a8d8d2">Monitoreo activo · 12 incidentes reales resueltos</text>
+
+  <!-- Arrows from top row -->
+  <line x1="165" y1="270" x2="500" y2="600" stroke="#1f6f68" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="480" y1="270" x2="560" y2="600" stroke="#1f6f68" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="795" y1="270" x2="740" y2="600" stroke="#1f6f68" stroke-width="2" marker-end="url(#a)"/>
+  <line x1="1110" y1="270" x2="800" y2="600" stroke="#1f6f68" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- Arrows from bottom row -->
+  <line x1="210" y1="505" x2="470" y2="620" stroke="#8a5a1c" stroke-width="2" marker-end="url(#b)"/>
+  <line x1="525" y1="505" x2="600" y2="600" stroke="#8a5a1c" stroke-width="2" marker-end="url(#b)"/>
+  <line x1="840" y1="505" x2="720" y2="600" stroke="#8a5a1c" stroke-width="2" marker-end="url(#b)"/>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1f6f68"/>
+    </marker>
+    <marker id="b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#8a5a1c"/>
+    </marker>
+  </defs>
+
+  <!-- Pie explicativo -->
+  <text x="650" y="750" text-anchor="middle" font-size="12" fill="#8a8f8a">Qué muestra: cada asignatura no solo "se relaciona" temáticamente con el proyecto — le aporta un componente técnico real, verificable en el código y en la infraestructura desplegada.</text>
+</svg>

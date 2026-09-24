@@ -1,20 +1,20 @@
 <svg viewBox="0 0 1000 720" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
   <rect x="0" y="0" width="1000" height="720" fill="#f4f5f2"/>
 
-  <text x="500" y="36" text-anchor="middle" font-size="21" font-weight="700" fill="#161b1a">Diagrama de Secuencia (Nivel 3) — Login y llamada autenticada</text>
-  <text x="500" y="57" text-anchor="middle" font-size="12.5" fill="#535e5c">Flujo real, sobre el despliegue en Proxmox: Navegador → crm-edge (Nginx) → crm-core (Docker)</text>
+  <text x="500" y="36" text-anchor="middle" font-size="28.4" font-weight="700" fill="#161b1a">Diagrama de Secuencia (Nivel 3) — Login y llamada autenticada</text>
+  <text x="500" y="57" text-anchor="middle" font-size="16.9" fill="#535e5c">Flujo real, sobre el despliegue en Proxmox: Navegador → crm-edge (Nginx) → crm-core (Docker)</text>
 
   <!-- Lifelines -->
-  <g font-size="11.5" font-weight="700" fill="#161b1a">
+  <g font-size="15.5" font-weight="700" fill="#161b1a">
     <text x="90" y="90" text-anchor="middle">Navegador</text>
     <text x="290" y="90" text-anchor="middle">crm-edge</text>
-    <text x="290" y="104" text-anchor="middle" font-size="9.5" font-weight="400" fill="#535e5c">(Nginx, 443)</text>
+    <text x="290" y="104" text-anchor="middle" font-size="12.8" font-weight="400" fill="#535e5c">(Nginx, 443)</text>
     <text x="500" y="90" text-anchor="middle">auth-service</text>
-    <text x="500" y="104" text-anchor="middle" font-size="9.5" font-weight="400" fill="#535e5c">(crm-core :8001)</text>
+    <text x="500" y="104" text-anchor="middle" font-size="12.8" font-weight="400" fill="#535e5c">(crm-core :8001)</text>
     <text x="700" y="90" text-anchor="middle">auth_db</text>
-    <text x="700" y="104" text-anchor="middle" font-size="9.5" font-weight="400" fill="#535e5c">(Postgres)</text>
+    <text x="700" y="104" text-anchor="middle" font-size="12.8" font-weight="400" fill="#535e5c">(Postgres)</text>
     <text x="900" y="90" text-anchor="middle">otro servicio</text>
-    <text x="900" y="104" text-anchor="middle" font-size="9.5" font-weight="400" fill="#535e5c">(ej. empleados :8002)</text>
+    <text x="900" y="104" text-anchor="middle" font-size="12.8" font-weight="400" fill="#535e5c">(ej. empleados :8002)</text>
   </g>
   <line x1="90" y1="115" x2="90" y2="660" stroke="#999" stroke-width="1.5"/>
   <line x1="290" y1="115" x2="290" y2="660" stroke="#999" stroke-width="1.5"/>
@@ -25,63 +25,63 @@
   <!-- messages -->
   <!-- 1 -->
   <line x1="90" y1="150" x2="290" y2="150" stroke="#1f6f68" stroke-width="1.8" marker-end="url(#a1)"/>
-  <text x="95" y="143" font-size="10.5" fill="#0f403c">1. POST /api/auth/login {usuario, contraseña}</text>
-  <text x="95" y="163" font-size="9.5" fill="#666">HTTPS, certificado firmado por la CA privada</text>
+  <text x="95" y="143" font-size="14.2" fill="#0f403c">1. POST /api/auth/login {usuario, contraseña}</text>
+  <text x="95" y="163" font-size="12.8" fill="#666">HTTPS, certificado firmado por la CA privada</text>
 
   <!-- 2 -->
   <line x1="290" y1="195" x2="500" y2="195" stroke="#1f6f68" stroke-width="1.8" marker-end="url(#a1)"/>
-  <text x="295" y="188" font-size="10.5" fill="#0f403c">2. proxy_pass → 10.10.10.10:8001/login</text>
-  <text x="295" y="208" font-size="9.5" fill="#666">Nginx reescribe la ruta, sin TLS interno (red vmbr1 aislada)</text>
+  <text x="295" y="188" font-size="14.2" fill="#0f403c">2. proxy_pass → 10.10.10.10:8001/login</text>
+  <text x="295" y="208" font-size="12.8" fill="#666">Nginx reescribe la ruta, sin TLS interno (red vmbr1 aislada)</text>
 
   <!-- 3 -->
   <line x1="500" y1="240" x2="700" y2="240" stroke="#1f6f68" stroke-width="1.8" marker-end="url(#a1)"/>
-  <text x="505" y="233" font-size="10.5" fill="#0f403c">3. SELECT usuario WHERE username = ?</text>
+  <text x="505" y="233" font-size="14.2" fill="#0f403c">3. SELECT usuario WHERE username = ?</text>
 
   <!-- 4 return -->
   <line x1="700" y1="270" x2="500" y2="270" stroke="#8a5a1c" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#a2)"/>
-  <text x="505" y="263" font-size="10.5" fill="#8a5a1c">4. fila con hash de contraseña (bcrypt)</text>
+  <text x="505" y="263" font-size="14.2" fill="#8a5a1c">4. fila con hash de contraseña (bcrypt)</text>
 
   <!-- 5 process -->
   <rect x="470" y="285" width="60" height="30" rx="6" fill="#e2efec" stroke="#1f6f68" stroke-width="1.2"/>
-  <text x="500" y="304" text-anchor="middle" font-size="9" fill="#0f403c">verifica hash</text>
+  <text x="500" y="304" text-anchor="middle" font-size="12.2" fill="#0f403c">verifica hash</text>
 
   <!-- 6 -->
   <rect x="465" y="320" width="70" height="30" rx="6" fill="#e2efec" stroke="#1f6f68" stroke-width="1.2"/>
-  <text x="500" y="339" text-anchor="middle" font-size="9" fill="#0f403c">firma JWT</text>
+  <text x="500" y="339" text-anchor="middle" font-size="12.2" fill="#0f403c">firma JWT</text>
 
   <!-- 7 return to edge -->
   <line x1="500" y1="365" x2="290" y2="365" stroke="#8a5a1c" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#a2)"/>
-  <text x="295" y="358" font-size="10.5" fill="#8a5a1c">5. 200 OK {access_token, rol, módulos permitidos}</text>
+  <text x="295" y="358" font-size="14.2" fill="#8a5a1c">5. 200 OK {access_token, rol, módulos permitidos}</text>
 
   <!-- 8 return to browser -->
   <line x1="290" y1="395" x2="90" y2="395" stroke="#8a5a1c" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#a2)"/>
-  <text x="95" y="388" font-size="10.5" fill="#8a5a1c">6. 200 OK (mismo cuerpo, sin modificar)</text>
+  <text x="95" y="388" font-size="14.2" fill="#8a5a1c">6. 200 OK (mismo cuerpo, sin modificar)</text>
 
   <!-- storage -->
   <rect x="55" y="410" width="140" height="30" rx="6" fill="#fdf4e9" stroke="#8a5a1c" stroke-width="1.2"/>
-  <text x="125" y="429" text-anchor="middle" font-size="9" fill="#161b1a">guarda JWT en localStorage</text>
+  <text x="125" y="429" text-anchor="middle" font-size="12.2" fill="#161b1a">guarda JWT en localStorage</text>
 
   <!-- separator -->
   <line x1="60" y1="465" x2="940" y2="465" stroke="#999" stroke-width="1" stroke-dasharray="2,4"/>
-  <text x="500" y="458" text-anchor="middle" font-size="10.5" font-weight="700" fill="#535e5c">Llamada posterior autenticada, a otro microservicio</text>
+  <text x="500" y="458" text-anchor="middle" font-size="14.2" font-weight="700" fill="#535e5c">Llamada posterior autenticada, a otro microservicio</text>
 
   <!-- 9 -->
   <line x1="90" y1="500" x2="290" y2="500" stroke="#1f6f68" stroke-width="1.8" marker-end="url(#a1)"/>
-  <text x="95" y="493" font-size="10.5" fill="#0f403c">7. GET /api/empleados/  (Authorization: Bearer &lt;JWT&gt;)</text>
+  <text x="95" y="493" font-size="14.2" fill="#0f403c">7. GET /api/empleados/  (Authorization: Bearer &lt;JWT&gt;)</text>
 
   <!-- 10 -->
   <line x1="290" y1="530" x2="900" y2="530" stroke="#1f6f68" stroke-width="1.8" marker-end="url(#a1)"/>
-  <text x="295" y="523" font-size="10.5" fill="#0f403c">8. proxy_pass → 10.10.10.10:8002/</text>
+  <text x="295" y="523" font-size="14.2" fill="#0f403c">8. proxy_pass → 10.10.10.10:8002/</text>
 
   <!-- 11 verify -->
   <rect x="865" y="545" width="80" height="30" rx="6" fill="#e2efec" stroke="#1f6f68" stroke-width="1.2"/>
-  <text x="900" y="564" text-anchor="middle" font-size="9" fill="#0f403c">valida JWT</text>
-  <text x="900" y="592" text-anchor="middle" font-size="9" fill="#666">(no llama a auth-service:</text>
-  <text x="900" y="604" text-anchor="middle" font-size="9" fill="#666">valida la firma localmente)</text>
+  <text x="900" y="564" text-anchor="middle" font-size="12.2" fill="#0f403c">valida JWT</text>
+  <text x="900" y="592" text-anchor="middle" font-size="12.2" fill="#666">(no llama a auth-service:</text>
+  <text x="900" y="604" text-anchor="middle" font-size="12.2" fill="#666">valida la firma localmente)</text>
 
   <!-- 12 return -->
   <line x1="900" y1="620" x2="290" y2="620" stroke="#8a5a1c" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#a2)"/>
-  <text x="450" y="613" font-size="10.5" fill="#8a5a1c">9. 200 OK {datos de empleados, cifrados desde el origen}</text>
+  <text x="450" y="613" font-size="14.2" fill="#8a5a1c">9. 200 OK {datos de empleados, cifrados desde el origen}</text>
 
   <defs>
     <marker id="a1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
@@ -93,6 +93,6 @@
   </defs>
 
   <!-- footer note -->
-  <text x="60" y="650" font-size="9.5" fill="#8a8f8a">Nota: el JWT es sin estado (stateless) -- ningun microservicio consulta a auth-service para validar cada request, solo verifica la firma</text>
-  <text x="60" y="663" font-size="9.5" fill="#8a8f8a">criptografica del token. Esto evita que auth-service sea un cuello de botella o un punto unico de falla para cada llamada de la app.</text>
+  <text x="60" y="650" font-size="12.8" fill="#8a8f8a">Nota: el JWT es sin estado (stateless) -- ningun microservicio consulta a auth-service para validar cada request, solo verifica la firma</text>
+  <text x="60" y="663" font-size="12.8" fill="#8a8f8a">criptografica del token. Esto evita que auth-service sea un cuello de botella o un punto unico de falla para cada llamada de la app.</text>
 </svg>
