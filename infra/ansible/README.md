@@ -55,12 +55,12 @@ openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 \
 # 2. Certificado de crm-edge, firmado por la CA (2 anos, se puede rotar sin
 #    tener que reinstalar la CA en los dispositivos)
 openssl genrsa -out crm-edge.key 2048
-openssl req -new -key crm-edge.key -subj "/CN=192.168.1.62/O=CRM Empresarial" -out crm-edge.csr
+openssl req -new -key crm-edge.key -subj "/CN=172.20.10.13/O=CRM Empresarial" -out crm-edge.csr
 cat > crm-edge.ext <<'EOF'
 basicConstraints=CA:FALSE
 keyUsage=digitalSignature,keyEncipherment
 extendedKeyUsage=serverAuth
-subjectAltName=IP:192.168.1.62,IP:192.168.1.60,IP:192.168.1.61,DNS:crm-edge,DNS:crm-edge-b
+subjectAltName=IP:172.20.10.13,IP:172.20.10.11,IP:172.20.10.12,IP:192.168.1.62,IP:192.168.1.60,IP:192.168.1.61,DNS:crm-edge,DNS:crm-edge-b
 EOF
 openssl x509 -req -in crm-edge.csr -CA ca.crt -CAkey ca.key -CAcreateserial \
   -days 730 -sha256 -extfile crm-edge.ext -out crm-edge.crt
@@ -79,10 +79,10 @@ propósito — son material generado y sensible, distinto por instalación.
   → **Equipo local** → *Colocar todos los certificados en el siguiente
   almacén* → **Entidades de certificación raíz de confianza**.
 - **Android**: una vez que `crm-edge` esté configurado (paso 4), abre
-  `http://192.168.1.62/ca.crt` desde el navegador del celular/tablet — Android
+  `http://172.20.10.13/ca.crt` desde el navegador del celular/tablet — Android
   detecta el tipo de archivo y ofrece instalarla directo (Ajustes → Seguridad
   → Cifrado y credenciales, si no aparece el instalador automático).
-- **iOS/iPadOS**: abre `http://192.168.1.62/ca.crt` en Safari, instala el
+- **iOS/iPadOS**: abre `http://172.20.10.13/ca.crt` en Safari, instala el
   perfil que se descarga (Ajustes → General → VPN y administración de
   dispositivos), y **además** actívala en Ajustes → General → Información →
   Ajustes de confianza de certificados (iOS no confía automáticamente en CAs
@@ -99,7 +99,7 @@ antes de instalar la CA y no la revisa de nuevo hasta reiniciar.
 Desde tu PC Windows:
 
 ```powershell
-scp -r infra/ansible cesar@192.168.1.60:~/ansible
+scp -r infra/ansible cesar@172.20.10.11:~/ansible
 ```
 
 (`-r` copia todo recursivamente, incluida la carpeta `files/` con los
@@ -114,12 +114,12 @@ mueve su contenido afuera, deja que el playbook clone, y devuélvelo (con
 `sudo`, porque el clon queda con dueño `root`).
 
 ```powershell
-scp -o ProxyJump=cesar@192.168.1.60 .env cesar@10.10.10.10:/home/cesar/crm-empresarial/.env
-scp -o ProxyJump=cesar@192.168.1.60 .env cesar@10.10.10.11:/home/cesar/crm-empresarial/.env
-scp -o ProxyJump=cesar@192.168.1.60 frontend/certs/*.crt frontend/certs/*.key cesar@10.10.10.10:/home/cesar/crm-empresarial/frontend/certs/
-scp -o ProxyJump=cesar@192.168.1.60 frontend/certs/*.crt frontend/certs/*.key cesar@10.10.10.11:/home/cesar/crm-empresarial/frontend/certs/
-scp -o ProxyJump=cesar@192.168.1.60 gateway/certs/*.crt gateway/certs/*.key cesar@10.10.10.10:/home/cesar/crm-empresarial/gateway/certs/
-scp -o ProxyJump=cesar@192.168.1.60 gateway/certs/*.crt gateway/certs/*.key cesar@10.10.10.11:/home/cesar/crm-empresarial/gateway/certs/
+scp -o ProxyJump=cesar@172.20.10.11 .env cesar@10.10.10.10:/home/cesar/crm-empresarial/.env
+scp -o ProxyJump=cesar@172.20.10.11 .env cesar@10.10.10.11:/home/cesar/crm-empresarial/.env
+scp -o ProxyJump=cesar@172.20.10.11 frontend/certs/*.crt frontend/certs/*.key cesar@10.10.10.10:/home/cesar/crm-empresarial/frontend/certs/
+scp -o ProxyJump=cesar@172.20.10.11 frontend/certs/*.crt frontend/certs/*.key cesar@10.10.10.11:/home/cesar/crm-empresarial/frontend/certs/
+scp -o ProxyJump=cesar@172.20.10.11 gateway/certs/*.crt gateway/certs/*.key cesar@10.10.10.10:/home/cesar/crm-empresarial/gateway/certs/
+scp -o ProxyJump=cesar@172.20.10.11 gateway/certs/*.crt gateway/certs/*.key cesar@10.10.10.11:/home/cesar/crm-empresarial/gateway/certs/
 ```
 
 `frontend/certs/` y `gateway/certs/` están en `.gitignore` (nunca viajan por
@@ -151,13 +151,13 @@ sudo chmod o+x /home/cesar
 
 ## 5. Verificar
 
-Desde cualquier equipo de la LAN: `http://192.168.1.62` (la **IP virtual**,
+Desde cualquier equipo de la LAN: `http://172.20.10.13` (la **IP virtual**,
 no la de `crm-edge` directamente) debe mostrar el login del CRM. También
-responde en `https://192.168.1.62` con el certificado firmado por la CA
+responde en `https://172.20.10.13` con el certificado firmado por la CA
 privada (cubre la VIP y ambos nodos como SAN) — si ya instalaste `ca.crt` en
 ese dispositivo (ver paso 1.5), entra **sin ninguna advertencia**; si no,
 verás la advertencia normal de certificado no confiable hasta que la
-instales. Apaga `crm-edge` un momento y confirma que `192.168.1.62` sigue
+instales. Apaga `crm-edge` un momento y confirma que `172.20.10.13` sigue
 respondiendo (ahora servido por `crm-edge-b`, con el mismo certificado) —
 esa es la prueba real de que Keepalived funciona.
 
@@ -202,5 +202,5 @@ público, no hace falta nada extra.
 - Correr el playbook una segunda vez y mostrar `changed=0` en la mayoría de
   las tareas — evidencia de idempotencia.
 - **Prueba de failover real**: apagar `crm-edge` y mostrar que
-  `192.168.1.62` sigue respondiendo vía `crm-edge-b` — la evidencia central
+  `172.20.10.13` sigue respondiendo vía `crm-edge-b` — la evidencia central
   del plan de redundancia (sección 4 de la síntesis académica).

@@ -8,7 +8,7 @@ pg_secondary_ip: "10.10.10.11"
 # Par de borde: IP virtual que Keepalived mueve entre crm-edge y crm-edge-b.
 # Ajusta keepalived_interface si tu plantilla no nombra las NIC "eth0"/"eth1"
 # (verifica con "ip addr" en la VM tras el primer arranque).
-keepalived_vip: "192.168.1.62"
+keepalived_vip: "10.10.10.5"
 keepalived_interface: "eth0"
 
 microservicios:

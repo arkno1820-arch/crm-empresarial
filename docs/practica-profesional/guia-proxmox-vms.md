@@ -203,3 +203,13 @@ CRM real de tu negocio, o es un entorno de laboratorio solo para la
 evidencia de la práctica, mientras el CRM real sigue en otro lado? Eso
 decide si esta rutina de respaldo reemplaza a `backup.ps1` o si son dos
 sistemas en paralelo — retómalo cuando lo tengas claro.
+
+---
+
+## Actualización de red (25-sep-2026)
+
+Las IPs `192.168.1.x` de esta guía corresponden al diseño inicial (red puenteada a la LAN). El esquema
+**vigente** usa una red NAT de VMware (VMnet8, `192.168.80.0/24`): Proxmox en `192.168.80.10`, las cuatro
+VMs solo en `vmbr1` (`10.10.10.0/24`: bordes `.2`/`.3`, VIP `.5`, núcleos `.10`/`.11`), y el host Proxmox
+actúa como router (DNAT 80/443 hacia la VIP y 2211/2212 hacia el SSH de cada borde; MASQUERADE solo para
+los bordes). Motivo y verificación: sección 4 (ADR-06/07) y 6.3 del informe de práctica.

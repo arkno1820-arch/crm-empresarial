@@ -27,11 +27,10 @@ resource "proxmox_virtual_environment_vm" "crm_edge" {
     size         = 8 # la plantilla trae 2GB, insuficiente incluso para Nginx + logs
   }
 
+  # Solo pata interna: el hotspot/Wi-Fi descarta las MACs de VMs anidadas, asi que
+  # el borde sale y entra por Proxmox (NAT/DNAT en vmbr0) y no directo a la LAN.
   network_device {
-    bridge = "vmbr0" # hacia la LAN
-  }
-  network_device {
-    bridge = "vmbr1" # hacia crm-core
+    bridge = "vmbr1"
   }
 
   initialization {
@@ -40,13 +39,8 @@ resource "proxmox_virtual_environment_vm" "crm_edge" {
     }
     ip_config {
       ipv4 {
-        address = var.crm_edge_lan_ip
-        gateway = var.lan_gateway
-      }
-    }
-    ip_config {
-      ipv4 {
         address = "10.10.10.2/24"
+        gateway = "10.10.10.1"
       }
     }
     user_account {
@@ -81,9 +75,6 @@ resource "proxmox_virtual_environment_vm" "crm_edge_b" {
   }
 
   network_device {
-    bridge = "vmbr0"
-  }
-  network_device {
     bridge = "vmbr1"
   }
 
@@ -93,13 +84,8 @@ resource "proxmox_virtual_environment_vm" "crm_edge_b" {
     }
     ip_config {
       ipv4 {
-        address = var.crm_edge_b_lan_ip
-        gateway = var.lan_gateway
-      }
-    }
-    ip_config {
-      ipv4 {
         address = "10.10.10.3/24"
+        gateway = "10.10.10.1"
       }
     }
     user_account {

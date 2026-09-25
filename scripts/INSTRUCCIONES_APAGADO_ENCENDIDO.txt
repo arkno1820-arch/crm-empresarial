@@ -13,12 +13,12 @@ termino). Ahora vive en 4 maquinas virtuales (VMs) dentro de Proxmox,
 que a su vez corre dentro de una VM de VMware, en tu PC fisico.
 
 Las 4 VMs son:
-  - crm-edge      (192.168.1.60)  -- el "bastion": es la UNICA forma
+  - crm-edge      (10.10.10.2, SSH por 192.168.80.10:2211)  -- el "bastion": es la UNICA forma
                                      de llegar por SSH a crm-core y
                                      crm-core-b, que estan en una red
                                      interna sin acceso directo desde
                                      tu PC.
-  - crm-edge-b    (192.168.1.61)  -- borde en espera (respaldo)
+  - crm-edge-b    (10.10.10.3, SSH por 192.168.80.10:2212)  -- borde en espera (respaldo)
   - crm-core      (10.10.10.10)   -- el CRM completo (Docker), solo
                                      alcanzable a traves de crm-edge
   - crm-core-b    (10.10.10.11)   -- replica pasiva del anterior
@@ -42,23 +42,23 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
   PASO 1 - Apagar crm-core-b (la replica, primero porque es menos
   critica):
 
-    ssh -i ~/.ssh/id_ed25519_crm cesar@192.168.1.60 "ssh cesar@10.10.10.11 'sudo shutdown -h now'"
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh cesar@10.10.10.11 'sudo shutdown -h now'"
 
   PASO 2 - Apagar crm-core (el CRM activo):
 
-    ssh -i ~/.ssh/id_ed25519_crm cesar@192.168.1.60 "ssh cesar@10.10.10.10 'sudo shutdown -h now'"
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh cesar@10.10.10.10 'sudo shutdown -h now'"
 
   Espera unos 10 segundos. Confirma en la consola de Proxmox
-  (https://192.168.1.147:8006) que crm-core y crm-core-b ya dicen
+  (https://192.168.80.10:8006) que crm-core y crm-core-b ya dicen
   "detenido" / apagado (icono gris) antes de seguir.
 
   PASO 3 - Apagar crm-edge-b:
 
-    ssh -i ~/.ssh/id_ed25519_crm cesar@192.168.1.61 "sudo shutdown -h now"
+    ssh -i ~/.ssh/id_ed25519_crm -p 2212 cesar@192.168.80.10 "sudo shutdown -h now"
 
   PASO 4 - Apagar crm-edge AL FINAL (es el bastion, se apaga ultimo):
 
-    ssh -i ~/.ssh/id_ed25519_crm cesar@192.168.1.60 "sudo shutdown -h now"
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "sudo shutdown -h now"
 
   PASO 5 - Confirma en Proxmox que las 4 VMs dicen apagado.
 
@@ -83,7 +83,7 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
 
   PASO 1 - Si apagaste el PC fisico: prendelo, abre VMware Workstation,
   y prende la VM de Proxmox ahi dentro. Espera a que la consola web
-  (https://192.168.1.147:8006) responda.
+  (https://192.168.80.10:8006) responda.
 
   PASO 2 - Prende las 4 VMs desde la consola de Proxmox (clic en cada
   una -> boton "Start"), EN ESTE ORDEN:
@@ -99,14 +99,14 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
 
   PASO 4 - Verifica que todo funcione entrando a:
 
-    https://192.168.1.62
+    https://192.168.80.10
 
   (esa es la IP virtual -- el sistema deberia mostrar la pantalla de
   login sin que tengas que hacer nada mas. Nginx, Keepalived, Docker y
   Uptime Kuma arrancan solos en cada VM, no hay que iniciar nada a
   mano).
 
-  PASO 5 - Revisa el monitoreo en http://192.168.1.60:3001 (Uptime
+  PASO 5 - Revisa el monitoreo en http://localhost:3001 (abre antes un tunel: ssh -i ~/.ssh/id_ed25519_crm -p 2211 -L 3001:localhost:3001 cesar@192.168.80.10) (Uptime
   Kuma) -- los 6 monitores deberian ponerse verdes en un par de
   minutos.
 
@@ -114,7 +114,7 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
 --------------------------------------------------------------------
 4. SI ALGO NO VUELVE BIEN
 --------------------------------------------------------------------
-- Si https://192.168.1.62 no responde pero las VMs dicen "corriendo"
+- Si https://192.168.80.10 no responde pero las VMs dicen "corriendo"
   en Proxmox: dale unos minutos mas, sobre todo si acabas de prender
   crm-core (Docker tarda en levantar los 9 contenedores).
 
@@ -136,3 +136,22 @@ otra guia -- scripts/INSTRUCCIONES_RESPALDO.txt -- que todavia describe
 el mundo viejo de Docker Compose en tu PC directamente y necesita
 actualizarse para el mundo de las VMs en Proxmox. Pendiente, avisale a
 Claude cuando quieras que se actualice.
+
+
+--------------------------------------------------------------------
+6. RED (CAMBIO 24-09-2026): NAT DE VMWARE, INDEPENDIENTE DE LA WIFI
+--------------------------------------------------------------------
+Proxmox ya NO va pegado (bridged) a tu Wi-Fi: la VM de Proxmox usa la
+red NAT de VMware (VMnet8, 192.168.80.0/24). Por eso, cambies de Wi-Fi
+o uses el hotspot del celular, TODO sigue funcionando igual desde el PC.
+  - Proxmox (web/SSH):   192.168.80.10   (puerto 8006 / 22)
+  - CRM:                 https://192.168.80.10  (Proxmox lo reenvia al VIP
+                         10.10.10.5 que mueve Keepalived entre los bordes)
+  - crm-edge (SSH):      192.168.80.10 puerto 2211
+  - crm-edge-b (SSH):    192.168.80.10 puerto 2212
+  - Red interna vmbr1:   10.10.10.0/24 (bordes .2/.3, VIP .5, nucleos .10/.11)
+Las reglas de reenvio/NAT viven en /etc/network/if-up.d/crm-nat dentro
+de Proxmox y se aplican solas al arrancar.
+La tarjeta de la VM Proxmox esta en modo NAT en proxmox.vmx (respaldos:
+proxmox.vmx.bak-ip y .bak-nat). Otros dispositivos (celular, tablet) no
+entran directo: haria falta un reenvio de puertos en VMware.

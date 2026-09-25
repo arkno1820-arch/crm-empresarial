@@ -61,7 +61,7 @@
     msg: >-
       Falta {{ repo_dest }}/.env en crm-core. Cópialo antes de correr este
       playbook, de un salto desde tu PC (a través de crm-edge):
-      scp -o ProxyJump=cesar@192.168.1.60 .env cesar@10.10.10.10:{{ repo_dest }}/.env
+      scp -o ProxyJump=cesar@172.20.10.11 .env cesar@10.10.10.10:{{ repo_dest }}/.env
   when: not env_file.stat.exists
 
 - name: Levantar el stack completo del CRM

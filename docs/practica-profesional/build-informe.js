@@ -4,7 +4,8 @@ const {
   Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
   ImageRun, PageBreak, LevelFormat, TableOfContents, Header, Footer,
-  PageNumber, VerticalAlign, convertInchesToTwip, PageOrientation, TabStopType, TabStopPosition
+  PageNumber, VerticalAlign, convertInchesToTwip, PageOrientation, TabStopType, TabStopPosition,
+  SequentialIdentifier
 } = require("docx");
 
 // A4 en twips (1440 = 1 pulgada). Para landscape, docx-js intercambia
@@ -13,10 +14,11 @@ const {
 const A4_WIDTH = 11906;
 const A4_HEIGHT = 16838;
 const MARGIN_PORTRAIT = { top: 1000, bottom: 1000, left: 1100, right: 1100 };
-const MARGIN_LANDSCAPE = { top: 700, bottom: 700, left: 700, right: 700 };
+const MARGIN_LANDSCAPE = { top: 800, bottom: 700, left: 700, right: 700, header: 300, footer: 300 };
 
 const DIA = path.join(__dirname, "diagramas");
 const EVI = path.join(__dirname, "evidencia");
+const CAP = path.join(__dirname, "capturas");
 
 // ---------- estilo / paleta ----------
 const TEAL = "1F6F68";
@@ -29,18 +31,18 @@ const LIGHT_AMBER = "FDF4E9";
 
 // ---------- helpers ----------
 function h1(text) {
-  return new Paragraph({ text, heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 200 } });
+  return new Paragraph({ text, heading: HeadingLevel.HEADING_1, keepNext: true, spacing: { before: 400, after: 200 } });
 }
 function h2(text) {
-  return new Paragraph({ text, heading: HeadingLevel.HEADING_2, spacing: { before: 300, after: 150 } });
+  return new Paragraph({ text, heading: HeadingLevel.HEADING_2, keepNext: true, spacing: { before: 300, after: 150 } });
 }
 function h3(text) {
-  return new Paragraph({ text, heading: HeadingLevel.HEADING_3, spacing: { before: 220, after: 120 } });
+  return new Paragraph({ text, heading: HeadingLevel.HEADING_3, keepNext: true, spacing: { before: 220, after: 120 } });
 }
 function p(text, opts = {}) {
   return new Paragraph({
     spacing: { after: 160, line: 276 },
-    children: [new TextRun({ text, ...opts })],
+    children: [new TextRun({ text: String(text).replace(/`/g, ""), ...opts })],
   });
 }
 function pRich(runs, opts = {}) {
@@ -53,7 +55,7 @@ function italic(text) { return new TextRun({ text, italics: true }); }
 let bulletCounter = 0;
 function bullet(text, level = 0) {
   return new Paragraph({
-    text,
+    text: String(text).replace(/`/g, ""),
     bullet: { level },
     spacing: { after: 90 },
   });
@@ -75,7 +77,7 @@ function cell(text, opts = {}) {
     margins: { top: 80, bottom: 80, left: 100, right: 100 },
     children: [new Paragraph({
       alignment: align,
-      children: [new TextRun({ text, bold: b, size, color: color || undefined })],
+      children: [new TextRun({ text: String(text).replace(/`/g, ""), bold: b, size, color: color || undefined })],
     })],
   });
 }
@@ -95,45 +97,66 @@ function makeTable(widths, headerRow, dataRows, headerShading = TEAL_DARK) {
   return new Table({ width: { size: total, type: WidthType.DXA }, columnWidths: widths, rows });
 }
 
-function imageBlock(fileName, widthPx, heightPx, caption, maxWidth = 560) {
-  const filePath = path.join(DIA, fileName);
-  const buf = fs.readFileSync(filePath);
-  const scale = Math.min(1, maxWidth / widthPx);
-  const w = Math.round(widthPx * scale);
-  const h = Math.round(heightPx * scale);
+// ---------- figuras: imagen + titulo numerado (campo SEQ) + leyenda ----------
+function pngSize(buf) {
+  if (buf.readUInt32BE(0) !== 0x89504e47) throw new Error("No es PNG");
+  return { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
+}
+let figContador = 0;
+function figuraTitulo(titulo) {
+  figContador++;
+  return new Paragraph({
+    style: "Caption", keepNext: true, keepLines: true,
+    children: [new TextRun({ text: "Figura " }), new SequentialIdentifier("Figura"), new TextRun({ text: ". " + titulo })],
+  });
+}
+function leyenda(texto) {
+  return new Paragraph({ style: "Leyenda", keepLines: true, children: [new TextRun({ text: texto })] });
+}
+function cargarImagen(dir, file, maxW, maxH) {
+  const buf = fs.readFileSync(path.join(dir, file));
+  const { w, h } = pngSize(buf);
+  const s = Math.min(maxW / w, maxH / h, 1.6);
+  return { buf, w: Math.round(w * s), h: Math.round(h * s) };
+}
+// Una figura completa (imagen centrada, titulo numerado y leyenda que explica que se observa)
+function figura(dir, file, titulo, texto, maxW = 1000, maxH = 500) {
+  // Hoja completa: usa todo el area util. Los valores chicos (<300 de alto) se respetan
+  // porque son capturas apiladas o acompanadas por otra figura en la misma hoja.
+  const cajaW = maxH < 300 ? maxW : 1000;
+  const cajaH = maxH < 300 ? maxH : 530;
+  const { buf, w, h } = cargarImagen(dir, file, cajaW, cajaH);
   return [
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing: { before: 120, after: 60 },
-      children: [new ImageRun({ type: "png", data: buf, transformation: { width: w, height: h } })],
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing: { after: 240 },
-      children: [new TextRun({ text: caption, italics: true, size: 18, color: "666666" })],
-    }),
+    new Paragraph({ alignment: AlignmentType.CENTER, keepNext: true, spacing: { before: 60, after: 60 },
+      children: [new ImageRun({ type: "png", data: buf, transformation: { width: w, height: h } })] }),
+    figuraTitulo(titulo),
+    leyenda(texto),
   ];
 }
-
-function evidenceImage(fileName, caption, maxWidth = 500) {
-  const filePath = path.join(EVI, fileName);
-  const buf = fs.readFileSync(filePath);
-  // crude PNG header read for dims
-  const w = buf.readUInt32BE(16);
-  const h = buf.readUInt32BE(20);
-  const scale = Math.min(1, maxWidth / w);
-  return [
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing: { before: 120, after: 60 },
-      children: [new ImageRun({ type: "png", data: buf, transformation: { width: Math.round(w*scale), height: Math.round(h*scale) } })],
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing: { after: 240 },
-      children: [new TextRun({ text: caption, italics: true, size: 18, color: "666666" })],
-    }),
-  ];
+// Dos figuras lado a lado (para capturas pequenas), cada una con su titulo y leyenda
+function figurasPar(dir, a, b, maxW = 480, maxH = 420) {
+  const celda = (f) => {
+    const { buf, w, h } = cargarImagen(dir, f.file, maxW, maxH);
+    return new TableCell({
+      width: { size: 7700, type: WidthType.DXA },
+      borders: { top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }, bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                 left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }, right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" } },
+      margins: { top: 40, bottom: 40, left: 100, right: 100 },
+      children: [
+        new Paragraph({ alignment: AlignmentType.CENTER, keepNext: true, children: [new ImageRun({ type: "png", data: buf, transformation: { width: w, height: h } })] }),
+        figuraTitulo(f.titulo), leyenda(f.texto),
+      ],
+    });
+  };
+  return new Table({ width: { size: 15400, type: WidthType.DXA }, columnWidths: [7700, 7700],
+    rows: [new TableRow({ children: [celda(a), celda(b)] })] });
+}
+// Varias figuras apiladas en una misma hoja (capturas muy bajas)
+function figurasApiladas(dir, lista, maxW = 700, maxH = 190) {
+  return lista.flatMap(f => figura(dir, f.file, f.titulo, f.texto, maxW, maxH));
+}
+function verificarFiguras(esperadas) {
+  if (figContador !== esperadas) throw new Error("Numeracion de figuras: se generaron " + figContador + " y se esperaban " + esperadas);
 }
 
 function pageBreak() { return new Paragraph({ children: [new PageBreak()] }); }
@@ -201,6 +224,6 @@ module.exports = {
   ImageRun, PageBreak, LevelFormat, Header, Footer, PageNumber, VerticalAlign,
   TEAL, TEAL_DARK, AMBER, RED, GRAY, LIGHT, LIGHT_AMBER,
   h1, h2, h3, p, pRich, bold, normal, italic, bullet, numbered, cell, makeTable,
-  imageBlock, evidenceImage, pageBreak, codeBlock, DIA, EVI,
+  figura, figurasPar, figurasApiladas, verificarFiguras, figuraTitulo, leyenda, pageBreak, codeBlock, DIA, EVI, CAP,
   TableOfContents, portraitSection, landscapeSection, makeHeader, makeFooter,
 };

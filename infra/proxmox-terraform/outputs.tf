@@ -1,9 +1,9 @@
 output "crm_edge_vip" {
-  value = "Accede al CRM desde tu LAN en: http://${var.crm_edge_vip} (IP virtual, la gestiona Keepalived)"
+  value = "VIP interna (Keepalived): ${var.crm_edge_vip}. Desde la LAN/hotspot el CRM se publica en https://<IP de Proxmox> (DNAT 80/443 -> VIP)"
 }
 
 output "crm_edge_nodos" {
-  value = "crm-edge: ${split("/", var.crm_edge_lan_ip)[0]} · crm-edge-b: ${split("/", var.crm_edge_b_lan_ip)[0]}"
+  value = "crm-edge: 10.10.10.2 · crm-edge-b: 10.10.10.3 (solo red interna vmbr1)"
 }
 
 output "crm_core_internal_ip" {

@@ -351,3 +351,14 @@ recomendado) y HPE ProLiant ML110 Gen11 ($6.671.150 CLP). Ambas con soporte comp
 Intel VT-x/VT-d/EPT y memoria ECC. Detalle completo en la sección 5.8 del informe tesis
 (`Informe_Practica_Profesional_CRM_Empresarial.docx`). Planificado como Fase F5 del
 cronograma (2-8 nov 2026).
+
+---
+
+## Nota de actualización (25-sep-2026)
+
+Las direcciones `192.168.1.x` citadas arriba son las de la red original, tal como estaban en las fechas
+de cada prueba (registro histórico). El esquema de red vigente es NAT de VMware (VMnet8): Proxmox
+`192.168.80.10`, bordes `10.10.10.2`/`.3`, VIP `10.10.10.5`, núcleos `10.10.10.10`/`.11`; el núcleo no tiene
+salida a Internet y solo los bordes tienen MASQUERADE. La bitácora completa pasó de 12 a 17 incidentes
+(nuevos: choque de IP con el host, hotspot descartando MACs de VMs anidadas, regla NAT persistente,
+monitores con IPs antiguas, diferencia residual del proveedor de Terraform). Ver el informe de práctica v2.0.
