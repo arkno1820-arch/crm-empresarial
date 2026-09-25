@@ -13,3 +13,7 @@ output "crm_core_internal_ip" {
 output "crm_monitoreo" {
   value = "Uptime Kuma en el contenedor LXC crm-mon (10.10.10.20), fuera de las VMs. Acceso: http://<IP de Proxmox>:3001 (DNAT en crm-nat)."
 }
+
+output "crm_nas" {
+  value = "NAS de respaldos: contenedor LXC crm-nas (10.10.10.30), disco raiz en el almacenamiento nas-respaldos (disco externo). Recibe por SSH los volcados cifrados de la base de datos."
+}

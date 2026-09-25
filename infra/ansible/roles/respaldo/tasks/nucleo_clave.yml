@@ -1,0 +1,22 @@
+---
+# Paso 1 (nucleos): cada nucleo tiene su PROPIA llave SSH, solo para entregar respaldos a crm-nas.
+# La llave publica se lee aqui y se autoriza en crm-nas en el paso 2.
+- name: Carpeta .ssh de root
+  ansible.builtin.file:
+    path: /root/.ssh
+    state: directory
+    mode: "0700"
+
+- name: Llave SSH de respaldo (solo para hablar con crm-nas)
+  ansible.builtin.command:
+    cmd: ssh-keygen -t ed25519 -N "" -C "respaldo@{{ inventory_hostname }}" -f /root/.ssh/id_respaldo
+    creates: /root/.ssh/id_respaldo
+
+- name: Leer la llave publica
+  ansible.builtin.slurp:
+    src: /root/.ssh/id_respaldo.pub
+  register: llave_publica_b64
+
+- name: Recordar la llave publica de este nucleo
+  ansible.builtin.set_fact:
+    respaldo_llave_publica: "{{ (llave_publica_b64.content | b64decode) | trim }}"

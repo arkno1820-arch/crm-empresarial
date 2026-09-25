@@ -33,3 +33,9 @@ microservicios:
   - { nombre: inventario, puerto: 8004 }
   - { nombre: reservas, puerto: 8005 }
   - { nombre: chat, puerto: 8006 }
+
+# Respaldo diario cifrado hacia crm-nas (rol respaldo)
+nas_ip: "10.10.10.30"
+respaldo_retencion_dias: 30
+# Huella de la clave PUBLICA de cifrado (la privada solo existe en el PC del administrador)
+respaldo_gpg_fpr: "6E275B7776ED1111AF96F18D87A64D5027036EB4"

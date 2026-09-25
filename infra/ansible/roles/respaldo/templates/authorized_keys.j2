@@ -1,0 +1,4 @@
+# Gestionado por Ansible (rol respaldo). Cada nucleo solo puede ejecutar recibir-respaldo.
+{% for n in groups['crm_core'] %}
+command="/usr/local/bin/recibir-respaldo",no-pty,no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-user-rc {{ hostvars[n].respaldo_llave_publica }}
+{% endfor %}

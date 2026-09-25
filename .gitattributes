@@ -1,0 +1,2 @@
+# Los archivos que se ejecutan en Linux deben conservar finales de linea LF
+infra/ansible/** text eol=lf

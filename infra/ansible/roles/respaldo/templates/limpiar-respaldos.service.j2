@@ -1,0 +1,6 @@
+[Unit]
+Description=Borra respaldos de base de datos con mas de {{ respaldo_retencion_dias }} dias
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/find /srv/respaldos/db -maxdepth 1 -name 'db-*.sql.gpg' -mtime +{{ respaldo_retencion_dias }} -delete

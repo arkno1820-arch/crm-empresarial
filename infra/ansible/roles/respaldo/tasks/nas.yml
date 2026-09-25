@@ -1,0 +1,73 @@
+---
+# Paso 2 (crm-nas): receptor de respaldos de SOLO ESCRITURA.
+# Los nucleos entran como el usuario "respaldos", cuya llave solo puede ejecutar el script
+# recibir-respaldo: subir un archivo nuevo. No pueden leer, listar, sobrescribir ni borrar
+# nada: aunque un nucleo fuese comprometido, no podria destruir ni leer los respaldos.
+- name: Usuario que recibe los respaldos (sin contrasena, solo llave)
+  ansible.builtin.user:
+    name: respaldos
+    shell: /bin/sh
+    password: "*"
+    create_home: true
+
+- name: Carpeta de respaldos de la base de datos
+  ansible.builtin.file:
+    path: /srv/respaldos/db
+    state: directory
+    owner: respaldos
+    group: respaldos
+    mode: "0700"
+
+- name: Script receptor (unico comando permitido a los nucleos)
+  ansible.builtin.copy:
+    src: recibir-respaldo
+    dest: /usr/local/bin/recibir-respaldo
+    mode: "0755"
+
+- name: Carpeta .ssh del usuario respaldos
+  ansible.builtin.file:
+    path: /home/respaldos/.ssh
+    state: directory
+    owner: respaldos
+    group: respaldos
+    mode: "0700"
+
+- name: Autorizar a los nucleos con comando forzado
+  ansible.builtin.template:
+    src: authorized_keys.j2
+    dest: /home/respaldos/.ssh/authorized_keys
+    owner: respaldos
+    group: respaldos
+    mode: "0600"
+
+- name: Limpieza automatica de respaldos antiguos (servicio)
+  ansible.builtin.template:
+    src: limpiar-respaldos.service.j2
+    dest: /etc/systemd/system/limpiar-respaldos.service
+    mode: "0644"
+  notify: recargar systemd
+
+- name: Limpieza automatica de respaldos antiguos (temporizador)
+  ansible.builtin.copy:
+    src: limpiar-respaldos.timer
+    dest: /etc/systemd/system/limpiar-respaldos.timer
+    mode: "0644"
+  notify: recargar systemd
+
+- name: Aplicar cambios de systemd antes de activar el temporizador
+  ansible.builtin.meta: flush_handlers
+
+- name: Activar la limpieza automatica
+  ansible.builtin.systemd:
+    name: limpiar-respaldos.timer
+    enabled: true
+    state: started
+
+- name: Leer la huella (llave publica) del host crm-nas
+  ansible.builtin.slurp:
+    src: /etc/ssh/ssh_host_ed25519_key.pub
+  register: nas_hostkey_b64
+
+- name: Recordar la llave del host para que los nucleos la registren
+  ansible.builtin.set_fact:
+    nas_hostkey: "{{ (nas_hostkey_b64.content | b64decode).split(' ')[0:2] | join(' ') }}"

@@ -27,6 +27,20 @@ dentro de una VM de VMware, en tu PC fisico. Todo lo que hay:
       Uptime Kuma principal (los 10 monitores). Vive FUERA de las VMs
       para que siga vigilando aunque una VM se caiga.
 
+  - crm-nas      (CONTENEDOR 105, 10.10.10.30)
+      NAS de respaldos: su disco vive en el DISCO EXTERNO del PC (unidad
+      K:, archivo K:\crm-nas\respaldos.vmdk, visto en Proxmox como el
+      almacenamiento "nas-respaldos"). Recibe cada noche los respaldos
+      cifrados de la base de datos y guarda los respaldos de las VMs.
+
+IMPORTANTE - DISCO EXTERNO K: la VM de Proxmox usa ese disco. Si se
+DESCONECTA con Proxmox encendido, VMware pausa la VM y muestra un aviso
+("The operation on file K:\crm-nas\respaldos.vmdk failed"): elige
+"Retry" una vez que el disco este de vuelta (NO "Continue" ni "Cancel").
+Sin el disco conectado, VMware no enciende la VM de Proxmox. Para
+llevarte el disco: apaga todo (seccion 2, hasta el paso 7) y quita el
+disco de la VM en VMware (Edit virtual machine settings > Hard Disk 2).
+
 Quien manda en la base de datos: Patroni. Uno de los dos nucleos es
 "Leader" (escribe) y el otro "Sync Standby" (replica sincronica). Si el
 lider cae, el otro asume solo. etcd (3 miembros: crm-edge, crm-edge-b,
@@ -113,6 +127,8 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
 
   Si las apagaste con las instrucciones de la seccion 2 y Proxmox sigue
   encendido, tendras que encenderlas a mano en ese orden.
+  (crm-mon y crm-nas, los contenedores, tambien arrancan solos: primero
+  crm-mon, luego crm-nas.)
 
   PASO 3 - Espera 3 a 5 minutos. Los nucleos tardan porque arrancan
   Docker (9 contenedores), Patroni, etcd y HAProxy. crm-mon vuelve en
@@ -152,10 +168,12 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
   replica. Es correcto. Si quisieras devolver el rol, se hace a mano y
   a proposito (con el sistema sano):
 
-    sudo patronictl -c /etc/patroni/config.yml switchover --leader crm-core-b --candidate crm-core
+    sudo patronictl -c /etc/patroni/config.yml switchover --master crm-core-b --candidate crm-core --force
 
-  (cambia los nombres segun quien sea el lider hoy; pregunta "when": deja
-  "now"). Dura unos segundos, sin perdida de datos.
+  (cambia los nombres segun quien sea el lider hoy; con --force no
+  pregunta nada). Dura unos segundos, sin perdida de datos. Probado el
+  25-09-2026: el CRM siguio respondiendo durante todo el cambio. En esta
+  version de Patroni la opcion se llama --master (no --leader).
 - Los nucleos y crm-mon NO tienen salida a Internet a proposito. Solo los
   bordes salen. Si un paquete "no descarga", es por diseno.
 - Un monitor rojo de "crm-core" o "crm-core-b" justo tras encender: espera

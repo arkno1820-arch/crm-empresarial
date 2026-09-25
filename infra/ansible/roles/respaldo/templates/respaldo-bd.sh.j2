@@ -1,0 +1,31 @@
+#!/bin/bash
+# Respaldo cifrado de la base de datos hacia crm-nas. Gestionado por Ansible (rol respaldo).
+# 1) volcado completo (pg_dumpall) del PostgreSQL LOCAL -- funciona igual en lider o replica
+# 2) comprueba que el volcado esta completo
+# 3) lo cifra con la clave PUBLICA (solo la privada del administrador puede descifrarlo)
+# 4) lo entrega a crm-nas por SSH (canal de solo escritura)
+# El volcado en claro solo existe en RAM (/dev/shm) y se borra al terminar.
+set -euo pipefail
+
+NAS="{{ nas_ip }}"
+FPR="{{ respaldo_gpg_fpr }}"
+NOMBRE="db-$(hostname)-$(date +%Y%m%d_%H%M%S).sql.gpg"
+
+TMP="$(mktemp -d /dev/shm/respaldo.XXXXXX)"
+chmod 700 "$TMP"
+trap 'rm -rf "$TMP"' EXIT
+cd /tmp
+
+runuser -u postgres -- pg_dumpall -p {{ pg_port_directo }} > "$TMP/volcado.sql"
+
+if [ "$(wc -c < "$TMP/volcado.sql")" -lt 1000 ] || ! tail -n 5 "$TMP/volcado.sql" | grep -q "cluster dump complete"; then
+  echo "ERROR: el volcado esta incompleto, no se envia" >&2
+  exit 1
+fi
+
+gpg --batch --yes --trust-model always -r "$FPR" -o "$TMP/$NOMBRE" -e "$TMP/volcado.sql"
+
+ssh -i /root/.ssh/id_respaldo -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15 \
+    respaldos@"$NAS" "subir $NOMBRE" < "$TMP/$NOMBRE"
+
+echo "Respaldo entregado: $NOMBRE ($(wc -c < "$TMP/$NOMBRE") bytes cifrados)"

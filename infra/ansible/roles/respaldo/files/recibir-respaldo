@@ -1,0 +1,29 @@
+#!/bin/sh
+# Receptor de respaldos (crm-nas). Lo ejecuta sshd como comando forzado del usuario "respaldos".
+# Unica orden permitida:   subir <nombre>     (el contenido llega por la entrada estandar)
+# El nombre debe ser  db-<algo>.sql.gpg  con caracteres seguros, y NO puede existir ya
+# (no se sobrescribe nada). El archivo se escribe con nombre temporal y solo se publica
+# cuando llego completo.
+set -eu
+DIR=/srv/respaldos/db
+
+# shellcheck disable=SC2086
+set -- $SSH_ORIGINAL_COMMAND
+[ "${1:-}" = "subir" ] || { echo "orden no permitida" >&2; exit 2; }
+NOMBRE="${2:-}"
+case "$NOMBRE" in
+  ""|*[!A-Za-z0-9._-]*) echo "nombre invalido" >&2; exit 3 ;;
+  db-*.sql.gpg) ;;
+  *) echo "nombre invalido" >&2; exit 3 ;;
+esac
+[ ! -e "$DIR/$NOMBRE" ] || { echo "ya existe" >&2; exit 4; }
+
+TMP="$DIR/.$NOMBRE.parcial"
+umask 077
+trap 'rm -f "$TMP"' EXIT
+cat > "$TMP"
+[ -s "$TMP" ] || { echo "archivo vacio" >&2; exit 5; }
+mv "$TMP" "$DIR/$NOMBRE"
+trap - EXIT
+logger -t recibir-respaldo "recibido $NOMBRE ($(wc -c < "$DIR/$NOMBRE") bytes)"
+echo "ok $NOMBRE"

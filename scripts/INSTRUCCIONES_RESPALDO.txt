@@ -76,6 +76,50 @@ tambien al otro nucleo. Solo un respaldo permite volver atras.
 
 
 --------------------------------------------------------------------
+3b. RESPALDOS AUTOMATICOS (desde 25-09-2026, no requieren que hagas nada)
+--------------------------------------------------------------------
+Ademas del respaldo manual, hay dos respaldos que corren solos y
+guardan en la NAS "crm-nas" (contenedor 105, en tu disco externo K:):
+
+  - CADA NOCHE, base de datos: crm-core a las 03:00 y crm-core-b a las
+    03:30 (dos copias, por si un nucleo esta caido). Cada volcado va
+    CIFRADO con la clave publica de "CRM Respaldos"; solo la clave
+    PRIVADA (en tu PC, C:\Users\HP\.gnupg) puede abrirlo. Se guardan
+    30 dias y luego se borran solos. Los nucleos solo pueden ESCRIBIR en
+    la NAS (no leer, listar ni borrar): un nucleo comprometido no puede
+    destruir los respaldos.
+  - CADA DOMINGO 02:00, maquinas completas: las 4 VMs y crm-mon, con
+    Proxmox (se conservan las 3 ultimas de cada una). Sirven para
+    reconstruir una VM entera.
+
+Ver que estan llegando (PowerShell):
+
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh root@10.10.10.30 'ls -la /srv/respaldos/db'"
+
+Hacer uno YA (ej. antes de un cambio grande), por ejemplo en crm-core:
+
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh cesar@10.10.10.10 'sudo systemctl start respaldo-bd.service'"
+
+Abrir (descifrar) un respaldo en tu PC (Git Bash), reemplaza el nombre:
+
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh root@10.10.10.30 'cat /srv/respaldos/db/NOMBRE.sql.gpg'" > NOMBRE.sql.gpg
+    gpg -d -o volcado.sql NOMBRE.sql.gpg
+
+Ese volcado se restaura con los pasos de la seccion 6 (usa ese archivo en
+vez de postgres_dump.sql). BORRA volcado.sql al terminar: tiene datos
+personales en claro.
+
+CLAVE PRIVADA: si se pierde la carpeta C:\Users\HP\.gnupg, los respaldos
+cifrados quedan ilegibles para siempre. Guarda una copia en un lugar seguro
+(y ponle contrasena: gpg --edit-key "CRM Respaldos" y luego "passwd").
+
+IMPORTANTE: la NAS esta en el mismo PC y en el disco externo enchufado a
+el. Sigue siendo la misma ubicacion fisica: de vez en cuando desenchufa
+el disco (apagando todo, ver INSTRUCCIONES_APAGADO_ENCENDIDO.txt) y
+guardalo en otro lugar.
+
+
+--------------------------------------------------------------------
 4. QUE CONTIENE CADA RESPALDO
 --------------------------------------------------------------------
   - postgres_dump.sql
@@ -107,7 +151,9 @@ mes) copia la carpeta completa:
 ...a un pendrive/disco externo o a una nube personal. El .env dentro del
 zip tiene contrasenas: NUNCA lo subas a un repositorio publico ni lo
 compartas con quien no sea de confianza.
-(Pendiente del proyecto: respaldo automatico fuera del PC, en la nube.)
+(Los respaldos automaticos de la seccion 3b viven en el disco externo, que
+tambien esta enchufado a este PC. Pendiente del proyecto: copia fuera de
+esta ubicacion, en la nube.)
 
 
 --------------------------------------------------------------------

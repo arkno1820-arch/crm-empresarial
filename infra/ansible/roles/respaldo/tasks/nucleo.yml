@@ -1,0 +1,47 @@
+---
+# Paso 3 (nucleos): respaldo diario cifrado de la base de datos hacia crm-nas.
+- name: Copiar la clave PUBLICA de cifrado (la privada solo existe en el PC del administrador)
+  ansible.builtin.copy:
+    src: respaldo-publica.asc
+    dest: /root/respaldo-publica.asc
+    mode: "0600"
+
+- name: Importar la clave publica de cifrado en el llavero de root
+  ansible.builtin.shell: gpg --batch --import /root/respaldo-publica.asc 2>&1 | grep -c "imported\|unchanged" >/dev/null
+  changed_when: false
+
+- name: Registrar la huella de crm-nas (leida por Ansible desde el propio crm-nas)
+  ansible.builtin.known_hosts:
+    path: /root/.ssh/known_hosts
+    name: "{{ nas_ip }}"
+    key: "{{ nas_ip }} {{ hostvars[groups['nas'][0]].nas_hostkey }}"
+    state: present
+
+- name: Script de respaldo
+  ansible.builtin.template:
+    src: respaldo-bd.sh.j2
+    dest: /usr/local/bin/respaldo-bd
+    mode: "0750"
+
+- name: Servicio de respaldo
+  ansible.builtin.copy:
+    src: respaldo-bd.service
+    dest: /etc/systemd/system/respaldo-bd.service
+    mode: "0644"
+  notify: recargar systemd
+
+- name: Temporizador de respaldo (hora distinta en cada nucleo)
+  ansible.builtin.template:
+    src: respaldo-bd.timer.j2
+    dest: /etc/systemd/system/respaldo-bd.timer
+    mode: "0644"
+  notify: recargar systemd
+
+- name: Aplicar cambios de systemd antes de activar el temporizador
+  ansible.builtin.meta: flush_handlers
+
+- name: Activar el respaldo diario
+  ansible.builtin.systemd:
+    name: respaldo-bd.timer
+    enabled: true
+    state: started

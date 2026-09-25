@@ -42,3 +42,30 @@
   tags: [app]
   roles:
     - crm_core
+
+- name: "Respaldo (1/3): llave SSH propia de cada nucleo para entregar respaldos"
+  hosts: crm_core
+  become: true
+  tags: [respaldo]
+  tasks:
+    - ansible.builtin.include_role:
+        name: respaldo
+        tasks_from: nucleo_clave.yml
+
+- name: "Respaldo (2/3): NAS crm-nas, receptor de solo escritura y limpieza automatica"
+  hosts: nas
+  become: true
+  tags: [respaldo]
+  tasks:
+    - ansible.builtin.include_role:
+        name: respaldo
+        tasks_from: nas.yml
+
+- name: "Respaldo (3/3): respaldo diario cifrado de la base de datos en cada nucleo"
+  hosts: crm_core
+  become: true
+  tags: [respaldo]
+  tasks:
+    - ansible.builtin.include_role:
+        name: respaldo
+        tasks_from: nucleo.yml
