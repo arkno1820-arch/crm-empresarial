@@ -1,157 +1,251 @@
 ========================================================================
  CRM EMPRESARIAL - COMO APAGAR Y ENCENDER TODO CORRECTAMENTE
- (infraestructura en Proxmox: 4 VMs sobre el PC fisico Ryzen 7)
+ (infraestructura en Proxmox: 4 VMs + 1 contenedor sobre el PC fisico)
  Escrita para que la sigas paso a paso aunque hayas olvidado todo el resto.
- Creada: 24-09-2026
+ Creada: 24-09-2026 - Actualizada: 25-09-2026 (Patroni, etcd, HAProxy,
+ monitoreo en contenedor, acceso desde otros equipos)
 ========================================================================
 
 --------------------------------------------------------------------
 1. QUE ES ESTO Y POR QUE EL ORDEN IMPORTA
 --------------------------------------------------------------------
-El CRM ya no vive en un Docker Compose suelto en tu PC (esa epoca
-termino). Ahora vive en 4 maquinas virtuales (VMs) dentro de Proxmox,
-que a su vez corre dentro de una VM de VMware, en tu PC fisico.
+El CRM vive en maquinas virtuales dentro de Proxmox, que a su vez corre
+dentro de una VM de VMware, en tu PC fisico. Todo lo que hay:
 
-Las 4 VMs son:
-  - crm-edge      (10.10.10.2, SSH por 192.168.80.10:2211)  -- el "bastion": es la UNICA forma
-                                     de llegar por SSH a crm-core y
-                                     crm-core-b, que estan en una red
-                                     interna sin acceso directo desde
-                                     tu PC.
-  - crm-edge-b    (10.10.10.3, SSH por 192.168.80.10:2212)  -- borde en espera (respaldo)
-  - crm-core      (10.10.10.10)   -- el CRM completo (Docker), solo
-                                     alcanzable a traves de crm-edge
-  - crm-core-b    (10.10.10.11)   -- replica pasiva del anterior
+  - crm-edge     (VM 103, 10.10.10.2)  SSH: 192.168.80.10 puerto 2211
+      Borde principal: Nginx (HTTPS), Keepalived (dueno del VIP
+      10.10.10.5), un miembro de etcd y el Kuma "centinela". Es el
+      "bastion": la unica forma de llegar por SSH a los nucleos.
+  - crm-edge-b   (VM 102, 10.10.10.3)  SSH: 192.168.80.10 puerto 2212
+      Borde de respaldo: Nginx, Keepalived y un miembro de etcd.
+  - crm-core     (VM 101, 10.10.10.10)
+      Nucleo: app CRM (Docker) + PostgreSQL bajo Patroni + HAProxy.
+  - crm-core-b   (VM 100, 10.10.10.11)
+      Nucleo gemelo: MISMO software, activo en paralelo (no es pasivo).
+      Tambien es miembro de etcd.
+  - crm-mon      (CONTENEDOR 104, 10.10.10.20)
+      Uptime Kuma principal (los 10 monitores). Vive FUERA de las VMs
+      para que siga vigilando aunque una VM se caiga.
 
-IMPORTANTE: si apagas crm-edge ANTES que crm-core/crm-core-b, pierdes
-el unico camino para apagarlas con cuidado (te quedarian solo
-accesibles por la consola de Proxmox, mas lento e incomodo). Por eso
-el orden de apagado es "de adentro hacia afuera", y el de encendido es
-al reves.
+Quien manda en la base de datos: Patroni. Uno de los dos nucleos es
+"Leader" (escribe) y el otro "Sync Standby" (replica sincronica). Si el
+lider cae, el otro asume solo. etcd (3 miembros: crm-edge, crm-edge-b,
+crm-core-b) es el "arbitro" que decide quien es lider.
+
+REGLA DE ORO DEL QUORUM: etcd necesita 2 de 3 miembros vivos. Por eso,
+con el sistema EN USO, nunca apagues a la vez dos de estas VMs:
+crm-edge, crm-edge-b, crm-core-b. Una a la vez, esperando que la
+anterior vuelva. (Si se caen dos, el sistema se DETIENE a proposito
+para no corromper datos; al volver una, se recupera solo.)
+Cuando apagas TODO, el orden de la seccion 2 ya lo respeta.
 
 Necesitas tu llave SSH: C:\Users\HP\.ssh\id_ed25519_crm
-(si no existe en tu PC, avisale a Claude para regenerarla)
+(si no existe en tu PC, avisale a Claude para regenerarla).
+Las VMs NO tienen contrasena de sistema: solo entra esa llave. Por eso
+la consola de Proxmox sirve para ver estado, pero no para iniciar sesion.
+
+Los comandos "ssh ..." se ejecutan en PowerShell o Git Bash. Si algun
+ssh avisa "huella cambiada", ver seccion 6 (tambien aplica al salto
+desde crm-edge hacia los nucleos: known_hosts de crm-edge).
 
 
 --------------------------------------------------------------------
 2. COMO APAGAR TODO (en este orden, no lo cambies)
 --------------------------------------------------------------------
-
 Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
 
-  PASO 1 - Apagar crm-core-b (la replica, primero porque es menos
-  critica):
+  PASO 1 - Apagar crm-core-b:
 
     ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh cesar@10.10.10.11 'sudo shutdown -h now'"
 
-  PASO 2 - Apagar crm-core (el CRM activo):
+  PASO 2 - Apagar crm-core:
 
     ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh cesar@10.10.10.10 'sudo shutdown -h now'"
 
-  Espera unos 10 segundos. Confirma en la consola de Proxmox
-  (https://192.168.80.10:8006) que crm-core y crm-core-b ya dicen
-  "detenido" / apagado (icono gris) antes de seguir.
+  Espera unos 10 segundos y confirma en Proxmox
+  (https://192.168.80.10:8006) que crm-core y crm-core-b estan
+  apagadas (icono gris). (Esperado: el Kuma se pondra rojo, es normal.)
 
   PASO 3 - Apagar crm-edge-b:
 
     ssh -i ~/.ssh/id_ed25519_crm -p 2212 cesar@192.168.80.10 "sudo shutdown -h now"
 
-  PASO 4 - Apagar crm-edge AL FINAL (es el bastion, se apaga ultimo):
+  PASO 4 - Apagar crm-edge AL FINAL (es el bastion):
 
     ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "sudo shutdown -h now"
 
-  PASO 5 - Confirma en Proxmox que las 4 VMs dicen apagado.
+  PASO 5 - Confirma en Proxmox que las 4 VMs dicen apagado. El
+  contenedor crm-mon (104) puede quedar encendido si solo apagas las VMs;
+  si vas a apagar Proxmox, se apaga solo (paso 6).
 
   PASO 6 (opcional, solo si vas a mover o apagar el PC fisico) -
-  Apagar Proxmox mismo: en su consola web, junto al nombre del nodo
-  "pve", boton de apagado -> "Shutdown" (NO "Stop", eso es un apagon
-  brusco).
+  Apagar Proxmox: consola web, nodo "pve" -> "Shutdown" (NO "Stop",
+  eso es un apagon brusco). Proxmox apaga ordenadamente lo que quede,
+  incluido crm-mon.
 
-  PASO 7 (opcional) - Si vas a apagar el PC fisico completo: espera
-  que Proxmox termine de apagarse, cierra VMware Workstation, y recien
-  ahi apaga Windows normal.
+  PASO 7 (opcional) - Si apagas el PC completo: espera que Proxmox
+  termine, cierra VMware Workstation y recien ahi apaga Windows.
 
-  NOTA: los pasos 6 y 7 dejan el CRM completamente inaccesible hasta
-  que vuelvas a prender el PC fisico y hacer todo el encendido de la
-  seccion 3 de nuevo, incluyendo prender Proxmox a mano. Solo hazlo si
-  de verdad necesitas apagar o mover el PC fisico.
+  NOTA: los pasos 6 y 7 dejan el CRM inaccesible hasta que prendas todo
+  de nuevo (seccion 3).
 
 
 --------------------------------------------------------------------
 3. COMO ENCENDER TODO DE NUEVO (orden inverso)
 --------------------------------------------------------------------
 
-  PASO 1 - Si apagaste el PC fisico: prendelo, abre VMware Workstation,
-  y prende la VM de Proxmox ahi dentro. Espera a que la consola web
-  (https://192.168.80.10:8006) responda.
+  PASO 1 - Si apagaste el PC fisico: prendelo, abre VMware Workstation
+  y prende la VM de Proxmox. Espera que https://192.168.80.10:8006
+  responda.
+  (Si tu PC cambio de red Wi-Fi/hotspot no importa: Proxmox usa la red
+  NAT de VMware, ver seccion 7.)
 
-  PASO 2 - Prende las 4 VMs desde la consola de Proxmox (clic en cada
-  una -> boton "Start"), EN ESTE ORDEN:
+  PASO 2 - Arranque automatico: las 4 VMs y el contenedor crm-mon estan
+  marcados "arrancar con Proxmox" (onboot). Al encender Proxmox, suben
+  SOLAS: primero crm-mon (orden 1) y luego las VMs. Si alguna no subio,
+  enciendela a mano (clic en ella -> "Start") en este orden:
 
-    1. crm-edge     (primero -- sin el no puedes llegar a las otras)
+    1. crm-edge     (sin el no llegas a las demas)
     2. crm-edge-b
     3. crm-core
     4. crm-core-b
+    (crm-mon es independiente: puede ir antes o despues)
 
-  PASO 3 - Espera. crm-core y crm-core-b tardan varios minutos en
-  quedar listos de verdad, porque adentro tienen que arrancar Docker y
-  los 9 contenedores del CRM. No te preocupes si no responden altiro.
+  Si las apagaste con las instrucciones de la seccion 2 y Proxmox sigue
+  encendido, tendras que encenderlas a mano en ese orden.
 
-  PASO 4 - Verifica que todo funcione entrando a:
+  PASO 3 - Espera 3 a 5 minutos. Los nucleos tardan porque arrancan
+  Docker (9 contenedores), Patroni, etcd y HAProxy. crm-mon vuelve en
+  ~30 segundos y el Kuma arranca solo con sus monitores.
 
-    https://192.168.80.10
+  PASO 4 - Verificacion rapida en el navegador:
+    - CRM:            https://192.168.80.10   (debe mostrar el login
+                      con candado, sin advertencias)
+    - Kuma principal: http://192.168.80.10:3001  (los 10 monitores en
+                      verde; algunos tardan 1-2 min)
 
-  (esa es la IP virtual -- el sistema deberia mostrar la pantalla de
-  login sin que tengas que hacer nada mas. Nginx, Keepalived, Docker y
-  Uptime Kuma arrancan solos en cada VM, no hay que iniciar nada a
-  mano).
+  PASO 5 - Verificacion tecnica de la base de datos (recomendada
+  cuando se encendio TODO desde cero). Desde crm-edge:
 
-  PASO 5 - Revisa el monitoreo en http://localhost:3001 (abre antes un tunel: ssh -i ~/.ssh/id_ed25519_crm -p 2211 -L 3001:localhost:3001 cesar@192.168.80.10) (Uptime
-  Kuma) -- los 6 monitores deberian ponerse verdes en un par de
-  minutos.
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10
+    ssh cesar@10.10.10.10
+    sudo patronictl -c /etc/patroni/config.yml list
 
+  Debe verse UN "Leader" y UN "Sync Standby", ambos "running", con
+  "Lag in MB" = 0. Y el estado de etcd (desde crm-edge):
 
---------------------------------------------------------------------
-4. SI ALGO NO VUELVE BIEN
---------------------------------------------------------------------
-- Si https://192.168.80.10 no responde pero las VMs dicen "corriendo"
-  en Proxmox: dale unos minutos mas, sobre todo si acabas de prender
-  crm-core (Docker tarda en levantar los 9 contenedores).
+    etcdctl --endpoints=http://10.10.10.2:2379,http://10.10.10.3:2379,http://10.10.10.11:2379 cluster-health
 
-- Si crm-core no vuelve a prender nunca (falla real de hardware/disco):
-  existe un procedimiento de promocion manual de crm-core-b como
-  reemplazo temporal. Esta documentado en
-  infra/ansible/README.md, seccion "Que hacer si crm-core falla".
+  Deben salir los 3 miembros "healthy" y al final "cluster is healthy".
 
-- Para cualquier duda, dile a Claude "revisa el estado de las VMs" y
-  te confirma que este todo bien antes de seguir.
+  PASO 6 - Kuma centinela (opcional): abre un tunel y entra a
+  http://localhost:3001 (tema oscuro, 2 alarmas):
 
-
---------------------------------------------------------------------
-5. RELACION CON LA OTRA GUIA (RESPALDO DE DATOS)
---------------------------------------------------------------------
-Este archivo es solo sobre APAGAR/ENCENDER las maquinas. Para
-respaldar y recuperar los DATOS del CRM (la base de datos), esa es
-otra guia -- scripts/INSTRUCCIONES_RESPALDO.txt -- que todavia describe
-el mundo viejo de Docker Compose en tu PC directamente y necesita
-actualizarse para el mundo de las VMs en Proxmox. Pendiente, avisale a
-Claude cuando quieras que se actualice.
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 -L 3001:localhost:3001 cesar@192.168.80.10
 
 
 --------------------------------------------------------------------
-6. RED (CAMBIO 24-09-2026): NAT DE VMWARE, INDEPENDIENTE DE LA WIFI
+4. COSAS QUE SON NORMALES (no te asustes)
 --------------------------------------------------------------------
-Proxmox ya NO va pegado (bridged) a tu Wi-Fi: la VM de Proxmox usa la
-red NAT de VMware (VMnet8, 192.168.80.0/24). Por eso, cambies de Wi-Fi
-o uses el hotspot del celular, TODO sigue funcionando igual desde el PC.
+- Despues de un apagado o falla, el lider de Patroni NO vuelve al nucleo
+  "original": quien quedo de lider sigue siendo lider y el otro queda como
+  replica. Es correcto. Si quisieras devolver el rol, se hace a mano y
+  a proposito (con el sistema sano):
+
+    sudo patronictl -c /etc/patroni/config.yml switchover --leader crm-core-b --candidate crm-core
+
+  (cambia los nombres segun quien sea el lider hoy; pregunta "when": deja
+  "now"). Dura unos segundos, sin perdida de datos.
+- Los nucleos y crm-mon NO tienen salida a Internet a proposito. Solo los
+  bordes salen. Si un paquete "no descarga", es por diseno.
+- Un monitor rojo de "crm-core" o "crm-core-b" justo tras encender: espera
+  unos minutos antes de preocuparte.
+- Sale HTTPS con advertencia solo en equipos que no tienen instalada la
+  CA propia: baja el certificado desde /ca.crt (seccion 7).
+
+
+--------------------------------------------------------------------
+5. SI ALGO NO VUELVE BIEN
+--------------------------------------------------------------------
+- https://192.168.80.10 no responde pero las VMs dicen "corriendo":
+  espera unos minutos mas (Docker, Patroni). Luego revisa
+  "patronictl list" y "endpoint health" (PASO 5).
+- "patronictl list" sin lider y etcd con menos de 2 miembros sanos:
+  enciende la VM de etcd que falte (crm-edge, crm-edge-b o crm-core-b).
+  Con 2 de 3 el sistema se recupera solo.
+- Un nucleo no vuelve a prender (falla real de disco/hardware): el otro
+  nucleo ya atiende solo (esa es la redundancia). Reconstruir el caido se
+  describe en infra/ansible/README.md.
+- El Kuma principal no abre: mira si crm-mon (104) esta "Started" en
+  Proxmox; el centinela (tunel del PASO 6) sigue vigilando aunque
+  crm-mon este apagado.
+- Para cualquier duda, dile a Claude "revisa el estado de las VMs" y te
+  confirma que todo este bien antes de seguir.
+
+
+--------------------------------------------------------------------
+6. AVISO DE "HUELLA SSH CAMBIADA"
+--------------------------------------------------------------------
+El 25-09-2026 las llaves SSH de host de los bordes se regeneraron (al
+recrearse por Terraform/cloud-init). Si tu PC muestra "REMOTE HOST
+IDENTIFICATION HAS CHANGED", NO ignores el aviso: primero pidele a
+Claude que compare la huella real de la VM con la que ves. Si coincide,
+borra la antigua y reconecta:
+
+    ssh-keygen -R "[192.168.80.10]:2211"
+    ssh-keygen -R "[192.168.80.10]:2212"
+
+Huella vigente de crm-edge: SHA256:D/PJNJmQQy5b/TzeL0R3lFdep0HKx9F4OtUUhRX+s9M
+Nunca uses "StrictHostKeyChecking=no" para saltarte un aviso sin
+haberlo comprobado.
+
+
+--------------------------------------------------------------------
+7. RED: NAT DE VMWARE, INDEPENDIENTE DE LA WIFI (vigente desde 24-09)
+--------------------------------------------------------------------
+Proxmox NO va pegado (bridged) a tu Wi-Fi: usa la red NAT de VMware
+(VMnet8, 192.168.80.0/24). Cambies de Wi-Fi o uses el hotspot del
+celular, TODO sigue igual desde el PC.
   - Proxmox (web/SSH):   192.168.80.10   (puerto 8006 / 22)
-  - CRM:                 https://192.168.80.10  (Proxmox lo reenvia al VIP
-                         10.10.10.5 que mueve Keepalived entre los bordes)
+  - CRM:                 https://192.168.80.10 (Proxmox reenvia 80/443
+                         al VIP 10.10.10.5 que mueve Keepalived)
   - crm-edge (SSH):      192.168.80.10 puerto 2211
   - crm-edge-b (SSH):    192.168.80.10 puerto 2212
-  - Red interna vmbr1:   10.10.10.0/24 (bordes .2/.3, VIP .5, nucleos .10/.11)
+  - Kuma principal:      http://192.168.80.10:3001  (-> 10.10.10.20)
+  - Red interna vmbr1:   10.10.10.0/24 (bordes .2/.3, VIP .5, nucleos
+                         .10/.11, monitor .20)
 Las reglas de reenvio/NAT viven en /etc/network/if-up.d/crm-nat dentro
-de Proxmox y se aplican solas al arrancar.
-La tarjeta de la VM Proxmox esta en modo NAT en proxmox.vmx (respaldos:
-proxmox.vmx.bak-ip y .bak-nat). Otros dispositivos (celular, tablet) no
-entran directo: haria falta un reenvio de puertos en VMware.
+de Proxmox y se aplican solas al arrancar. Solo los bordes (.2 y .3)
+tienen salida a Internet (MASQUERADE); los demas no.
+
+ACCESO DESDE OTROS EQUIPOS (segundo notebook, celular en la misma red):
+Un reenvio de puertos en tu PC (Windows) publica el CRM. Se accede por
+la IP que tenga tu PC en el hotspot (ultima vez 172.20.10.2; puede
+cambiar, verificala con ipconfig):
+
+    https://172.20.10.2
+
+Ese certificado incluye esa IP. Si tu PC recibe otra IP del celular,
+hay que agregarla al certificado (pidele a Claude). Instalar la CA en el
+equipo nuevo: http://172.20.10.2/ca.crt (importar como "Entidades de
+certificacion raiz de confianza").
+El reenvio (PowerShell como administrador) es:
+
+    netsh interface portproxy add v4tov4 listenport=443 listenaddress=0.0.0.0 connectport=443 connectaddress=192.168.80.10
+    netsh interface portproxy add v4tov4 listenport=80  listenaddress=0.0.0.0 connectport=80  connectaddress=192.168.80.10
+
+y una regla de firewall "CRM reenvio 80-443". Para VER que quedo:
+    netsh interface portproxy show all
+Para QUITARLO (cierra el acceso de otros equipos a tu CRM):
+    netsh interface portproxy reset
+Es una exposicion a la red del celular: quitalo si no lo necesitas.
+
+
+--------------------------------------------------------------------
+8. RELACION CON LA OTRA GUIA (RESPALDO DE DATOS)
+--------------------------------------------------------------------
+Este archivo es solo sobre APAGAR/ENCENDER. Los respaldos y recuperacion
+de datos estan en scripts/INSTRUCCIONES_RESPALDO.txt, que todavia
+describe el mundo viejo de Docker Compose y NO refleja Patroni. Esta
+pendiente actualizarla: avisale a Claude.
+Detalle tecnico de la infraestructura: infra/ansible/README.md.
