@@ -29,3 +29,8 @@ ssh -i /root/.ssh/id_respaldo -o BatchMode=yes -o StrictHostKeyChecking=yes -o C
     respaldos@"$NAS" "subir $NOMBRE" < "$TMP/$NOMBRE"
 
 echo "Respaldo entregado: $NOMBRE ($(wc -c < "$TMP/$NOMBRE") bytes cifrados)"
+
+# Aviso a Kuma (monitor "push"): si en 26 horas ningun nucleo avisa, Kuma alarma.
+if [ -s /etc/respaldo-push-url ]; then
+  curl -fsS -m 10 -o /dev/null "$(cat /etc/respaldo-push-url)" || echo "aviso: no se pudo avisar a Kuma" >&2
+fi

@@ -23,6 +23,14 @@
     dest: /usr/local/bin/respaldo-bd
     mode: "0750"
 
+- name: URL "push" de Kuma (el token vive en crm-edge, fuera de Git; se pasa con -e)
+  ansible.builtin.copy:
+    content: "{{ respaldo_kuma_push_url }}"
+    dest: /etc/respaldo-push-url
+    mode: "0600"
+  when: respaldo_kuma_push_url | length > 0
+  no_log: true
+
 - name: Servicio de respaldo
   ansible.builtin.copy:
     src: respaldo-bd.service
