@@ -106,7 +106,7 @@ const s3 = [
     "Este informe cubre el diseño, la implementación y la validación en simulación, con evidencia real: " +
     "una red NAT independiente de la red externa, aislamiento del núcleo verificado, failover de la " +
     "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo y una " +
-    "bitácora de veintitrés incidentes resueltos. La migración a producción bare metal y el respaldo " +
+    "bitácora de veinticuatro incidentes resueltos. La migración a producción bare metal y el respaldo " +
     "offsite en la nube se abordan como las siguientes fases formales de la práctica, con su " +
     "cronograma y su cotización de hardware ya definidos en este documento."
   ),
@@ -202,7 +202,7 @@ const acadRows = [
   ["Virtualización\n(CR401ICRE)", "Fuerte", "Dos tecnologías de virtualización en la misma pila (VMware anida a Proxmox/KVM), segmentación de redes virtuales (vmbr1), asignación de recursos por VM. La migración en vivo real entre servidores queda como la fase siguiente de la práctica, ligada a la cotización de hardware (sección 5.7)."],
   ["Arquitectura Cloud\n(IF304CIINF)", "Fuerte", "Automatización de la topología completa con Terraform (IaC) contra la API de Proxmox, incluyendo modificaciones en caliente sobre una infraestructura ya desplegada (migración de la red de las VMs). El respaldo offsite hacia Oracle Cloud (Fase F4) y la evaluación de arquitectura híbrida on-premise/nube completan la evidencia de esta asignatura sobre el propio proyecto."],
   ["Gestión de Proyectos\n(IF405IINF)", "Cubierto en este informe", "Acta de Constitución, EDT, cronograma real de 360 horas, matriz RACI, registro de riesgos y línea base de Valor Planificado, todos construidos para el periodo real de la práctica (sección 5)."],
-  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 23 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
+  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 24 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
   ["Gestión de la Información con TICs\n(AS300PCOM)", "Parcial", "Calza en comparación de plataformas cloud y en seguridad/protección de datos según marco legal (Ley 21.719): roles y permisos, cifrado de datos de salud, consentimiento, auditoría y anonimización, verificados en la sección 6.6. El resto del programa (IA, IoT, redes sociales) no aplica a un proyecto de infraestructura —no se fuerza."],
   ["Diseño y Arquitectura de Redes\n(CR301ICRE)", "Uno de los más fuertes", "El estándar FCAPS mapea con los 5 pilares cubiertos: Fault (bitácora), Configuration (Git/Terraform/Ansible), Accounting (RBAC), Security (HTTPS/CA privada/cifrado/aislamiento verificado) y Performance (Uptime Kuma). Diagrama topológico incluido en este informe."],
 ];
@@ -321,7 +321,7 @@ const edt = [
   "  1.4 Operaciones",
   "    1.4.1 Monitoreo (Uptime Kuma)",
   "    1.4.2 Pruebas de resiliencia (failover borde y núcleo)",
-  "    1.4.3 Corrección de incidentes de despliegue (23 documentados)",
+  "    1.4.3 Corrección de incidentes de despliegue (24 documentados)",
   "  1.5 Migración a producción (fase siguiente)",
   "    1.5.1 Respaldo offsite en Oracle Cloud",
   "    1.5.2 Cotización formal del segundo servidor físico",
@@ -453,7 +453,7 @@ s13.push(bullet("Las imágenes base de un proveedor de laboratorio pueden traer 
 s13.push(bullet("Un diseño de seguridad de “cero salida” debe validarse contra el flujo operativo real antes de implementarse, no después."));
 s13.push(bullet("Una infraestructura virtual no debe depender de la red física en la que se encuentre el equipo anfitrión: pasar de una red puenteada a una red NAT aislada eliminó de raíz los choques de IP y los cambios de direccionamiento (incidentes 13 y 14)."));
 s13.push(bullet("Verificar el estado real y persistente de la configuración, no solo el estado en ejecución: una regla de NAT antigua persistía en un archivo de arranque y habría reaparecido tras un reinicio (incidente 15)."));
-s13.push(bullet("Validar primero en un entorno de simulación (como instruyó la jefatura) permitió encontrar y resolver 23 incidentes reales sin arriesgar la operación de CHIC, antes de tocar producción."));
+s13.push(bullet("Validar primero en un entorno de simulación (como instruyó la jefatura) permitió encontrar y resolver 24 incidentes reales sin arriesgar la operación de CHIC, antes de tocar producción."));
 s13.push(bullet("La asistencia de IA acelera genuinamente la implementación de infraestructura y la depuración, pero las decisiones de seguridad y arquitectura deben mantenerse bajo revisión y autorización humana explícita en cada paso."));
 
 s13.push(h1("6. Implementación Técnica"));
@@ -610,7 +610,7 @@ const s16 = [
   h2("6.5 Monitoreo: centro de operaciones (NOC) con Uptime Kuma"),
   p("El monitoreo es los “ojos” del sistema y por eso su diseño sigue una regla: no puede caer junto con lo que vigila. Su despliegue pasó por tres etapas, cada una motivada por una prueba real (secciones 6.5.1 y 9): una instancia única en crm-edge, una instancia por borde, y finalmente la arquitectura vigente, con un panel principal fuera de las máquinas virtuales y un centinela secundario."),
   h3("6.5.1 Arquitectura vigente"),
-  bullet("Panel principal (crm-mon): Uptime Kuma nativo (Node.js) en un contenedor LXC del propio nodo Proxmox (VM id 104, 10.10.10.20, 768 MB, arranque automático con orden 1). Está fuera de las cuatro VMs, así que sobrevive a la caída de cualquiera de ellas. Se publica en http://192.168.80.10:3001 mediante DNAT y vigila nueve elementos con intervalo de 15 segundos."),
+  bullet("Panel principal (crm-mon): Uptime Kuma nativo (Node.js) en un contenedor LXC del propio nodo Proxmox (VM id 104, 10.10.10.20, 768 MB, arranque automático con orden 1). Está fuera de las cuatro VMs, así que sobrevive a la caída de cualquiera de ellas. Se publica en http://192.168.80.10:3001 mediante DNAT y vigila diez elementos con intervalo de 15 segundos."),
   bullet("Centinela secundario (en crm-edge): un Kuma reducido a dos monitores, en tema oscuro para distinguirlo del principal —el principal (crm-mon) y el servicio extremo a extremo por la IP virtual—, con intervalo de 5 segundos. Si el principal cae, el centinela lo marca en rojo y evita quedar sin visibilidad mientras se verifica qué ocurrió."),
   bullet("Convención de nombres de NOC: “CAPA · elemento · función”, para que el panel se lea como un diagrama de red y el operador vea qué enlace o servicio cayó, no qué herramienta lo mide."),
   p("Se prefirió detectar y avisar antes que reiniciar automáticamente el contenedor caído: un reinicio silencioso ocultaría la falla, y en un NOC se separa observar de actuar. El límite declarado es que ambos paneles residen en el mismo servidor físico; la caída del equipo completo se resuelve con el segundo servidor (sección 5.7)."),
@@ -623,12 +623,13 @@ const nocRows = [
   ["BORDE · respaldo", "HTTPS a https://10.10.10.3", "Borde", "Lo mismo en crm-edge-b: comprueba que el respaldo está sano antes de necesitarlo."],
   ["APP · CORE primario · svc", "HTTP a 10.10.10.10:8001/docs", "Aplicación", "Que los microservicios del núcleo crm-core responden."],
   ["APP · CORE respaldo · svc", "HTTP a 10.10.10.11:8001/docs", "Aplicación", "Lo mismo en crm-core-b; ambos núcleos sirven la aplicación a la vez."],
-  ["BD · acceso al primario · aplicaciones", "TCP a 10.10.10.10:5000", "Base de datos", "Que las aplicaciones alcanzan la base de datos a través de HAProxy (siempre el primario vigente)."],
-  ["BD · CORE · réplica/primario", "HTTP a 10.10.10.10:8008/health", "Base de datos", "Que el agente de alta disponibilidad de la base en crm-core está vivo; el nombre no fija el rol porque el líder cambia."],
-  ["BD · CORE-b · réplica/primario", "HTTP a 10.10.10.11:8008/health", "Base de datos", "Lo mismo en crm-core-b."],
+  ["BD · Acceso de las aplicaciones · CORE", "TCP a 10.10.10.10:5000", "Base de datos", "¿Las aplicaciones de crm-core llegan a la base? Mide la puerta de entrada (HAProxy) que usan, que siempre lleva al primario vigente. Cada núcleo usa la suya, por eso hay un monitor por nodo."],
+  ["BD · Acceso de las aplicaciones · CORE-b", "TCP a 10.10.10.11:5000", "Base de datos", "Lo mismo para crm-core-b: si cae un núcleo, solo se pone en rojo el suyo y el otro sigue en verde."],
+  ["BD · Gestor de la base (Patroni) · CORE", "HTTP a 10.10.10.10:8008/health", "Base de datos", "¿El encargado de la base en crm-core está despierto? Patroni decide quién manda y ejecuta la conmutación; el nombre no fija el rol porque el líder cambia."],
+  ["BD · Gestor de la base (Patroni) · CORE-b", "HTTP a 10.10.10.11:8008/health", "Base de datos", "Lo mismo en crm-core-b."],
 ];
 s16.push(makeTable([2600, 2100, 1300, 3600], ["Monitor (nombre de NOC)", "Qué consulta", "Capa", "Qué evidencia si falla"], nocRows));
-s16.push(p(`Las capturas de los nueve monitores (figuras ${F.noc1} a ${F.noc9}) muestran su estado “Funcional”, el tiempo de respuesta y la disponibilidad acumulada; en ellas, los tramos rojos de los gráficos corresponden a las pruebas de resiliencia de la sección 9. El contenedor que aloja el panel se ve en Proxmox junto a las cuatro VMs (figura ${F.pvemon}).`, { size: 21 }));
+s16.push(p(`Las capturas de los diez monitores (figuras ${F.noc1} a ${F.noc10}; la lista completa está en la figura ${F.noc11}) muestran su estado “Funcional”, el tiempo de respuesta y la disponibilidad acumulada; en ellas, los tramos rojos de los gráficos corresponden a las pruebas de resiliencia de la sección 9. El contenedor que aloja el panel se ve en Proxmox junto a las cuatro VMs (figura ${F.pvemon}).`, { size: 21 }));
 s16.push(h3("6.5.3 Tabla del centinela"));
 s16.push(makeTable([3300, 2600, 3700], ["Monitor del centinela", "Qué consulta", "Pregunta que responde"], [
   ["MONITOREO · Kuma principal · crm-mon", "HTTP a http://10.10.10.20:3001", "¿Está vivo el vigilante principal?"],
@@ -650,17 +651,17 @@ const s16a = [
     "Qué se observa: en Proxmox, el contenedor 104 (crm-mon) en ejecución junto a las VMs 100, 101, 102 y 103, con su consumo de CPU, memoria y tiempo de actividad. El monitoreo vive en el nodo, no dentro de ninguna VM.", 1000, 500),
   pageBreak(),
   ...figurasApiladas(CAP, [
-    { file: "noc-01-app-core-primario.png", titulo: "APP · CORE primario · svc", texto: "Qué se observa: la API del núcleo crm-core en estado “Funcional” con tiempo de respuesta estable; la lista lateral muestra los nueve monitores del NOC." },
+    { file: "noc-01-app-core-primario.png", titulo: "APP · CORE primario · svc", texto: "Qué se observa: la API del núcleo crm-core en estado “Funcional” con tiempo de respuesta estable; la lista lateral muestra los monitores del NOC." },
     { file: "noc-02-app-core-respaldo.png", titulo: "APP · CORE respaldo · svc", texto: "Qué se observa: el núcleo crm-core-b también sirve la aplicación; el hueco rojo del gráfico corresponde a la prueba de apagado del núcleo." },
   ], 620, 250),
   pageBreak(),
   ...figurasApiladas(CAP, [
-    { file: "noc-03-bd-acceso-al-primario.png", titulo: "BD · acceso al primario · aplicaciones", texto: "Qué se observa: el puerto 5000 (HAProxy) accesible en TCP, con 100 % de disponibilidad y ≈ 2 ms de respuesta." },
-    { file: "noc-04-bd-crm-core.png", titulo: "BD · CORE · réplica/primario", texto: "Qué se observa: el agente de alta disponibilidad de la base en crm-core responde su estado de salud (≈ 10 ms)." },
+    { file: "noc-03-bd-acceso-al-primario.png", titulo: "BD · Acceso de las aplicaciones · CORE", texto: "Qué se observa: el puerto 5000 (HAProxy) de crm-core accesible en TCP, con ≈ 2 ms de respuesta. Captura tomada antes de renombrar el monitor, cuando se llamaba “acceso al primario”." },
+    { file: "noc-04-bd-crm-core.png", titulo: "BD · Gestor de la base (Patroni) · CORE", texto: "Qué se observa: el agente de alta disponibilidad de la base en crm-core responde su estado de salud (≈ 10 ms). Captura tomada con el nombre anterior del monitor." },
   ], 620, 250),
   pageBreak(),
   ...figurasApiladas(CAP, [
-    { file: "noc-05-bd-crm-core-b.png", titulo: "BD · CORE-b · réplica/primario", texto: "Qué se observa: el agente de crm-core-b, con 100 % de disponibilidad y ≈ 15 ms de respuesta." },
+    { file: "noc-05-bd-crm-core-b.png", titulo: "BD · Gestor de la base (Patroni) · CORE-b", texto: "Qué se observa: el agente de crm-core-b, con 100 % de disponibilidad y ≈ 15 ms de respuesta. Captura tomada con el nombre anterior del monitor." },
     { file: "noc-06-borde-primario.png", titulo: "BORDE · primario", texto: "Qué se observa: Nginx de crm-edge con HTTPS válido; abajo a la derecha, la caducidad del certificado a 729 días." },
   ], 620, 250),
   pageBreak(),
@@ -671,6 +672,12 @@ const s16a = [
   pageBreak(),
   ...figura(CAP, "noc-09-infra-nodo-proxmox.png", "INFRA · Nodo Proxmox · hipervisor",
     "Qué se observa: la consola del hipervisor (puerto 8006) responde; el tramo rojo inicial del gráfico corresponde a los cortes de red del periodo de migración a la red NAT.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "noc-10-bd-acceso-crm-core-b.png", "BD · Acceso de las aplicaciones · CORE-b",
+    "Qué se observa: el monitor TCP hacia el HAProxy de crm-core-b (10.10.10.11:5000), creado cuando se vio que un único monitor apuntaba al núcleo caído; en verde, con 100 % de disponibilidad y ≈ 1 ms de respuesta. Captura tomada con el nombre anterior del monitor.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "noc-11-lista-diez-monitores.png", "Panel principal con los diez monitores",
+    "Qué se observa: la lista lateral del panel principal con los diez monitores del NOC, todos en “Funcional”, ordenados por capa: aplicación, base de datos (uno por nodo y uno por agente de Patroni), borde, enlace e infraestructura.", 640, 480),
   pageBreak(),
   ...figura(CAP, "kuma-00-monitores-tras-cambio-de-ip.png", "Monitores tras el cambio de direccionamiento",
     "Qué se observa: los monitores EDGE activo, EDGE stand-by e IP Virtual VRRP en rojo (apuntaban a las IPs antiguas) mientras CORE activo, CORE stand-by y POSTGRES siguen en verde.", 520, 480),
@@ -748,7 +755,7 @@ const toolRows = [
   ["Patroni", "Gestiona PostgreSQL en cada núcleo: replicación sincrónica y conmutación automática del primario.", "Un agente por núcleo (no hay uno “principal”)", "Un agente caído provoca la elección de otro líder."],
   ["etcd", "Árbitro de Patroni: guarda quién es el líder (clave con TTL de 30 s); tres miembros, mayoría de dos.", "crm-edge, crm-edge-b y crm-core-b", "Tolera una caída; con dos caídas se detiene por seguridad (sin split-brain)."],
   ["HAProxy", "Punto de entrada único a la base (puerto 5000): comprueba /primary y dirige al líder vigente.", "crm-core y crm-core-b", "Cada núcleo tiene el suyo."],
-  ["Uptime Kuma", "Monitoreo tipo NOC: nueve monitores en el panel principal y dos en el centinela; alertas por cambio de estado.", "Contenedor crm-mon; centinela en crm-edge", "El centinela vigila al principal."],
+  ["Uptime Kuma", "Monitoreo tipo NOC: diez monitores en el panel principal y dos en el centinela; alertas por cambio de estado.", "Contenedor crm-mon; centinela en crm-edge", "El centinela vigila al principal."],
   ["Autoridad certificadora privada (openssl)", "Emite el certificado HTTPS de los bordes; su llave nunca sale del equipo del responsable.", "Equipo del operador", "Si caduca, hay que renovarlo (vigencia de 2 años)."],
   ["Git y GitHub", "Versionan el código, la infraestructura y el informe; cada cambio queda con su commit.", "Repositorio en GitHub", "No afecta al servicio."],
   ["iptables (NAT/DNAT)", "Publica el CRM y el acceso de administración en Proxmox y limita la salida a Internet solo a los bordes.", "Nodo Proxmox", "Persistente por script idempotente."],
@@ -774,7 +781,7 @@ const s20a = [
 // ---- 8 Bitacora (portrait) ----
 const s21 = [
   h1("8. Bitácora de Incidentes Reales (fase de simulación)"),
-  p("Veintitrés incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
+  p("Veinticuatro incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
 ];
 const incidents = [
   ["1", "Caché de DNS del gateway Nginx", "Nginx seguía resolviendo IPs viejas tras reconstruir contenedores.", "`resolver 127.0.0.11 valid=10s;` + variables dinámicas en proxy_pass."],
@@ -799,7 +806,8 @@ const incidents = [
   ["20", "Pérdida de quórum con dos VMs de etcd caídas", "Con crm-edge-b y crm-core-b apagadas a la vez, etcd quedó con 1 de 3 miembros; Patroni se negó a promover y el CRM dio error 500 (falla segura, sin split-brain).", "El diseño tolera una falla a la vez; al volver crm-edge-b recuperó la mayoría y crm-core se promovió sola. Límite declarado en el informe."],
   ["21", "Primera petición lenta con un núcleo caído", "Nginx esperaba 3 s a un núcleo apagado antes de usar el otro.", "max_fails=1, fail_timeout=30 s y timeout de conexión de 1 s: solo la primera solicitud paga la espera; las siguientes bajan a ≈ 45 ms."],
   ["22", "Monitoreo externo que no se vigila a sí mismo", "Al apagar crm-mon, el panel principal desaparecía sin alarma.", "Centinela secundario de dos monitores en crm-edge (tema oscuro) que marca en rojo la caída del principal (ADR-10)."],
-  ["23", "Advertencia de huella SSH cambiada", "El cloud-init regeneró las llaves de host de los bordes tras un apply de Terraform; el cliente rechazó la conexión.", "Verificada la huella contra el archivo de llave de la VM y eliminada la entrada antigua de known_hosts; conexión aceptada con la huella comprobada."]
+  ["23", "Advertencia de huella SSH cambiada", "El cloud-init regeneró las llaves de host de los bordes tras un apply de Terraform; el cliente rechazó la conexión.", "Verificada la huella contra el archivo de llave de la VM y eliminada la entrada antigua de known_hosts; conexión aceptada con la huella comprobada."],
+  ["24", "Monitor de la base de datos con un solo núcleo como destino", "El monitor de acceso a la base apuntaba al HAProxy de crm-core y se ponía en rojo cuando ese núcleo caía, aunque la base siguiera sirviendo por crm-core-b: el nombre sugería una falla que no era del servicio.", "Un monitor por núcleo (cada aplicación usa su HAProxy local), con el nodo en el nombre; el panel pasó de nueve a diez monitores."]
 ];
 s21.push(makeTable([500, 2500, 3500, 3200], ["#", "Incidente", "Causa raíz", "Resolución"], incidents));
 
@@ -973,7 +981,7 @@ const s23 = [
   ),
   p(
     "El valor del trabajo no reside solo en el resultado —la infraestructura funcionando en " +
-    "simulación—, sino en el proceso documentado de veintitrés incidentes reales resueltos con su " +
+    "simulación—, sino en el proceso documentado de veinticuatro incidentes reales resueltos con su " +
     "causa raíz identificada (varios de ellos de red: choque de IP, direcciones MAC descartadas por " +
     "el hotspot, reglas de NAT persistentes), y en la experiencia adquirida que habilita, con " +
     "conocimiento real y no teórico, la migración responsable a producción sobre el servidor físico de CHIC."

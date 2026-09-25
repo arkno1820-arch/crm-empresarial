@@ -13,7 +13,7 @@ const MAPA = {
   edgeci: "pve-07-edge-cloudinit.png", corehw: "pve-08-core-hardware.png", coreci: "pve-09-core-cloudinit.png",
   vms: "pve-12-vms-en-ejecucion.png", tfplan: "tf-01-plan-residual.png",
   certdet: "2026-09-23-08-detalle-certificado-ca.png", candado: "2026-09-23-09-candado-conexion-segura.png",
-  pvemon: "pve-13-vms-y-contenedor-crm-mon.png", noc1: "noc-01-app-core-primario.png", noc9: "noc-09-infra-nodo-proxmox.png",
+  pvemon: "pve-13-vms-y-contenedor-crm-mon.png", noc1: "noc-01-app-core-primario.png", noc9: "noc-09-infra-nodo-proxmox.png", noc10: "noc-10-bd-acceso-crm-core-b.png", noc11: "noc-11-lista-diez-monitores.png",
   kumarojo: "kuma-00-monitores-tras-cambio-de-ip.png", kuma1: "kuma-01-core-activo.png", kuma6: "kuma-06-postgres.png",
   kumab: "kuma-07-instancia-crm-edge-b.png", kumaprueba: "kuma-08-prueba-estres-instancia-b.png",
   login: "crm-22-login-fallido-https.png", usuarios: "crm-09-usuarios-lista.png", sinpermiso: "crm-18-sin-permiso-salud.png",
