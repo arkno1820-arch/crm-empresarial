@@ -106,7 +106,7 @@ const s3 = [
     "Este informe cubre el diseño, la implementación y la validación en simulación, con evidencia real: " +
     "una red NAT independiente de la red externa, aislamiento del núcleo verificado, failover de la " +
     "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo y una " +
-    "bitácora de veinticuatro incidentes resueltos. La migración a producción bare metal y el respaldo " +
+    "bitácora de veinticinco incidentes resueltos. La migración a producción bare metal y el respaldo " +
     "offsite en la nube se abordan como las siguientes fases formales de la práctica, con su " +
     "cronograma y su cotización de hardware ya definidos en este documento."
   ),
@@ -202,7 +202,7 @@ const acadRows = [
   ["Virtualización\n(CR401ICRE)", "Fuerte", "Dos tecnologías de virtualización en la misma pila (VMware anida a Proxmox/KVM), segmentación de redes virtuales (vmbr1), asignación de recursos por VM. La migración en vivo real entre servidores queda como la fase siguiente de la práctica, ligada a la cotización de hardware (sección 5.7)."],
   ["Arquitectura Cloud\n(IF304CIINF)", "Fuerte", "Automatización de la topología completa con Terraform (IaC) contra la API de Proxmox, incluyendo modificaciones en caliente sobre una infraestructura ya desplegada (migración de la red de las VMs). El respaldo offsite hacia Oracle Cloud (Fase F4) y la evaluación de arquitectura híbrida on-premise/nube completan la evidencia de esta asignatura sobre el propio proyecto."],
   ["Gestión de Proyectos\n(IF405IINF)", "Cubierto en este informe", "Acta de Constitución, EDT, cronograma real de 360 horas, matriz RACI, registro de riesgos y línea base de Valor Planificado, todos construidos para el periodo real de la práctica (sección 5)."],
-  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 24 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
+  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 25 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
   ["Gestión de la Información con TICs\n(AS300PCOM)", "Parcial", "Calza en comparación de plataformas cloud y en seguridad/protección de datos según marco legal (Ley 21.719): roles y permisos, cifrado de datos de salud, consentimiento, auditoría y anonimización, verificados en la sección 6.6. El resto del programa (IA, IoT, redes sociales) no aplica a un proyecto de infraestructura —no se fuerza."],
   ["Diseño y Arquitectura de Redes\n(CR301ICRE)", "Uno de los más fuertes", "El estándar FCAPS mapea con los 5 pilares cubiertos: Fault (bitácora), Configuration (Git/Terraform/Ansible), Accounting (RBAC), Security (HTTPS/CA privada/cifrado/aislamiento verificado) y Performance (Uptime Kuma). Diagrama topológico incluido en este informe."],
 ];
@@ -268,7 +268,8 @@ const adrs = [
   ["ADR-07", "Proxmox como router de las VMs (DNAT + VIP interna)", "Como las VMs ya no están en la red externa, el host Proxmox publica el CRM mediante DNAT (80/443 hacia la VIP interna 10.10.10.5) y el acceso de administración por puertos dedicados (2211/2212) a cada borde. Las reglas viven en un script idempotente que se reaplica en cada arranque, y la salida a Internet (MASQUERADE) se limita a los bordes."],
   ["ADR-08", "Monitoreo redundante: una instancia de Kuma por borde (SUPERADA por ADR-10)", "Solución intermedia a un hallazgo de una prueba de estrés: al apagar crm-edge desaparecía el monitoreo, porque Kuma corría solo en ese nodo. Se instaló una instancia en cada borde con monitoreo cruzado. Una tercera prueba mostró que seguía atada a las VMs de borde; ver ADR-10."],
   ["ADR-09", "Núcleo con Patroni, etcd y HAProxy (conmutación automática de la base de datos)", "Una prueba de estrés mostró que apagar crm-core tumbaba la base de datos y el servicio: las dos VMs del núcleo no compartían la base en vivo (volcado cada 15 min, promoción manual). Se reemplazó por PostgreSQL 14 nativo bajo Patroni en ambos núcleos, con replicación sincrónica, un clúster etcd de tres miembros repartido en tres VMs como árbitro (evita el split-brain sin un tercer servidor) y HAProxy en cada núcleo apuntando siempre al primario vigente. La aplicación pasó a correr activa en ambos núcleos, y los adjuntos del chat se guardan en la base para replicarse con ella. Límite declarado: se tolera la caída de UNA VM a la vez."],
-  ["ADR-10", "Monitoreo externo en contenedor LXC con un centinela secundario", "El monitoreo debe sobrevivir a la caída de cualquier VM. Se movió Uptime Kuma a un contenedor LXC del propio nodo Proxmox (crm-mon, 10.10.10.20, arranque automático con orden 1, 768 MB), fuera de las cuatro VMs. Como el monitor no se vigila a sí mismo, el Kuma del borde se redujo a un centinela con solo dos monitores (el principal y el servicio extremo a extremo), en tema oscuro para distinguirlo. Se prefirió detectar y avisar antes que reiniciar automáticamente, para no ocultar la falla. Límite declarado: ambos comparten servidor físico."],
+  ["ADR-10", "Monitoreo externo en contenedor LXC con un centinela secundario", "El monitoreo debe sobrevivir a la caída de cualquier VM. Se movió Uptime Kuma a un contenedor LXC del propio nodo Proxmox (crm-mon, 10.10.10.20, arranque automático con orden 1, 768 MB), fuera de las cuatro VMs. Como el monitor no se vigila a sí mismo, el Kuma del borde se redujo a un centinela con solo dos monitores (el principal y el servicio extremo a extremo), en tema oscuro para distinguirlo. Se prefirió detectar y avisar antes que reiniciar automáticamente, para no ocultar la falla. Límite declarado: ambos comparten servidor físico."],,
+  ["ADR-11", "Acceso desde otros equipos mediante reenvío de puertos en el PC anfitrión", "La red NAT aísla la infraestructura, pero un equipo externo no podía abrir el CRM. En lugar de volver a una red puenteada (que causó los incidentes 13 y 14), se reenvían los puertos 80 y 443 del PC hacia la infraestructura y se reemitió el certificado con la dirección del PC en la red del celular. Se conserva el aislamiento y se gana acceso; límite declarado: la dirección la asigna el celular y puede cambiar (sección 6.4.1)."]
 ];
 s8.push(makeTable([1200, 3100, 5400], ["ID", "Decisión", "Justificación"], adrs));
 
@@ -321,7 +322,7 @@ const edt = [
   "  1.4 Operaciones",
   "    1.4.1 Monitoreo (Uptime Kuma)",
   "    1.4.2 Pruebas de resiliencia (failover borde y núcleo)",
-  "    1.4.3 Corrección de incidentes de despliegue (24 documentados)",
+  "    1.4.3 Corrección de incidentes de despliegue (25 documentados)",
   "  1.5 Migración a producción (fase siguiente)",
   "    1.5.1 Respaldo offsite en Oracle Cloud",
   "    1.5.2 Cotización formal del segundo servidor físico",
@@ -453,7 +454,7 @@ s13.push(bullet("Las imágenes base de un proveedor de laboratorio pueden traer 
 s13.push(bullet("Un diseño de seguridad de “cero salida” debe validarse contra el flujo operativo real antes de implementarse, no después."));
 s13.push(bullet("Una infraestructura virtual no debe depender de la red física en la que se encuentre el equipo anfitrión: pasar de una red puenteada a una red NAT aislada eliminó de raíz los choques de IP y los cambios de direccionamiento (incidentes 13 y 14)."));
 s13.push(bullet("Verificar el estado real y persistente de la configuración, no solo el estado en ejecución: una regla de NAT antigua persistía en un archivo de arranque y habría reaparecido tras un reinicio (incidente 15)."));
-s13.push(bullet("Validar primero en un entorno de simulación (como instruyó la jefatura) permitió encontrar y resolver 24 incidentes reales sin arriesgar la operación de CHIC, antes de tocar producción."));
+s13.push(bullet("Validar primero en un entorno de simulación (como instruyó la jefatura) permitió encontrar y resolver 25 incidentes reales sin arriesgar la operación de CHIC, antes de tocar producción."));
 s13.push(bullet("La asistencia de IA acelera genuinamente la implementación de infraestructura y la depuración, pero las decisiones de seguridad y arquitectura deben mantenerse bajo revisión y autorización humana explícita en cada paso."));
 
 s13.push(h1("6. Implementación Técnica"));
@@ -597,7 +598,19 @@ const s15 = [
   p("Se construyó una CA propia: su llave privada nunca sale del equipo del responsable ni se copia a ninguna VM. El certificado de `crm-edge`, firmado por esa CA, cubre como SAN la IP virtual y las IPs de ambos bordes, incluida la IP de Proxmox con la que se accede desde el PC (192.168.80.10), y tiene una vigencia de dos años; la CA se instala una sola vez en cada dispositivo."),
   p(`Las figuras ${F.certdet} y ${F.candado} son las capturas originales de la validación del certificado (23 de septiembre, red de simulación anterior). La captura de acceso vigente, con el candado sobre https://192.168.80.10, se presenta en la sección 6.6 (figura ${F.login}).`),
 ];
+s15.push(h3("6.4.1 Acceso desde otros equipos: reenvío de puertos en el PC anfitrión"));
+s15.push(p("La red NAT de VMware (ADR-06) aísla la infraestructura, y por eso otro equipo conectado a la misma red del celular no podía abrir https://192.168.80.10: esa dirección solo existe dentro del PC anfitrión. Se resolvió con un reenvío de puertos en el propio PC (netsh interface portproxy), que entrega al CRM las conexiones que llegan a los puertos 80 y 443 de la dirección del PC en la red del celular (172.20.10.2); el puerto 80 permite descargar la CA privada (/ca.crt). Es reversible con un solo comando y no modifica la infraestructura."));
+s15.push(p("Para que el navegador confíe sin advertencias, el certificado se volvió a emitir incluyendo esa dirección entre sus nombres alternativos (SAN), quitando las direcciones históricas que ya no se usan, y se desplegó en ambos bordes con Ansible. Se verificó contra la CA privada por la dirección 172.20.10.2 (openssl s_client con verificación por IP, resultado “OK”), y el certificado es válido hasta septiembre de 2028."));
+s15.push(p(`La evidencia se obtuvo con dos equipos físicos distintos a la vez (figuras ${F.otro1} y ${F.otro2}): el PC anfitrión abre https://192.168.80.10 con la sesión de un usuario de Recepción y un segundo notebook, conectado a la red del celular, abre https://172.20.10.2 con la sesión del administrador. Ambos muestran el candado cerrado (certificado válido) y el chat interno entre los dos usuarios, con los mismos mensajes en las dos pantallas, lo que confirma que el servicio funciona de punta a punta para un equipo externo a la máquina de virtualización.`));
+s15.push(p("Límite declarado: la dirección del PC en la red del celular la asigna el celular y puede cambiar si se reconecta; si cambia, hay que volver a emitir el certificado con la nueva dirección. Además, el reenvío expone el CRM a los equipos de esa red, que igualmente necesitan usuario y contraseña para entrar.", { size: 21 }));
+
 const s15a = [
+  ...figura(CAP, "otro-equipo-01-dos-equipos-lado-a-lado.png", "El CRM abierto desde dos equipos a la vez",
+    "Qué se observa: a la izquierda, un segundo notebook conectado a la red del celular abre https://172.20.10.2 con la sesión del administrador; a la derecha, el PC anfitrión abre https://192.168.80.10 con un usuario de Recepción. Ambos muestran el mismo chat interno, con los mismos mensajes, en tiempo real.", 1000, 540),
+  pageBreak(),
+  ...figura(CAP, "otro-equipo-02-candado-en-172-20-10-2.png", "Segundo equipo: acceso por HTTPS con el candado cerrado",
+    "Qué se observa: el navegador del segundo notebook en https://172.20.10.2 con el candado cerrado (certificado válido emitido por la CA privada, tras instalarla en ese equipo) y la sesión del administrador en el módulo de chat.", 1000, 540),
+  pageBreak(),
   ...figura(EVI, "2026-09-23-08-detalle-certificado-ca.png", "Detalle del certificado servido por el CRM",
     "Qué se observa: el certificado emitido por “CRM Empresarial - CA Interna” (no un autofirmado), con validez de dos años. Captura del 23 de septiembre, bajo el direccionamiento de la red anterior.", 700, 480),
   pageBreak(),
@@ -781,7 +794,7 @@ const s20a = [
 // ---- 8 Bitacora (portrait) ----
 const s21 = [
   h1("8. Bitácora de Incidentes Reales (fase de simulación)"),
-  p("Veinticuatro incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
+  p("Veinticinco incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
 ];
 const incidents = [
   ["1", "Caché de DNS del gateway Nginx", "Nginx seguía resolviendo IPs viejas tras reconstruir contenedores.", "`resolver 127.0.0.11 valid=10s;` + variables dinámicas en proxy_pass."],
@@ -807,7 +820,8 @@ const incidents = [
   ["21", "Primera petición lenta con un núcleo caído", "Nginx esperaba 3 s a un núcleo apagado antes de usar el otro.", "max_fails=1, fail_timeout=30 s y timeout de conexión de 1 s: solo la primera solicitud paga la espera; las siguientes bajan a ≈ 45 ms."],
   ["22", "Monitoreo externo que no se vigila a sí mismo", "Al apagar crm-mon, el panel principal desaparecía sin alarma.", "Centinela secundario de dos monitores en crm-edge (tema oscuro) que marca en rojo la caída del principal (ADR-10)."],
   ["23", "Advertencia de huella SSH cambiada", "El cloud-init regeneró las llaves de host de los bordes tras un apply de Terraform; el cliente rechazó la conexión.", "Verificada la huella contra el archivo de llave de la VM y eliminada la entrada antigua de known_hosts; conexión aceptada con la huella comprobada."],
-  ["24", "Monitor de la base de datos con un solo núcleo como destino", "El monitor de acceso a la base apuntaba al HAProxy de crm-core y se ponía en rojo cuando ese núcleo caía, aunque la base siguiera sirviendo por crm-core-b: el nombre sugería una falla que no era del servicio.", "Un monitor por núcleo (cada aplicación usa su HAProxy local), con el nodo en el nombre; el panel pasó de nueve a diez monitores."]
+  ["24", "Monitor de la base de datos con un solo núcleo como destino", "El monitor de acceso a la base apuntaba al HAProxy de crm-core y se ponía en rojo cuando ese núcleo caía, aunque la base siguiera sirviendo por crm-core-b: el nombre sugería una falla que no era del servicio.", "Un monitor por núcleo (cada aplicación usa su HAProxy local), con el nodo en el nombre; el panel pasó de nueve a diez monitores."],
+  ["25", "Otro equipo de la red del celular no podía abrir el CRM", "La dirección 192.168.80.10 pertenece a la red privada de VMware y solo existe dentro del PC anfitrión; un segundo notebook conectado al celular no tenía ruta hacia ella.", "Reenvío de puertos 80 y 443 en el PC anfitrión y certificado reemitido con la dirección del PC en la red del celular; validado con dos equipos a la vez (ADR-11, sección 6.4.1)."]
 ];
 s21.push(makeTable([500, 2500, 3500, 3200], ["#", "Incidente", "Causa raíz", "Resolución"], incidents));
 
@@ -896,6 +910,7 @@ s21.push(bullet("Todo reside en un único servidor físico: ni el panel de monit
 s21.push(bullet("El apagado de la prueba es abrupto pero de máquina virtual; no se simularon fallas de disco, corrupción de datos ni de red física, que quedan fuera del alcance de la simulación."));
 
 s21.push(h2("9.7 Verificaciones complementarias"));
+s21.push(bullet(`Acceso desde un equipo externo: un segundo notebook, conectado a la red del celular, abre el CRM por https://172.20.10.2 con el candado cerrado y comparte el chat con el PC anfitrión en tiempo real (figuras ${F.otro1} y ${F.otro2}).`));
 s21.push(bullet(`HTTPS con CA privada: confirmado con openssl s_client y curl --cacert (validación real de la cadena de confianza, código 0) y en el navegador, con candado y sin advertencias (figura ${F.login}); el SAN incluye 192.168.80.10.`));
 s21.push(bullet(`Aislamiento del núcleo: el ping desde el PC hacia 10.10.10.10 termina con 100 % de pérdida (figura ${F.ping}) y las reglas de NAT dejan salida solo a los bordes (figura ${F.iptables}).`));
 s21.push(bullet(`Cifrado en reposo: una consulta directa a PostgreSQL devuelve texto cifrado (gAAAA…) en las columnas de salud (figura ${F.cifrado}).`));
@@ -981,7 +996,7 @@ const s23 = [
   ),
   p(
     "El valor del trabajo no reside solo en el resultado —la infraestructura funcionando en " +
-    "simulación—, sino en el proceso documentado de veinticuatro incidentes reales resueltos con su " +
+    "simulación—, sino en el proceso documentado de veinticinco incidentes reales resueltos con su " +
     "causa raíz identificada (varios de ellos de red: choque de IP, direcciones MAC descartadas por " +
     "el hotspot, reglas de NAT persistentes), y en la experiencia adquirida que habilita, con " +
     "conocimiento real y no teórico, la migración responsable a producción sobre el servidor físico de CHIC."
