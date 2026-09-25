@@ -13,12 +13,17 @@ const {
 // valida al final con verificarFiguras).
 // ------------------------------------------------------------
 const FIG_KEYS = [
-  "justif", "infra", "contexto", "modulos", "gantt", "evm",
+  "justif", "infra", "patronipiezas", "contexto", "modulos", "gantt", "evm",
   "vmwnat", "vmwnet", "ipconfig", "redpve", "crmnat", "iptables", "ping", "edgehw", "edgeci", "corehw", "coreci",
   "vms", "tfplan",
   "certdet", "candado",
+  "noc1", "noc2", "noc3", "noc4", "noc5", "noc6", "noc7", "noc8", "noc9", "pvemon",
   "kumarojo", "kuma1", "kuma2", "kuma3", "kuma4", "kuma5", "kuma6", "kumab", "kumaprueba",
+  "antesdespues",
   "login", "usuarios", "sinpermiso", "cifrado",
+  "p1proxmox", "p1kuma", "p1crm", "ltnucleo",
+  "p2proxmox", "p2kuma", "p2crm", "p2taskhist", "p2enlace", "p2respaldo", "ltborde",
+  "p3proxmox", "p3kumacaido", "p3crm", "p3centinela",
   "github", "ciclo", "crmfailover",
   "pveclean", "errordns", "cloudimg",
   "vm100", "vm101", "vm102", "vm103",
@@ -26,7 +31,9 @@ const FIG_KEYS = [
   "permrrhh", "permemp", "permrec", "permadm", "ficha", "hist1", "hist2", "hist3", "anonim", "chataud",
   "secuencia",
 ];
-const F = Object.fromEntries(FIG_KEYS.map((k, i) => [k, i + 1]));
+// Los numeros de figura se resuelven AL FINAL, cuando ya se conoce el orden real del documento:
+// cada referencia es un marcador ⟦clave⟧ que se sustituye por el numero de la figura que lleva esa clave.
+const F = new Proxy({}, { get: (_, k) => "⟦" + String(k) + "⟧" });
 
 // ============================================================
 // SECCION 1 (portrait): Portada
@@ -99,7 +106,7 @@ const s3 = [
     "Este informe cubre el diseño, la implementación y la validación en simulación, con evidencia real: " +
     "una red NAT independiente de la red externa, aislamiento del núcleo verificado, failover de la " +
     "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo y una " +
-    "bitácora de dieciocho incidentes resueltos. La migración a producción bare metal y el respaldo " +
+    "bitácora de veintitrés incidentes resueltos. La migración a producción bare metal y el respaldo " +
     "offsite en la nube se abordan como las siguientes fases formales de la práctica, con su " +
     "cronograma y su cotización de hardware ya definidos en este documento."
   ),
@@ -195,7 +202,7 @@ const acadRows = [
   ["Virtualización\n(CR401ICRE)", "Fuerte", "Dos tecnologías de virtualización en la misma pila (VMware anida a Proxmox/KVM), segmentación de redes virtuales (vmbr1), asignación de recursos por VM. La migración en vivo real entre servidores queda como la fase siguiente de la práctica, ligada a la cotización de hardware (sección 5.7)."],
   ["Arquitectura Cloud\n(IF304CIINF)", "Fuerte", "Automatización de la topología completa con Terraform (IaC) contra la API de Proxmox, incluyendo modificaciones en caliente sobre una infraestructura ya desplegada (migración de la red de las VMs). El respaldo offsite hacia Oracle Cloud (Fase F4) y la evaluación de arquitectura híbrida on-premise/nube completan la evidencia de esta asignatura sobre el propio proyecto."],
   ["Gestión de Proyectos\n(IF405IINF)", "Cubierto en este informe", "Acta de Constitución, EDT, cronograma real de 360 horas, matriz RACI, registro de riesgos y línea base de Valor Planificado, todos construidos para el periodo real de la práctica (sección 5)."],
-  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 18 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
+  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 23 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
   ["Gestión de la Información con TICs\n(AS300PCOM)", "Parcial", "Calza en comparación de plataformas cloud y en seguridad/protección de datos según marco legal (Ley 21.719): roles y permisos, cifrado de datos de salud, consentimiento, auditoría y anonimización, verificados en la sección 6.6. El resto del programa (IA, IoT, redes sociales) no aplica a un proyecto de infraestructura —no se fuerza."],
   ["Diseño y Arquitectura de Redes\n(CR301ICRE)", "Uno de los más fuertes", "El estándar FCAPS mapea con los 5 pilares cubiertos: Fault (bitácora), Configuration (Git/Terraform/Ansible), Accounting (RBAC), Security (HTTPS/CA privada/cifrado/aislamiento verificado) y Performance (Uptime Kuma). Diagrama topológico incluido en este informe."],
 ];
@@ -253,13 +260,15 @@ const s8 = [
 const adrs = [
   ["ADR-00", "Metodología: simulación antes de producción", "Instrucción explícita de la jefatura del proyecto: diseñar y validar primero en un entorno de simulación (Proxmox anidado sobre VMware) para adquirir experiencia operativa, antes de migrar a producción sobre el servidor físico de CHIC en modo nativo (bare metal). Este informe documenta la fase de simulación, ya validada; la migración a producción es la fase siguiente formal de la práctica."],
   ["ADR-01", "Redundancia activa-pasiva (no clúster de alta disponibilidad)", "Con un solo servidor físico disponible hoy, un clúster Proxmox multi-nodo o la migración en vivo real no son alcanzables todavía. Se optó por redundancia a nivel de VM (Keepalived + réplica de Postgres) dentro del entorno de simulación, documentando honestamente su techo: protege contra fallas de software, no contra la falla del servidor físico completo."],
-  ["ADR-02", "Promoción de base de datos manual, no automática", "Automatizar de forma segura la promoción de un primario de base de datos exige resolver split-brain, un problema no trivial que no se justifica a esta escala. Se documentó un runbook de promoción manual en vez de una automatización a medias."],
+  ["ADR-02", "Promoción de base de datos manual, no automática (SUPERADA por ADR-09)", "Decisión original: automatizar de forma segura la promoción exige resolver split-brain, un problema no trivial. Se documentó un runbook manual. Una prueba de estrés mostró que ese diseño no cumplía el objetivo de redundancia (sección 6.7); se reemplazó por Patroni con etcd como árbitro (ADR-09)."],
   ["ADR-03", "Salida a Internet solo para los bordes (NAT selectivo)", "El diseño original planteaba “sin salida a Internet” para crm-core, pero Ansible necesita instalar Docker y clonar el repositorio. Se distinguió aislamiento de entrada de aislamiento de salida. Una vez desplegado, el NAT de salida se restringió a crm-edge y crm-edge-b: el núcleo quedó sin entrada directa ni salida a Internet, y la regla amplia que lo permitía se eliminó y verificó (sección 6.1)."],
   ["ADR-04", "CA privada en vez de certificados autofirmados sueltos", "Un certificado autofirmado por VM seguía mostrando advertencia de “no seguro” en cualquier dispositivo. Se construyó una autoridad certificadora propia, cuya llave privada nunca sale del equipo del responsable, permitiendo instalarla una sola vez por dispositivo y confiar automáticamente en cualquier certificado futuro que ella firme."],
-  ["ADR-05", "Monitoreo nativo (Node.js) en vez de contenedorizado", "Uptime Kuma se instala sin Docker, manteniendo el principio de diseño de los bordes (bastión liviano, sin Docker). Su ubicación inicial en un solo borde resultó ser un punto único de falla del monitoreo; ver ADR-08."],
+  ["ADR-05", "Monitoreo nativo (Node.js) en vez de contenedorizado", "Uptime Kuma se instala sin Docker, manteniendo el principio de diseño de los bordes (bastión liviano, sin Docker). Su ubicación inicial en un solo borde resultó ser un punto único de falla del monitoreo; ver ADR-08 y ADR-10."],
   ["ADR-06", "Red NAT de VMware en lugar de red puenteada (bridged)", "En modo bridged sobre Wi-Fi/hotspot, la red externa descartaba las direcciones MAC de las VMs anidadas (solo veía el PC), Proxmox llegó a compartir IP con el equipo host y tumbó su conexión, y cada cambio de red obligaba a reconfigurar todas las IPs. Con la red NAT VMnet8 (192.168.80.0/24) la infraestructura queda detrás del PC y su direccionamiento es independiente de la red externa."],
   ["ADR-07", "Proxmox como router de las VMs (DNAT + VIP interna)", "Como las VMs ya no están en la red externa, el host Proxmox publica el CRM mediante DNAT (80/443 hacia la VIP interna 10.10.10.5) y el acceso de administración por puertos dedicados (2211/2212) a cada borde. Las reglas viven en un script idempotente que se reaplica en cada arranque, y la salida a Internet (MASQUERADE) se limita a los bordes."],
-  ["ADR-08", "Monitoreo redundante: una instancia de Kuma por borde con monitoreo cruzado", "Una prueba de estrés mostró que al apagar crm-edge el CRM seguía disponible (crm-edge-b) pero el monitoreo desaparecía, porque Kuma corría solo en ese nodo. Se instala una instancia en cada borde y cada una vigila también a su par, de modo que la caída de un borde es detectada por el otro. Se evaluaron una VM aparte, el host Proxmox y una base replicada, y se descartaron por memoria disponible, pureza del hipervisor y complejidad (sección 6.5.1). Límite declarado: ambas instancias comparten servidor físico."],
+  ["ADR-08", "Monitoreo redundante: una instancia de Kuma por borde (SUPERADA por ADR-10)", "Solución intermedia a un hallazgo de una prueba de estrés: al apagar crm-edge desaparecía el monitoreo, porque Kuma corría solo en ese nodo. Se instaló una instancia en cada borde con monitoreo cruzado. Una tercera prueba mostró que seguía atada a las VMs de borde; ver ADR-10."],
+  ["ADR-09", "Núcleo con Patroni, etcd y HAProxy (conmutación automática de la base de datos)", "Una prueba de estrés mostró que apagar crm-core tumbaba la base de datos y el servicio: las dos VMs del núcleo no compartían la base en vivo (volcado cada 15 min, promoción manual). Se reemplazó por PostgreSQL 14 nativo bajo Patroni en ambos núcleos, con replicación sincrónica, un clúster etcd de tres miembros repartido en tres VMs como árbitro (evita el split-brain sin un tercer servidor) y HAProxy en cada núcleo apuntando siempre al primario vigente. La aplicación pasó a correr activa en ambos núcleos, y los adjuntos del chat se guardan en la base para replicarse con ella. Límite declarado: se tolera la caída de UNA VM a la vez."],
+  ["ADR-10", "Monitoreo externo en contenedor LXC con un centinela secundario", "El monitoreo debe sobrevivir a la caída de cualquier VM. Se movió Uptime Kuma a un contenedor LXC del propio nodo Proxmox (crm-mon, 10.10.10.20, arranque automático con orden 1, 768 MB), fuera de las cuatro VMs. Como el monitor no se vigila a sí mismo, el Kuma del borde se redujo a un centinela con solo dos monitores (el principal y el servicio extremo a extremo), en tema oscuro para distinguirlo. Se prefirió detectar y avisar antes que reiniciar automáticamente, para no ocultar la falla. Límite declarado: ambos comparten servidor físico."],
 ];
 s8.push(makeTable([1200, 3100, 5400], ["ID", "Decisión", "Justificación"], adrs));
 
@@ -312,7 +321,7 @@ const edt = [
   "  1.4 Operaciones",
   "    1.4.1 Monitoreo (Uptime Kuma)",
   "    1.4.2 Pruebas de resiliencia (failover borde y núcleo)",
-  "    1.4.3 Corrección de incidentes de despliegue (18 documentados)",
+  "    1.4.3 Corrección de incidentes de despliegue (23 documentados)",
   "  1.5 Migración a producción (fase siguiente)",
   "    1.5.1 Respaldo offsite en Oracle Cloud",
   "    1.5.2 Cotización formal del segundo servidor físico",
@@ -367,7 +376,7 @@ s11.push(p(
 ));
 
 s11.push(h2("5.5 Registro de Riesgos"));
-s11.push(p("Los primeros doce riesgos ya se materializaron durante la fase de simulación (ver bitácora de incidentes, sección 8) y se documentan con su probabilidad e impacto originales. Los últimos cuatro son riesgos abiertos y activos en la fase de práctica actual."));
+s11.push(p("Los primeros trece riesgos ya se materializaron durante la fase de simulación (ver bitácora de incidentes, sección 8) y se documentan con su probabilidad e impacto originales. Los últimos cinco son riesgos abiertos y activos en la fase de práctica actual."));
 const riskRows = [
   ["R1", "Hardware insuficiente para el diseño de virtualización planeado", "Alta", "Alto", "Materializado", "Pivote de arquitectura (laptop→LXC→PC de escritorio con VMs reales)"],
   ["R2", "Conflicto de virtualización VT-x entre Docker Desktop y Proxmox", "Media", "Alto", "Materializado", "Retiro de Docker Desktop del host físico; Hyper-V desactivado"],
@@ -380,11 +389,13 @@ const riskRows = [
   ["R9", "Inestabilidad de la red externa (Wi-Fi/hotspot) afectando al PC host o a la infraestructura", "Alta", "Alto", "Materializado", "Red NAT VMnet8: la infraestructura queda detrás del PC, independiente de la red externa (ADR-06)"],
   ["R10", "Pérdida de reglas de red o de aislamiento tras reinicios", "Media", "Alto", "Materializado", "Script idempotente en Proxmox y verificación de que ninguna regla persistente reintroduzca salida del núcleo"],
   ["R11", "Configuración de monitoreo desactualizada tras cambios de direccionamiento", "Media", "Medio", "Materializado", "Monitores actualizados y recuperación verificada (sección 6.5)"],
-  ["R12", "Punto único de falla del monitoreo (una sola instancia de Kuma)", "Media", "Alto", "Materializado", "Instancia de Kuma en cada borde con monitoreo cruzado (ADR-08, sección 6.5.1)"],
-  ["R13", "Punto único de falla del servidor físico durante la simulación", "Media", "Crítico", "Abierto — en gestión activa", "Cotización formal del segundo servidor en curso (sección 5.7), fase F5 del cronograma"],
-  ["R14", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Abierto — en desarrollo activo", "Fase F4 del cronograma: desarrollo del respaldo hacia Oracle Cloud"],
-  ["R15", "Compromiso de la llave privada de la CA interna", "Baja", "Crítico", "Abierto — mitigado por diseño", "La llave nunca sale del equipo del responsable; nunca se copia a ninguna VM"],
-  ["R16", "Documentos legales en borrador sin revisión jurídica", "Media", "Alto", "Abierto — pendiente", "Solicitar revisión de un abogado especializado antes de considerarlos oficiales (sección 6.6)"],
+  ["R12", "Punto único de falla del monitoreo (una sola instancia de Kuma)", "Media", "Alto", "Materializado", "Kuma externo en contenedor LXC y centinela secundario (ADR-10, sección 6.5)"],
+  ["R13", "Núcleo sin redundancia real: la caída de crm-core tumbaba la base de datos", "Alta", "Crítico", "Materializado", "Patroni + etcd + HAProxy con conmutación automática (ADR-09, sección 6.7)"],
+  ["R14", "Pérdida de mayoría de etcd por dos fallas simultáneas", "Baja", "Alto", "Abierto — límite declarado", "El diseño tolera UNA falla a la vez; con dos VMs de etcd caídas el sistema se detiene por seguridad (sin split-brain) y se recupera solo al volver la mayoría"],
+  ["R15", "Punto único de falla del servidor físico durante la simulación", "Media", "Crítico", "Abierto — en gestión activa", "Cotización formal del segundo servidor en curso (sección 5.7), fase F5 del cronograma"],
+  ["R16", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Abierto — en desarrollo activo", "Fase F4 del cronograma: desarrollo del respaldo hacia Oracle Cloud"],
+  ["R17", "Compromiso de la llave privada de la CA interna", "Baja", "Crítico", "Abierto — mitigado por diseño", "La llave nunca sale del equipo del responsable; nunca se copia a ninguna VM"],
+  ["R18", "Documentos legales en borrador sin revisión jurídica", "Media", "Alto", "Abierto — pendiente", "Solicitar revisión de un abogado especializado antes de considerarlos oficiales (sección 6.6)"],
 ];
 s11.push(makeTable([700, 2700, 1100, 1000, 1600, 2600],
   ["ID", "Riesgo", "Prob.", "Impacto", "Estado", "Mitigación"], riskRows));
@@ -442,7 +453,7 @@ s13.push(bullet("Las imágenes base de un proveedor de laboratorio pueden traer 
 s13.push(bullet("Un diseño de seguridad de “cero salida” debe validarse contra el flujo operativo real antes de implementarse, no después."));
 s13.push(bullet("Una infraestructura virtual no debe depender de la red física en la que se encuentre el equipo anfitrión: pasar de una red puenteada a una red NAT aislada eliminó de raíz los choques de IP y los cambios de direccionamiento (incidentes 13 y 14)."));
 s13.push(bullet("Verificar el estado real y persistente de la configuración, no solo el estado en ejecución: una regla de NAT antigua persistía en un archivo de arranque y habría reaparecido tras un reinicio (incidente 15)."));
-s13.push(bullet("Validar primero en un entorno de simulación (como instruyó la jefatura) permitió encontrar y resolver 18 incidentes reales sin arriesgar la operación de CHIC, antes de tocar producción."));
+s13.push(bullet("Validar primero en un entorno de simulación (como instruyó la jefatura) permitió encontrar y resolver 23 incidentes reales sin arriesgar la operación de CHIC, antes de tocar producción."));
 s13.push(bullet("La asistencia de IA acelera genuinamente la implementación de infraestructura y la depuración, pero las decisiones de seguridad y arquitectura deben mantenerse bajo revisión y autorización humana explícita en cada paso."));
 
 s13.push(h1("6. Implementación Técnica"));
@@ -596,53 +607,94 @@ const s15a = [
 
 // ---- 6.5 Monitoreo (portrait) ----
 const s16 = [
-  h2("6.5 Monitoreo (Uptime Kuma)"),
-  p("Uptime Kuma se instaló nativo (Node.js, sin Docker) con 6 monitores activos cada 30 segundos: la IP virtual VRRP, ambos nodos de borde, ambos nodos de núcleo (API en el puerto 8001) y PostgreSQL (TCP 5432). Se accede a su panel mediante un túnel SSH hacia el puerto 3001, sin exponerlo en la red. Tras una prueba de estrés, su despliegue pasó de una instancia única a una instancia por borde (sección 6.5.1)."),
-  p(
-    `Al migrar el direccionamiento, los tres monitores del borde quedaron en rojo porque seguían apuntando a las IPs antiguas (figura ${F.kumarojo}); los de núcleo y PostgreSQL, que ya usaban la red interna, no ` +
-    `se vieron afectados. Tras actualizar las direcciones a 10.10.10.2, 10.10.10.3 y 10.10.10.5, los seis monitores volvieron a estado “Funcional” ` +
-    `(figuras ${F.kuma1} a ${F.kuma6}). El historial rojo-verde de las gráficas es evidencia de que el monitoreo detecta tanto la falla como la recuperación; el porcentaje de disponibilidad acumulado quedó reducido por ese periodo (incidente 16).`
-  ),
-  h3("6.5.1 Hallazgo de la prueba de estrés: el monitoreo como punto único de falla"),
-  p("Durante una prueba de estrés se apagó la máquina virtual crm-edge. El resultado fue mixto: la redundancia del servicio funcionó —crm-edge-b tomó la IP virtual y mantuvo el CRM disponible—, pero el monitoreo dejó de estar disponible. Uptime Kuma corría únicamente en crm-edge, de modo que al caer ese nodo cayeron a la vez la herramienta que debía detectar la falla y el túnel de acceso a ella. Es decir, el mecanismo de detección tenía un punto único de falla que la arquitectura de servicio no tenía."),
-  p("Este hallazgo es una limitación de diseño, no un defecto de implementación: en la decisión original (ADR-05) se ubicó Kuma en crm-edge por ser una VM con visibilidad hacia la red interna y por mantener el principio de bastión liviano, sin considerar que el monitoreo debe sobrevivir a la falla del nodo que monitorea."),
-  h3("Análisis de alternativas"),
+  h2("6.5 Monitoreo: centro de operaciones (NOC) con Uptime Kuma"),
+  p("El monitoreo es los “ojos” del sistema y por eso su diseño sigue una regla: no puede caer junto con lo que vigila. Su despliegue pasó por tres etapas, cada una motivada por una prueba real (secciones 6.5.1 y 9): una instancia única en crm-edge, una instancia por borde, y finalmente la arquitectura vigente, con un panel principal fuera de las máquinas virtuales y un centinela secundario."),
+  h3("6.5.1 Arquitectura vigente"),
+  bullet("Panel principal (crm-mon): Uptime Kuma nativo (Node.js) en un contenedor LXC del propio nodo Proxmox (VM id 104, 10.10.10.20, 768 MB, arranque automático con orden 1). Está fuera de las cuatro VMs, así que sobrevive a la caída de cualquiera de ellas. Se publica en http://192.168.80.10:3001 mediante DNAT y vigila nueve elementos con intervalo de 15 segundos."),
+  bullet("Centinela secundario (en crm-edge): un Kuma reducido a dos monitores, en tema oscuro para distinguirlo del principal —el principal (crm-mon) y el servicio extremo a extremo por la IP virtual—, con intervalo de 5 segundos. Si el principal cae, el centinela lo marca en rojo y evita quedar sin visibilidad mientras se verifica qué ocurrió."),
+  bullet("Convención de nombres de NOC: “CAPA · elemento · función”, para que el panel se lea como un diagrama de red y el operador vea qué enlace o servicio cayó, no qué herramienta lo mide."),
+  p("Se prefirió detectar y avisar antes que reiniciar automáticamente el contenedor caído: un reinicio silencioso ocultaría la falla, y en un NOC se separa observar de actuar. El límite declarado es que ambos paneles residen en el mismo servidor físico; la caída del equipo completo se resuelve con el segundo servidor (sección 5.7)."),
+  h3("6.5.2 Qué mide cada monitor del panel principal"),
 ];
-const kumaAlt = [
-  ["A. Una instancia de Kuma en cada borde, con monitoreo cruzado", "Aprovecha el par de borde, que ya es redundante y sin estado; reutiliza el rol Ansible existente; sin memoria adicional; cada instancia vigila además a su par, de modo que la caída de un borde es detectada por el otro.", "Elegida. Límite declarado: ambas instancias siguen en el mismo servidor físico."],
-  ["B. Una VM de monitoreo independiente", "Aísla el monitoreo de los bordes.", "Descartada: la memoria del host ya está casi asignada (16 GB de 18,6 GB) y seguiría siendo una instancia única."],
-  ["C. Kuma directamente en el host Proxmox", "Sobrevive a la caída de cualquier VM.", "Descartada: contamina el hipervisor con software de aplicación y rompe la separación de responsabilidades."],
-  ["D. Una instancia con base replicada entre nodos", "Un único estado lógico de monitoreo.", "Descartada: replicar una base SQLite activa exige coordinación y riesgo de corrupción, con demasiada complejidad para una herramienta liviana."],
+const nocRows = [
+  ["INFRA · Nodo Proxmox · hipervisor", "HTTPS a https://10.10.10.1:8006", "Infraestructura", "Que el servidor físico y su capa de virtualización están vivos; si cae, caen todas las VMs."],
+  ["ENLACE · IP virtual de servicio · usuarios", "HTTPS a https://10.10.10.5", "Red de entrada", "Lo que ve el usuario: que la IP virtual que mueve Keepalived responde con el certificado de la CA."],
+  ["BORDE · primario", "HTTPS a https://10.10.10.2", "Borde", "Que Nginx de crm-edge responde con HTTPS válido (y la caducidad del certificado)."],
+  ["BORDE · respaldo", "HTTPS a https://10.10.10.3", "Borde", "Lo mismo en crm-edge-b: comprueba que el respaldo está sano antes de necesitarlo."],
+  ["APP · CORE primario · svc", "HTTP a 10.10.10.10:8001/docs", "Aplicación", "Que los microservicios del núcleo crm-core responden."],
+  ["APP · CORE respaldo · svc", "HTTP a 10.10.10.11:8001/docs", "Aplicación", "Lo mismo en crm-core-b; ambos núcleos sirven la aplicación a la vez."],
+  ["BD · acceso al primario · aplicaciones", "TCP a 10.10.10.10:5000", "Base de datos", "Que las aplicaciones alcanzan la base de datos a través de HAProxy (siempre el primario vigente)."],
+  ["BD · CORE · réplica/primario", "HTTP a 10.10.10.10:8008/health", "Base de datos", "Que el agente de alta disponibilidad de la base en crm-core está vivo; el nombre no fija el rol porque el líder cambia."],
+  ["BD · CORE-b · réplica/primario", "HTTP a 10.10.10.11:8008/health", "Base de datos", "Lo mismo en crm-core-b."],
 ];
-s16.push(makeTable([3000, 3700, 3000], ["Alternativa", "Ventaja", "Evaluación"], kumaAlt));
-s16.push(h3("Decisión e implementación"));
-s16.push(p("Se adoptó la alternativa A (ADR-08). La segunda instancia se sembró copiando /opt/uptime-kuma desde crm-edge hacia crm-edge-b por la red interna (tar por SSH, con el servicio detenido unos segundos para copiar la base de forma consistente), sin descargar dependencias por Internet; luego el rol Ansible uptime_kuma, ahora aplicado a ambos bordes, completó la instalación de Node.js y el servicio. Ambas instancias quedaron activas y cada una alcanza a la otra por la red interna (respuesta HTTP 200 en el puerto 3001)."));
-s16.push(p(`En la instancia de crm-edge-b se creó un monitor cruzado hacia la instancia de crm-edge (http://10.10.10.2:3001), que quedó en estado “Funcional” (figura ${F.kumab}). La validación se hizo repitiendo la prueba de estrés: con crm-edge apagado, la instancia de crm-edge-b siguió operativa, marcó “Caído” el monitor cruzado y el monitor del borde activo, y emitió alertas de conexión (EHOSTUNREACH), mientras el CRM seguía servido por crm-edge-b (figura ${F.kumaprueba}). El monitor recíproco en crm-edge se registrará junto con las pruebas de la Fase F3. Límite declarado: ambas instancias residen en el mismo servidor físico, por lo que no cubren la caída del equipo completo; eso se resuelve con el segundo servidor (sección 5.7).`));
+s16.push(makeTable([2600, 2100, 1300, 3600], ["Monitor (nombre de NOC)", "Qué consulta", "Capa", "Qué evidencia si falla"], nocRows));
+s16.push(p(`Las capturas de los nueve monitores (figuras ${F.noc1} a ${F.noc9}) muestran su estado “Funcional”, el tiempo de respuesta y la disponibilidad acumulada; en ellas, los tramos rojos de los gráficos corresponden a las pruebas de resiliencia de la sección 9. El contenedor que aloja el panel se ve en Proxmox junto a las cuatro VMs (figura ${F.pvemon}).`, { size: 21 }));
+s16.push(h3("6.5.3 Tabla del centinela"));
+s16.push(makeTable([3300, 2600, 3700], ["Monitor del centinela", "Qué consulta", "Pregunta que responde"], [
+  ["MONITOREO · Kuma principal · crm-mon", "HTTP a http://10.10.10.20:3001", "¿Está vivo el vigilante principal?"],
+  ["ENLACE · CRM extremo a extremo · usuarios", "HTTPS a https://10.10.10.5/api/auth/health", "Aunque el principal falle, ¿el sistema sigue funcionando de punta a punta para el usuario? (atraviesa Nginx, el reparto entre núcleos y el servicio de autenticación)"],
+]));
+s16.push(h3("6.5.4 Evolución del monitoreo y hallazgos que la motivaron"));
+s16.push(p(`Al migrar el direccionamiento, los tres monitores del borde quedaron en rojo porque seguían apuntando a las IPs antiguas (figura ${F.kumarojo}); tras actualizar las direcciones a 10.10.10.2, 10.10.10.3 y 10.10.10.5 volvieron a “Funcional” (figuras ${F.kuma1} a ${F.kuma6}). Después, una prueba de estrés mostró que apagar crm-edge hacía desaparecer el monitoreo (Kuma corría solo allí); la primera solución fue una instancia por borde con monitoreo cruzado (ADR-08; figuras ${F.kumab} y ${F.kumaprueba}). Una prueba posterior mostró que seguía atada a las máquinas virtuales de borde, y la solución vigente es el panel externo con centinela (ADR-10). Las capturas de las etapas intermedias se conservan como evidencia de la evolución.`));
+s16.push(h3("Análisis de alternativas para ubicar el monitoreo"));
+s16.push(makeTable([3000, 3700, 3000], ["Alternativa", "Ventaja", "Evaluación"], [
+  ["A. Una instancia por borde, con monitoreo cruzado", "Aprovecha el par de borde y el rol Ansible existente; sin memoria adicional.", "Etapa intermedia (ADR-08): sigue dependiendo de las VMs de borde."],
+  ["B. Una VM de monitoreo independiente", "Aísla el monitoreo de los bordes.", "Descartada: la memoria del host ya está casi asignada (16 GB de 18,6 GB)."],
+  ["C. Kuma directamente en el host Proxmox", "Sobrevive a la caída de cualquier VM.", "Descartada: contamina el hipervisor con software de aplicación."],
+  ["D. Contenedor LXC en el nodo Proxmox (elegida)", "Sobrevive a cualquier VM; ~160 MB de memoria; arranque automático; aislado del hipervisor.", "Elegida (ADR-10), con un centinela secundario para vigilar al principal."],
+  ["E. Base de Kuma replicada entre nodos", "Un único estado lógico.", "Descartada: replicar una base SQLite activa exige coordinación y riesgo de corrupción."],
+]));
 
 const s16a = [
+  ...figura(CAP, "pve-13-vms-y-contenedor-crm-mon.png", "El contenedor de monitoreo junto a las cuatro VMs",
+    "Qué se observa: en Proxmox, el contenedor 104 (crm-mon) en ejecución junto a las VMs 100, 101, 102 y 103, con su consumo de CPU, memoria y tiempo de actividad. El monitoreo vive en el nodo, no dentro de ninguna VM.", 1000, 500),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "noc-01-app-core-primario.png", titulo: "APP · CORE primario · svc", texto: "Qué se observa: la API del núcleo crm-core en estado “Funcional” con tiempo de respuesta estable; la lista lateral muestra los nueve monitores del NOC." },
+    { file: "noc-02-app-core-respaldo.png", titulo: "APP · CORE respaldo · svc", texto: "Qué se observa: el núcleo crm-core-b también sirve la aplicación; el hueco rojo del gráfico corresponde a la prueba de apagado del núcleo." },
+  ], 620, 250),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "noc-03-bd-acceso-al-primario.png", titulo: "BD · acceso al primario · aplicaciones", texto: "Qué se observa: el puerto 5000 (HAProxy) accesible en TCP, con 100 % de disponibilidad y ≈ 2 ms de respuesta." },
+    { file: "noc-04-bd-crm-core.png", titulo: "BD · CORE · réplica/primario", texto: "Qué se observa: el agente de alta disponibilidad de la base en crm-core responde su estado de salud (≈ 10 ms)." },
+  ], 620, 250),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "noc-05-bd-crm-core-b.png", titulo: "BD · CORE-b · réplica/primario", texto: "Qué se observa: el agente de crm-core-b, con 100 % de disponibilidad y ≈ 15 ms de respuesta." },
+    { file: "noc-06-borde-primario.png", titulo: "BORDE · primario", texto: "Qué se observa: Nginx de crm-edge con HTTPS válido; abajo a la derecha, la caducidad del certificado a 729 días." },
+  ], 620, 250),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "noc-07-borde-respaldo.png", titulo: "BORDE · respaldo", texto: "Qué se observa: el borde de respaldo con HTTPS válido y el certificado vigente; los picos de respuesta corresponden a los cambios de la IP virtual." },
+    { file: "noc-08-enlace-ip-virtual.png", titulo: "ENLACE · IP virtual de servicio · usuarios", texto: "Qué se observa: la IP virtual con 98,2 % de disponibilidad en 24 horas, incluso durante las pruebas de apagado de VMs." },
+  ], 620, 250),
+  pageBreak(),
+  ...figura(CAP, "noc-09-infra-nodo-proxmox.png", "INFRA · Nodo Proxmox · hipervisor",
+    "Qué se observa: la consola del hipervisor (puerto 8006) responde; el tramo rojo inicial del gráfico corresponde a los cortes de red del periodo de migración a la red NAT.", 1000, 500),
+  pageBreak(),
   ...figura(CAP, "kuma-00-monitores-tras-cambio-de-ip.png", "Monitores tras el cambio de direccionamiento",
     "Qué se observa: los monitores EDGE activo, EDGE stand-by e IP Virtual VRRP en rojo (apuntaban a las IPs antiguas) mientras CORE activo, CORE stand-by y POSTGRES siguen en verde.", 520, 480),
   pageBreak(),
   ...figurasApiladas(CAP, [
-    { file: "kuma-01-core-activo.png", titulo: "Monitor CORE activo (10.10.10.10:8001)", texto: "Qué se observa: estado “Funcional”, disponibilidad y tiempo de respuesta estable (≈11 ms) de la API del núcleo activo." },
-    { file: "kuma-02-core-standby.png", titulo: "Monitor CORE stand-by (10.10.10.11:8001)", texto: "Qué se observa: la réplica del núcleo responde y está disponible (≈12 ms), lista para una eventual promoción manual." },
+    { file: "kuma-01-core-activo.png", titulo: "Etapa 1: monitor CORE activo (10.10.10.10:8001)", texto: "Qué se observa: estado “Funcional” y tiempo de respuesta estable (≈ 11 ms) de la API del núcleo, en la primera versión del monitoreo." },
+    { file: "kuma-02-core-standby.png", titulo: "Etapa 1: monitor CORE stand-by (10.10.10.11:8001)", texto: "Qué se observa: la réplica del núcleo responde (≈ 12 ms)." },
   ], 620, 250),
   pageBreak(),
   ...figurasApiladas(CAP, [
-    { file: "kuma-03-edge-activo.png", titulo: "Monitor EDGE activo (https://10.10.10.2)", texto: "Qué se observa: en la gráfica, la franja roja del periodo con IP antigua y la recuperación al corregirla; abajo a la derecha, la caducidad del certificado a 729 días." },
-    { file: "kuma-04-edge-standby.png", titulo: "Monitor EDGE stand-by (https://10.10.10.3)", texto: "Qué se observa: el mismo patrón de caída y recuperación en el borde de respaldo, con el certificado vigente." },
+    { file: "kuma-03-edge-activo.png", titulo: "Etapa 1: monitor EDGE activo (https://10.10.10.2)", texto: "Qué se observa: la franja roja del periodo con IP antigua y la recuperación al corregirla." },
+    { file: "kuma-04-edge-standby.png", titulo: "Etapa 1: monitor EDGE stand-by (https://10.10.10.3)", texto: "Qué se observa: el mismo patrón de caída y recuperación en el borde de respaldo." },
   ], 620, 250),
   pageBreak(),
   ...figurasApiladas(CAP, [
-    { file: "kuma-05-ip-virtual-vrrp.png", titulo: "Monitor IP Virtual VRRP (https://10.10.10.5)", texto: "Qué se observa: la IP virtual que mueve Keepalived responde con el certificado firmado por la CA, y su historial refleja la corrección de la IP." },
-    { file: "kuma-06-postgres.png", titulo: "Monitor POSTGRES (TCP 10.10.10.10:5432)", texto: "Qué se observa: el puerto de la base de datos accesible desde crm-edge (≈4 ms) con 99,6% de disponibilidad." },
+    { file: "kuma-05-ip-virtual-vrrp.png", titulo: "Etapa 1: monitor IP Virtual VRRP (https://10.10.10.5)", texto: "Qué se observa: la IP virtual responde con el certificado firmado por la CA privada." },
+    { file: "kuma-06-postgres.png", titulo: "Etapa 1: monitor POSTGRES (TCP 10.10.10.10:5432)", texto: "Qué se observa: el puerto de la base accesible (≈ 4 ms), antes de que la base pasara a Patroni." },
   ], 620, 250),
   pageBreak(),
-  ...figura(CAP, "kuma-07-instancia-crm-edge-b.png", "Segunda instancia de Kuma (crm-edge b) vigilando a crm-edge",
-    "Qué se observa: la instancia de crm-edge-b (túnel al puerto 3002) con la configuración copiada de crm-edge —los seis monitores originales— y el nuevo monitor cruzado “KUMA -EDGE activo”, que apunta a http://10.10.10.2:3001 y está en estado Funcional (100%). Si crm-edge cae, esta instancia sigue operativa y lo señala.", 1000, 500),
+  ...figura(CAP, "kuma-07-instancia-crm-edge-b.png", "Etapa 2: segunda instancia de Kuma (crm-edge b) vigilando a crm-edge",
+    "Qué se observa: la instancia de crm-edge-b con la configuración copiada de crm-edge y el monitor cruzado “KUMA -EDGE activo” en estado Funcional (100 %).", 1000, 500),
   pageBreak(),
-  ...figura(CAP, "kuma-08-prueba-estres-instancia-b.png", "Prueba de estrés con la solución: la instancia de crm-edge b sigue operativa",
-    "Qué se observa: con crm-edge apagado, la instancia de crm-edge-b (túnel al puerto 3002) sigue en línea y muestra en rojo “Caído” el monitor cruzado KUMA -EDGE activo y el monitor EDGE activo, con las alertas “connect EHOSTUNREACH” hacia 10.10.10.2. La herramienta de detección sobrevive a la falla del nodo que vigila.", 1000, 500),
+  ...figura(CAP, "kuma-08-prueba-estres-instancia-b.png", "Etapa 2: prueba de estrés con la instancia de crm-edge b",
+    "Qué se observa: con crm-edge apagado, la instancia de crm-edge-b sigue en línea y marca en rojo el monitor cruzado y el monitor del borde activo, con las alertas “connect EHOSTUNREACH” hacia 10.10.10.2.", 1000, 500),
 ];
 
 // ---- 6.6 Carga de trabajo (portrait) ----
@@ -653,7 +705,7 @@ const s17 = [
   bullet(`Control de acceso por roles: cuatro roles (Administrador, Recursos humanos, Recepción y Empleado) con permisos asignados por módulo; la cuenta genérica “admin” de fábrica permanece inactiva (figura ${F.usuarios}). Los formularios de permisos por perfil están en el Anexo B (figuras ${F.permrrhh} a ${F.permadm}).`),
   bullet(`Protección de datos sensibles: los datos de salud solo los ve quien tiene el permiso específico (figura ${F.sinpermiso}) y se guardan cifrados en reposo con Fernet, de modo que un acceso directo a la base de datos o a un respaldo no revela su contenido (figura ${F.cifrado}). El consentimiento informado, el historial de accesos, la anonimización al eliminar y la auditoría del chat se muestran en el Anexo B.`),
   bullet("Las contraseñas se almacenan con hash bcrypt y la sesión usa un token JWT con vencimiento de 8 horas."),
-  p("Junto al sistema se elaboraron dos documentos en la carpeta legal/ del repositorio: el Registro de Actividades de Tratamiento (qué datos personales se tratan, con qué finalidad, quién accede y con qué medidas de seguridad) y el Procedimiento ante Brechas de Seguridad. Ambos son borradores: requieren revisión de un abogado especializado y completar los datos de la institución antes de considerarse oficiales, lo que se registra como el riesgo R16."),
+  p("Junto al sistema se elaboraron dos documentos en la carpeta legal/ del repositorio: el Registro de Actividades de Tratamiento (qué datos personales se tratan, con qué finalidad, quién accede y con qué medidas de seguridad) y el Procedimiento ante Brechas de Seguridad. Ambos son borradores: requieren revisión de un abogado especializado y completar los datos de la institución antes de considerarse oficiales, lo que se registra como el riesgo R18."),
 ];
 const s17a = [
   ...figura(CAP, "crm-22-login-fallido-https.png", "Inicio de sesión con credenciales inválidas, sobre HTTPS",
@@ -669,6 +721,47 @@ const s17a = [
     "Qué se observa: al consultar la tabla empleados directamente en PostgreSQL, las columnas alergias y medicamentos contienen texto cifrado que empieza con “gAAAA…” (formato Fernet), no el contenido real. Muestra que los datos de salud no son legibles sin la clave de la aplicación.", 900, 420),
 ];
 
+const s67 = [
+  h2("6.7 Núcleo redundante: Patroni, etcd y HAProxy"),
+  p("El núcleo aloja la aplicación y su base de datos. Su primera versión tenía redundancia solo aparente: crm-core-b recibía un volcado de la base cada 15 minutos y la promoción era manual. Una prueba de estrés lo puso en evidencia: al apagar crm-core cayeron la base de datos y el servicio, porque el borde solo conocía a crm-core y la réplica no estaba en línea. El diseño se reemplazó por una arquitectura de alta disponibilidad real (ADR-09), cuya ubicación de cada pieza se muestra en la figura ${F.patronipiezas}."),
+  bullet("Base de datos: PostgreSQL 14 nativo en crm-core y crm-core-b, gestionado por Patroni, con replicación en vivo (streaming) en modo sincrónico: una transacción solo se confirma cuando la réplica la recibió, por lo que no se pierden datos."),
+  bullet("Árbitro: un clúster etcd de tres miembros repartido en crm-edge, crm-edge-b y crm-core-b. Guarda quién es el líder mediante una clave con vencimiento (TTL de 30 s). Con tres miembros basta una mayoría de dos, por lo que la caída de cualquier VM no detiene el clúster, y un nodo aislado nunca se promueve solo (sin split-brain), sin necesitar un tercer servidor."),
+  bullet("Punto de entrada: HAProxy en cada núcleo escucha en el puerto 5000 y comprueba GET /primary en el agente de Patroni de cada nodo, de modo que la aplicación siempre llega al primario vigente sin reconfigurarse."),
+  bullet("Aplicación: los ocho contenedores corren activos en ambos núcleos (docker-compose.ha.yml). Como son sin estado, Nginx en los bordes reparte entre los dos núcleos con reintento automático (un núcleo caído se omite 30 s y el tiempo de espera de conexión es de 1 s). Los adjuntos del chat se guardan en la base de datos, para replicarse con ella."),
+  bullet("Traspaso de datos: un playbook único volcó las seis bases del contenedor heredado al clúster nuevo y comparó el número de tablas de origen y destino; el volumen antiguo se conservó como respaldo. La réplica quedó con los mismos datos que el primario (5 usuarios y 5 empleados en ambos nodos, réplica en modo solo lectura)."),
+  p("Un aspecto que conviene entender: cuando el núcleo original se recupera, no recupera el liderazgo. Patroni no define un líder “original”: el rol es el que resulte de la última elección, y devolverlo provocaría una segunda interrupción sin beneficio, porque los dos nodos son idénticos. En el borde, en cambio, Keepalived sí devuelve la IP virtual al nodo de mayor prioridad. Si se quisiera devolver el liderazgo (por ejemplo, en una ventana de mantenimiento), se hace con un comando de conmutación planificada."),
+  p(`Los resultados de las pruebas que validaron este diseño, con tiempos medidos, se presentan en la sección 9; el diagrama de antes y después de la conmutación es la figura ${F.antesdespues}.`),
+
+  h2("6.8 Herramientas de la orquesta y su función"),
+  p("El sistema se compone de varias herramientas que cooperan; cada una resuelve un problema distinto. La tabla resume qué hace cada una, dónde vive y qué pasa si falla."),
+];
+const toolRows = [
+  ["Proxmox VE (KVM y LXC)", "Hipervisor: crea y ejecuta las máquinas virtuales y el contenedor de monitoreo; actúa como router de la red interna (NAT/DNAT).", "El nodo Proxmox", "Si cae, cae toda la infraestructura (límite de un solo servidor físico)."],
+  ["VMware Workstation (red NAT VMnet8)", "Aloja a Proxmox en la fase de simulación y lo aísla de la red externa mediante una red privada.", "PC físico", "Sin él no hay simulación; con el servidor real se reemplaza por Proxmox nativo."],
+  ["Terraform", "Infraestructura como código: define y crea las VMs, la red interna y el contenedor de monitoreo contra la API de Proxmox.", "Equipo del operador", "No afecta al servicio en marcha; solo a los cambios de infraestructura."],
+  ["Ansible", "Configuración como código: instala y configura Nginx, Keepalived, etcd, Patroni, HAProxy, Docker y Uptime Kuma; idempotente.", "Se ejecuta desde crm-edge", "No afecta al servicio en marcha."],
+  ["cloud-init", "Da a cada VM su usuario, llave SSH, red y DNS en el primer arranque.", "En cada VM y en el contenedor", "Solo interviene al crear o reconfigurar la VM."],
+  ["Nginx", "Servidor web y proxy inverso en los bordes: entrega el frontend, termina HTTPS y reparte las llamadas entre los dos núcleos con reintento.", "crm-edge y crm-edge-b", "Un borde caído lo cubre el otro."],
+  ["Keepalived (VRRP)", "Mantiene la IP virtual 10.10.10.5 en el borde sano; conmutación en ≈ 3 s.", "crm-edge y crm-edge-b", "Si ambos fallan, no hay entrada al servicio."],
+  ["Docker y Docker Compose", "Empaquetan y ejecutan los microservicios de la aplicación.", "crm-core y crm-core-b", "Un núcleo caído lo cubre el otro."],
+  ["PostgreSQL 14", "Base de datos de las seis bases del CRM; los datos de salud se guardan cifrados a nivel de columna.", "crm-core y crm-core-b", "Ver Patroni."],
+  ["Patroni", "Gestiona PostgreSQL en cada núcleo: replicación sincrónica y conmutación automática del primario.", "Un agente por núcleo (no hay uno “principal”)", "Un agente caído provoca la elección de otro líder."],
+  ["etcd", "Árbitro de Patroni: guarda quién es el líder (clave con TTL de 30 s); tres miembros, mayoría de dos.", "crm-edge, crm-edge-b y crm-core-b", "Tolera una caída; con dos caídas se detiene por seguridad (sin split-brain)."],
+  ["HAProxy", "Punto de entrada único a la base (puerto 5000): comprueba /primary y dirige al líder vigente.", "crm-core y crm-core-b", "Cada núcleo tiene el suyo."],
+  ["Uptime Kuma", "Monitoreo tipo NOC: nueve monitores en el panel principal y dos en el centinela; alertas por cambio de estado.", "Contenedor crm-mon; centinela en crm-edge", "El centinela vigila al principal."],
+  ["Autoridad certificadora privada (openssl)", "Emite el certificado HTTPS de los bordes; su llave nunca sale del equipo del responsable.", "Equipo del operador", "Si caduca, hay que renovarlo (vigencia de 2 años)."],
+  ["Git y GitHub", "Versionan el código, la infraestructura y el informe; cada cambio queda con su commit.", "Repositorio en GitHub", "No afecta al servicio."],
+  ["iptables (NAT/DNAT)", "Publica el CRM y el acceso de administración en Proxmox y limita la salida a Internet solo a los bordes.", "Nodo Proxmox", "Persistente por script idempotente."],
+];
+s67.push(makeTable([2200, 3600, 1700, 2100], ["Herramienta", "Función en el sistema", "Dónde vive", "Si falla"], toolRows));
+const s67a = [
+  ...figura(DIA, "11-patroni-donde-vive-cada-pieza.png", "Alta disponibilidad de la base de datos: dónde vive cada pieza",
+    "Qué se observa: el clúster etcd de tres miembros (arriba) arbitra, y cada núcleo tiene su propio Patroni con PostgreSQL, HAProxy y la aplicación. Ninguno de los dos agentes es “el principal”; crm-core-b aloja un nodo de datos y un voto de etcd a la vez, por lo que el diseño tolera una falla a la vez.", 1000, 540),
+  pageBreak(),
+  ...figura(DIA, "08-conmutacion-antes-despues.png", "Conmutación automática de la base de datos: antes y después",
+    "Qué se observa: a la izquierda, operación normal con crm-core como líder y crm-core-b como réplica sincrónica; a la derecha, tras apagar crm-core, crm-core-b es el nuevo líder y HAProxy dirige a él sin cambiar la configuración de las aplicaciones.", 1000, 540),
+];
+
 const s20 = [
   h1("7. Control de Versiones (GitHub)"),
   p("Todo el trabajo descrito en este informe está versionado con git y publicado en un repositorio real de GitHub (arkno1820-arch/crm-empresarial), con cada commit correspondiendo a un cambio real y verificable."),
@@ -681,7 +774,7 @@ const s20a = [
 // ---- 8 Bitacora (portrait) ----
 const s21 = [
   h1("8. Bitácora de Incidentes Reales (fase de simulación)"),
-  p("Dieciocho incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
+  p("Veintitrés incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
 ];
 const incidents = [
   ["1", "Caché de DNS del gateway Nginx", "Nginx seguía resolviendo IPs viejas tras reconstruir contenedores.", "`resolver 127.0.0.11 valid=10s;` + variables dinámicas en proxy_pass."],
@@ -701,58 +794,155 @@ const incidents = [
   ["15", "Regla NAT amplia persistente en iptables", "Una regla MASQUERADE de 10.10.10.0/24 quedó guardada en /etc/iptables/rules.v4 y habría devuelto la salida a Internet al núcleo tras un reinicio.", "Regla eliminada de la configuración activa y del archivo persistente; verificado con iptables (solo los bordes con salida)."],
   ["16", "Monitores de Uptime Kuma en rojo tras cambiar el direccionamiento", "Tres monitores del borde apuntaban a las IPs antiguas de la red externa.", "Direcciones actualizadas a 10.10.10.2, .3 y .5; los seis monitores volvieron a “Funcional”."],
   ["17", "Diferencia residual del proveedor de Terraform", "Tras eliminar un bloque ip_config, el plan sigue reportando 2 cambios aunque Proxmox coincide con el código.", "Diferencia observada y documentada; la verificación se hizo en Cloud-Init de cada VM. No afecta a las VMs."],
-  ["18", "Monitoreo con punto único de falla", "Uptime Kuma corría solo en crm-edge: al apagarlo en una prueba de estrés, el CRM siguió disponible por crm-edge-b pero el monitoreo dejó de estar disponible.", "Instancia de Kuma en cada borde con monitoreo cruzado (ADR-08); segunda instancia sembrada por la red interna y desplegada con Ansible."],
+  ["18", "Monitoreo con punto único de falla", "Uptime Kuma corría solo en crm-edge: al apagarlo en una prueba de estrés, el CRM siguió disponible por crm-edge-b pero el monitoreo dejó de estar disponible.", "Instancia de Kuma en cada borde con monitoreo cruzado (ADR-08); segunda instancia sembrada por la red interna y desplegada con Ansible."],,
+  ["19", "Núcleo sin redundancia real de la base de datos", "Al apagar crm-core, la base de datos y el CRM caían: los dos núcleos no compartían la base en vivo (volcado cada 15 min y promoción manual) y el borde solo conocía a crm-core.", "PostgreSQL con Patroni y etcd, HAProxy en cada núcleo, aplicación activa en ambos y Nginx con upstream a los dos (ADR-09)."],
+  ["20", "Pérdida de quórum con dos VMs de etcd caídas", "Con crm-edge-b y crm-core-b apagadas a la vez, etcd quedó con 1 de 3 miembros; Patroni se negó a promover y el CRM dio error 500 (falla segura, sin split-brain).", "El diseño tolera una falla a la vez; al volver crm-edge-b recuperó la mayoría y crm-core se promovió sola. Límite declarado en el informe."],
+  ["21", "Primera petición lenta con un núcleo caído", "Nginx esperaba 3 s a un núcleo apagado antes de usar el otro.", "max_fails=1, fail_timeout=30 s y timeout de conexión de 1 s: solo la primera solicitud paga la espera; las siguientes bajan a ≈ 45 ms."],
+  ["22", "Monitoreo externo que no se vigila a sí mismo", "Al apagar crm-mon, el panel principal desaparecía sin alarma.", "Centinela secundario de dos monitores en crm-edge (tema oscuro) que marca en rojo la caída del principal (ADR-10)."],
+  ["23", "Advertencia de huella SSH cambiada", "El cloud-init regeneró las llaves de host de los bordes tras un apply de Terraform; el cliente rechazó la conexión.", "Verificada la huella contra el archivo de llave de la VM y eliminada la entrada antigua de known_hosts; conexión aceptada con la huella comprobada."]
 ];
 s21.push(makeTable([500, 2500, 3500, 3200], ["#", "Incidente", "Causa raíz", "Resolución"], incidents));
 
-// ---- 9 Pruebas (portrait) ----
+// ---- 9 Pruebas y verificación (portrait) ----
 s21.push(h1("9. Pruebas y Verificación"));
 s21.push(p(
-  "Las pruebas se ejecutaron técnicamente entre el 23 y el 25 de septiembre de 2026, como parte del " +
+  "Las pruebas se ejecutaron técnicamente entre el 23 y el 26 de septiembre de 2026, como parte del " +
   "cierre de la fase de desarrollo del entorno de simulación. Se presentan y validan formalmente dentro " +
-  "de la Fase F3 del cronograma de la práctica —“Validación de infraestructura y pruebas”, 12 al 18 de " +
-  `octubre de 2026 (ver figura ${F.gantt})—, que es cuando corresponde su revisión y cierre dentro del periodo oficial.`
+  "de la Fase F3 del cronograma —“Validación de infraestructura y pruebas”, 12 al 18 de octubre de 2026 " +
+  `(figura ${F.gantt})—, que es cuando corresponde su revisión y cierre dentro del periodo oficial.`
 ));
-s21.push(h2("9.1 Failover de Keepalived: prueba inicial (Fase F3)"));
-s21.push(p("Ejecutada con apagado abrupto (no un shutdown ordenado) para simular una falla real, bajo el direccionamiento de la red anterior:"));
-s21.push(bullet("19:03:40 — se apaga crm-edge de golpe, mientras sostenía la IP virtual."));
-s21.push(bullet("19:03:50 — la IP virtual ya respondía 200 OK, ahora servida por crm-edge-b. Sin caída visible del servicio."));
-s21.push(bullet("19:04:37 — se enciende crm-edge de nuevo. Al terminar de bootear, reclamó automáticamente la IP virtual (prioridad 150 vs. 100) y crm-edge-b la soltó — sin intervención manual."));
-
-s21.push(h2("9.2 Failover de Keepalived: revalidación en la red NAT (Fase F3)"));
+s21.push(h2("9.1 Metodología de las pruebas de estrés"));
 s21.push(p(
-  `Repetida sobre la arquitectura vigente (VIP interna 10.10.10.5, acceso por Proxmox). Se detuvo Keepalived en crm-edge y se verificó, ` +
-  `en menos de 5 segundos, que la IP virtual pasó a crm-edge-b; mientras tanto el CRM siguió respondiendo por https://192.168.80.10 ` +
-  `(figura ${F.crmfailover}). Luego se reinició Keepalived en crm-edge y este recuperó la IP virtual. El ciclo completo, con los comandos y ` +
-  `las direcciones de cada paso, se muestra en la figura ${F.ciclo}.`
+  "Las pruebas de estrés consisten en apagar de forma abrupta (Stop, no un apagado ordenado) componentes reales de la " +
+  "infraestructura con el CRM abierto y con sesión iniciada, y observar tres cosas: si el servicio sigue disponible, si el " +
+  "monitoreo lo detecta y cuánto tarda el sistema en recuperarse. Los tiempos no son estimaciones: la hora del apagado " +
+  "se toma del historial de tareas de Proxmox (hora local UTC-3, convertida a UTC) y los eventos posteriores, de los " +
+  "registros de Patroni y de Keepalived y del histórico de Uptime Kuma. Las horas de esta sección están en UTC salvo que se indique."
+));
+s21.push(makeTable([1500, 2900, 2500, 2600], ["Prueba", "Qué se apaga", "Qué debía ocurrir", "Resultado medido"], [
+  ["P1 — Núcleo", "crm-core (VM 101), líder de la base de datos", "Patroni promueve a crm-core-b; el CRM sigue respondiendo", "Base con escrituras 26,4 s después del apagado; sin pérdida de datos"],
+  ["P2 — Borde", "crm-edge (VM 103), con crm-core aún apagada", "Keepalived pasa la IP virtual a crm-edge-b", "Nueva IP virtual en ≈ 3 s; sin corte visible para el usuario"],
+  ["P3 — Extrema", "crm-mon (contenedor) y crm-edge-b (VM 102) a la vez", "El CRM sigue funcionando y el centinela detecta la caída del monitor principal", "CRM operativo; centinela en rojo para el principal; el principal vuelve 28 s tras encenderlo"],
+  ["Recuperación", "Se reencienden las VMs y el contenedor", "Todo vuelve solo a su estado previo, sin intervención manual", "etcd 3/3, réplica sincrónica con lag 0, IP virtual de vuelta en crm-edge en ≈ 4 s"],
+]));
+
+s21.push(h2("9.2 P1 — Apagado del núcleo activo (crm-core)"));
+s21.push(p(
+  `Se apagó crm-core (VM 101) a las 17:25:57 UTC, cuando era el líder de la base de datos. Patroni en crm-core-b detectó la ` +
+  `falla a las 17:26:24,131 —al vencer la clave del líder en etcd, cuyo TTL es de 30 s—, adquirió el bloqueo de sesión a los 48 ms ` +
+  `y habilitó las escrituras a los 296 ms (17:26:24,427), con lo que la línea de tiempo de la base pasó de 7 a 8. Desde el apagado ` +
+  `hasta que la base aceptó escrituras transcurrieron 26,4 s; casi todo ese tiempo es la espera del vencimiento del TTL, no la promoción, ` +
+  `que fue prácticamente instantánea (figura ${F.ltnucleo}). La réplica era sincrónica, por lo que no se perdieron transacciones: la última ` +
+  `confirmada fue a las 17:25:24 UTC, antes de la falla.`
+));
+s21.push(p(
+  `Mientras tanto, el CRM siguió respondiendo (figura ${F.p1crm}), porque los microservicios corren activos en ambos núcleos y Nginx omite ` +
+  `el núcleo caído; solo la primera solicitud pagó una espera breve, ajustada después a 1 s (incidente 21). El monitoreo lo señaló en rojo ` +
+  `(figura ${F.p1kuma}) y Proxmox lo confirma (figura ${F.p1proxmox}).`
+));
+s21.push(h3("Hallazgo previo que originó esta prueba"));
+s21.push(p(
+  "La primera versión de esta prueba, ejecutada antes de rediseñar el núcleo, mostró que apagar crm-core tumbaba la base de datos " +
+  "y el servicio (error 502 y monitor PostgreSQL en rojo): las dos VMs no compartían la base en vivo. Ese resultado motivó el " +
+  "rediseño de la sección 6.7 (ADR-09) y es la razón por la que esta prueba se repitió con la solución aplicada."
 ));
 
-s21.push(h2("9.3 Failover manual del núcleo (Fase F3)"));
-s21.push(bullet("Apagado abrupto de crm-core mientras era el primario: la API del CRM cayó con 502 Bad Gateway."));
-s21.push(bullet("Se ejecutó el runbook de promoción manual: cambiar `crm_core_ip` a la IP de la réplica y re-aplicar Ansible."));
-s21.push(bullet("La API volvió a responder, servida por crm-core-b. Tras encender crm-core de nuevo, se revirtió la promoción."));
+s21.push(h2("9.3 P2 — Apagado del borde activo (crm-edge)"));
+s21.push(p(
+  `Con crm-core todavía apagada, se apagó crm-edge (VM 103) a las 17:55:11 UTC. Keepalived en crm-edge-b registró "Entering MASTER STATE" ` +
+  `a las 17:55:14, es decir, unos 3 s después: VRRP detecta la pérdida del maestro con anuncios cada segundo, mucho más rápido que el ` +
+  `vencimiento del TTL de la base de datos (figura ${F.ltborde}). El usuario casi no lo notó: el monitor del enlace de servicio mantuvo ` +
+  `respuestas de 20 a 30 ms, y el borde de respaldo mostró un solo pico de ≈ 85 ms al asumir la IP virtual (figuras ${F.p2enlace} y ${F.p2respaldo}). ` +
+  `El CRM siguió funcionando (figura ${F.p2crm}), Kuma marcó en rojo el borde caído con la alarma “connect EHOSTUNREACH” (figura ${F.p2kuma}) ` +
+  `y las horas de apagado salen del historial de Proxmox (figuras ${F.p2proxmox} y ${F.p2taskhist}). Esta prueba tuvo además dos fallas ` +
+  `simultáneas en capas distintas (núcleo y borde), y el servicio se mantuvo.`
+));
 
-s21.push(h2("9.4 Verificación de HTTPS con CA privada (Fase F3)"));
-s21.push(p(`Confirmado con \`openssl s_client\` y \`curl --cacert\` (validación real de la cadena de confianza contra la CA privada, código de verificación 0) y visualmente en el navegador: candado, sin advertencias (figura ${F.login}), con el nuevo SAN que incluye 192.168.80.10.`));
+s21.push(h2("9.4 P3 — Prueba extrema: monitoreo principal y un borde caídos a la vez"));
+s21.push(p(
+  `Con todo el sistema sano, se apagó el contenedor crm-mon a las 18:35:56 UTC y la VM crm-edge-b a las 18:36:07. Resultados: el CRM siguió ` +
+  `funcionando con otro usuario (figura ${F.p3crm}); etcd quedó con dos de sus tres miembros (con mayoría) y Patroni no cambió (crm-core-b líder, ` +
+  `crm-core réplica sincrónica); la IP virtual permaneció en crm-edge, por lo que no hubo conmutación de borde (figura ${F.p3proxmox}). ` +
+  `El panel principal de Kuma dejó de responder (figura ${F.p3kumacaido}); en cambio, el centinela de crm-edge siguió activo, marcó en rojo ` +
+  `“MONITOREO · Kuma principal” y mantuvo en verde “ENLACE · CRM extremo a extremo” (figura ${F.p3centinela}): la falla del monitoreo quedó ` +
+  `evidenciada sin afectar el servicio. Esta prueba motivó ADR-10 (incidente 22).`
+));
+s21.push(p(
+  "Al encender crm-mon a las 19:22:47 UTC, el centinela lo vio de nuevo en verde a las 19:23:15: 28 s desde el comando de inicio, sin " +
+  "reconfigurar nada, porque Uptime Kuma arranca solo con sus monitores. El monitor del principal estuvo caído 46 min 51 s, y esa " +
+  "ventana quedó registrada como un hueco en su histórico."
+));
 
-s21.push(h2("9.5 Verificación de monitoreo (Fase F3)"));
-s21.push(p(`Seis monitores activos en Uptime Kuma, todos en estado “Funcional” tras la corrección del direccionamiento (figuras ${F.kuma1} a ${F.kuma6}).`));
+s21.push(h2("9.5 Recuperación tras las pruebas"));
+s21.push(p(
+  "Al reencender las VMs, el sistema volvió a su estado previo sin intervención manual, y varias de sus reacciones ilustran el diseño:"
+));
+s21.push(bullet("Keepalived: crm-edge arrancó en BACKUP a las 18:14:50 y entró a MASTER a las 18:14:54, recuperando la IP virtual por su prioridad mayor (150 frente a 100), en unos 4 s; crm-edge-b volvió a BACKUP."));
+s21.push(bullet("Patroni: crm-core se reincorporó como réplica sincrónica con lag 0, pero crm-core-b siguió siendo el líder. Es el comportamiento correcto: no existe un líder “original”, y devolver el liderazgo sería una segunda interrupción sin beneficio (sección 6.7)."));
+s21.push(bullet("etcd: los tres miembros volvieron a estar sanos y el clúster recuperó la mayoría completa."));
+s21.push(bullet("Aislamiento: verificado al final, los núcleos y el contenedor de monitoreo siguen sin salida a Internet; solo los bordes la tienen."));
 
-s21.push(h2("9.6 Verificación de aislamiento y protección de datos (Fase F3)"));
-s21.push(bullet(`Aislamiento del núcleo: el ping desde el PC hacia 10.10.10.10 termina con 100% de pérdida (figura ${F.ping}) y las reglas de NAT dejan salida solo a los bordes (figura ${F.iptables}).`));
+s21.push(h2("9.6 Límites del diseño, declarados"));
+s21.push(bullet("Se tolera la caída de UNA VM a la vez. Con dos VMs del clúster etcd caídas simultáneamente (por ejemplo crm-edge-b y crm-core-b), etcd pierde la mayoría y Patroni no promueve: el servicio de base de datos se detiene por seguridad, sin riesgo de split-brain, y se recupera solo al volver la mayoría (incidente 20)."));
+s21.push(bullet("Todo reside en un único servidor físico: ni el panel de monitoreo ni el centinela protegen ante la caída del equipo completo. Eso requiere el segundo servidor cotizado (sección 5.7)."));
+s21.push(bullet("El apagado de la prueba es abrupto pero de máquina virtual; no se simularon fallas de disco, corrupción de datos ni de red física, que quedan fuera del alcance de la simulación."));
+
+s21.push(h2("9.7 Verificaciones complementarias"));
+s21.push(bullet(`HTTPS con CA privada: confirmado con openssl s_client y curl --cacert (validación real de la cadena de confianza, código 0) y en el navegador, con candado y sin advertencias (figura ${F.login}); el SAN incluye 192.168.80.10.`));
+s21.push(bullet(`Aislamiento del núcleo: el ping desde el PC hacia 10.10.10.10 termina con 100 % de pérdida (figura ${F.ping}) y las reglas de NAT dejan salida solo a los bordes (figura ${F.iptables}).`));
 s21.push(bullet(`Cifrado en reposo: una consulta directa a PostgreSQL devuelve texto cifrado (gAAAA…) en las columnas de salud (figura ${F.cifrado}).`));
 s21.push(bullet(`Control de acceso: el menú y los datos de salud dependen del rol y de los permisos (figura ${F.usuarios}, figura ${F.sinpermiso} y, en el Anexo B, figuras ${F.permrrhh} a ${F.permadm}).`));
-
-s21.push(h2("9.7 Prueba de estrés: apagado del borde activo (Fase F3)"));
-s21.push(p(`Se apagó la máquina virtual crm-edge (borde activo, con la IP virtual) como prueba de estrés. Resultados observados: (1) crm-edge-b tomó la IP virtual y mantuvo el CRM en servicio, sin intervención manual; (2) el monitoreo, que entonces corría solo en crm-edge, dejó de estar disponible junto con su túnel de acceso, lo que motivó el hallazgo y la solución de la sección 6.5.1. Al encender de nuevo crm-edge, Uptime Kuma arrancó solo y conservó sus monitores. La prueba se repitió con la solución aplicada: la instancia de Kuma de crm-edge-b siguió operativa y señaló la caída de crm-edge (figura ${F.kumaprueba}).`));
+s21.push(bullet(`Failover de Keepalived en la red NAT: al detener Keepalived en crm-edge, la IP virtual pasó a crm-edge-b en menos de 5 s y el CRM siguió respondiendo (figuras ${F.crmfailover} y ${F.ciclo}).`));
 
 const s21a = [
-  ...figura(CAP, "ha-01-ciclo-failover.png", "Ciclo completo de failover del borde",
-    "Qué se observa: crm-edge con la IP virtual 10.10.10.5; se detiene su Keepalived; la IP virtual aparece en crm-edge-b (repetida en dos consultas); se reinicia Keepalived en crm-edge y la IP virtual vuelve a él. Todo sin intervención en las VMs, solo por VRRP.", 950, 480),
+  ...figura(DIA, "09-conmutacion-linea-de-tiempo.png", "Línea de tiempo de la conmutación del núcleo (P1)",
+    "Qué se observa: con datos reales del registro de Patroni, del apagado de crm-core a las 17:25:57 hasta las escrituras habilitadas en crm-core-b a las 17:26:24,427; la detección tarda por el TTL de 30 s y la promoción, solo 0,296 s.", 1000, 540),
   pageBreak(),
-  ...figura(CAP, "ha-02-crm-durante-failover.png", "El CRM disponible durante el failover",
-    "Qué se observa: con crm-edge sin Keepalived (la IP virtual servida por crm-edge-b), el CRM sigue respondiendo con su pantalla de inicio de sesión en https://192.168.80.10.", 640, 480),
+  ...figurasApiladas(CAP, [
+    { file: "p1-proxmox-core-apagado.png", titulo: "P1: Proxmox con crm-core apagado", texto: "Qué se observa: la VM 101 (crm-core) detenida mientras las demás máquinas y el contenedor crm-mon siguen en ejecución." },
+    { file: "p1-crm-funcionando.png", titulo: "P1: el CRM sigue funcionando", texto: "Qué se observa: el sistema responde en https://192.168.80.10 con crm-core apagada; la base la sirve crm-core-b." },
+  ], 620, 250),
+  pageBreak(),
+  ...figura(CAP, "p1-kuma-core-apagado.png", "P1: el monitoreo detecta la falla",
+    "Qué se observa: los monitores de la base y de la aplicación de crm-core en rojo, con las alarmas de conexión fallida; el servicio y los demás monitores se mantienen.", 1000, 500),
+  pageBreak(),
+  ...figura(DIA, "10-conmutacion-borde-linea-de-tiempo.png", "Línea de tiempo de la conmutación del borde (P2)",
+    "Qué se observa: el apagado de crm-edge a las 17:55:11, la entrada de crm-edge-b a MASTER a las 17:55:14 (≈ 3 s) y la respuesta del CRM sin corte visible.", 1000, 540),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "p2-proxmox-borde-apagado.png", titulo: "P2: Proxmox con crm-edge apagado", texto: "Qué se observa: la VM 103 (crm-edge) detenida; crm-edge-b y el resto de la infraestructura siguen en ejecución." },
+    { file: "p2-proxmox-task-history.png", titulo: "P2: historial de tareas de Proxmox", texto: "Qué se observa: las filas de Stop de las VMs 103 y 101 con su hora local; de aquí se toma la hora exacta del apagado." },
+  ], 620, 250),
+  pageBreak(),
+  ...figura(CAP, "p2-kuma-borde-apagado.png", "P2: el monitoreo marca en rojo el borde caído",
+    "Qué se observa: el monitor BORDE · primario en “Caído” con la alarma “connect EHOSTUNREACH 10.10.10.2:443”; el resto del sistema sigue funcionando.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "p2-crm-funcionando.png", "P2: el CRM sigue funcionando",
+    "Qué se observa: el módulo de reservas responde con normalidad por la IP virtual servida por crm-edge-b; los correos de los huéspedes están difuminados.", 900, 480),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "p2-kuma-enlace-tiempos.png", titulo: "P2: tiempo de respuesta del enlace de servicio", texto: "Qué se observa: la IP virtual mantiene respuestas de 20 a 30 ms alrededor de las 14:55 (hora local), sin hueco visible durante la conmutación." },
+    { file: "p2-kuma-borde-respaldo-tiempos.png", titulo: "P2: tiempo de respuesta del borde de respaldo", texto: "Qué se observa: un solo pico de ≈ 85 ms a las 14:55, cuando crm-edge-b asume la IP virtual." },
+  ], 620, 250),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "p3-proxmox-mon-y-edge-b-apagados.png", titulo: "P3: crm-mon y crm-edge-b apagados", texto: "Qué se observa: el contenedor 104 y la VM 102 detenidos; el resto de la infraestructura sigue en ejecución." },
+    { file: "p3-kuma-externo-caido.png", titulo: "P3: el panel principal de Kuma no responde", texto: "Qué se observa: el panel principal (192.168.80.10:3001) agota el tiempo de espera porque su contenedor está apagado." },
+  ], 620, 250),
+  pageBreak(),
+  ...figura(CAP, "p3-crm-otro-usuario.png", "P3: el CRM sigue funcionando con otro usuario",
+    "Qué se observa: con el monitoreo principal y un borde caídos, el CRM responde a otra sesión de usuario (módulo de usuarios y accesos); los correos están difuminados.", 900, 480),
+  pageBreak(),
+  ...figura(CAP, "p3-centinela-detecta-caida.png", "P3: el centinela detecta la caída del monitor principal",
+    "Qué se observa: el centinela (tema oscuro) marca en rojo “MONITOREO · Kuma principal” (0 %) y mantiene en verde “ENLACE · CRM extremo a extremo”: la falla del monitoreo queda evidenciada sin afectar el servicio.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "ha-01-ciclo-failover.png", "Ciclo de failover del borde con Keepalived (comandos)",
+    "Qué se observa: crm-edge con la IP virtual; se detiene su Keepalived; la IP virtual aparece en crm-edge-b; al reiniciarlo, vuelve a crm-edge. Todo por VRRP, sin intervención en las VMs.", 950, 480),
+  pageBreak(),
+  ...figura(CAP, "ha-02-crm-durante-failover.png", "El CRM disponible durante el failover del borde",
+    "Qué se observa: con crm-edge sin Keepalived, el CRM sigue respondiendo con su pantalla de inicio de sesión en https://192.168.80.10.", 640, 480),
 ];
+
 
 // ---- 10 Evidencia del despliegue (portrait titulo + landscape figuras) ----
 const s22 = [
@@ -783,7 +973,7 @@ const s23 = [
   ),
   p(
     "El valor del trabajo no reside solo en el resultado —la infraestructura funcionando en " +
-    "simulación—, sino en el proceso documentado de dieciocho incidentes reales resueltos con su " +
+    "simulación—, sino en el proceso documentado de veintitrés incidentes reales resueltos con su " +
     "causa raíz identificada (varios de ellos de red: choque de IP, direcciones MAC descartadas por " +
     "el hotspot, reglas de NAT persistentes), y en la experiencia adquirida que habilita, con " +
     "conocimiento real y no teórico, la migración responsable a producción sobre el servidor físico de CHIC."
@@ -870,7 +1060,7 @@ const sCa = [
     "Qué se observa: el flujo real de login y de una llamada autenticada posterior. El token JWT permite que cada microservicio valide una solicitud sin depender de auth-service en cada llamada (sin punto único de falla por autenticación).", 1000, 540),
 ];
 
-verificarFiguras(FIG_KEYS.length);
+// (la validacion de figuras y referencias se hace en la etapa de resolucion posterior)
 
 // ============================================================
 // Build document
@@ -922,6 +1112,8 @@ const doc = new Document({
     landscapeSection(s16a),
     portraitSection(s17),
     landscapeSection(s17a),
+    portraitSection(s67),
+    landscapeSection(s67a),
     portraitSection(s20),
     landscapeSection(s20a),
     portraitSection(s21),

@@ -103,11 +103,15 @@ function pngSize(buf) {
   return { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
 }
 let figContador = 0;
-function figuraTitulo(titulo) {
+const figArchivos = [];   // archivo de cada figura, en el orden en que se crea su titulo
+function figuraTitulo(titulo, archivo) {
   figContador++;
+  figArchivos.push(archivo || null);
+  const _idx = figArchivos.length - 1;
   return new Paragraph({
-    style: "Caption", keepNext: true, keepLines: true,
-    children: [new TextRun({ text: "Figura " }), new SequentialIdentifier("Figura"), new TextRun({ text: ". " + titulo })],
+    style: "Caption", keepNext: true, keepLines: true, __figIdx: _idx,
+    children: [new TextRun({ text: "Figura " }), new SequentialIdentifier("Figura"), new TextRun({ text: ". " + titulo }),
+      new TextRun({ text: " [[" + (archivo || "") + "]]", size: 2, color: "FFFFFF" })],
   });
 }
 function leyenda(texto) {
@@ -129,7 +133,7 @@ function figura(dir, file, titulo, texto, maxW = 1000, maxH = 500) {
   return [
     new Paragraph({ alignment: AlignmentType.CENTER, keepNext: true, spacing: { before: 60, after: 60 },
       children: [new ImageRun({ type: "png", data: buf, transformation: { width: w, height: h } })] }),
-    figuraTitulo(titulo),
+    figuraTitulo(titulo, file),
     leyenda(texto),
   ];
 }
@@ -144,7 +148,7 @@ function figurasPar(dir, a, b, maxW = 480, maxH = 420) {
       margins: { top: 40, bottom: 40, left: 100, right: 100 },
       children: [
         new Paragraph({ alignment: AlignmentType.CENTER, keepNext: true, children: [new ImageRun({ type: "png", data: buf, transformation: { width: w, height: h } })] }),
-        figuraTitulo(f.titulo), leyenda(f.texto),
+        figuraTitulo(f.titulo, f.file), leyenda(f.texto),
       ],
     });
   };
@@ -155,6 +159,7 @@ function figurasPar(dir, a, b, maxW = 480, maxH = 420) {
 function figurasApiladas(dir, lista, maxW = 700, maxH = 190) {
   return lista.flatMap(f => figura(dir, f.file, f.titulo, f.texto, maxW, maxH));
 }
+function ordenFiguras() { return ordenFinal.length ? ordenFinal.map(i => figArchivos[i]) : figArchivos.slice(); }
 function verificarFiguras(esperadas) {
   if (figContador !== esperadas) throw new Error("Numeracion de figuras: se generaron " + figContador + " y se esperaban " + esperadas);
 }
@@ -196,6 +201,17 @@ function makeFooter() {
 // Cada llamada crea una NUEVA seccion de Word (salto de seccion = pagina nueva).
 // portraitSection/landscapeSection intercalados permiten que los diagramas
 // grandes vivan en hojas horizontales sin forzar todo el documento a landscape.
+const ordenFinal = [];
+function anotar_no_usado(children) {
+  const rec = (n) => {
+    if (!n) return;
+    if (Array.isArray(n)) { n.forEach(rec); return; }
+    if (typeof n.__figIdx === "number") ordenFinal.push(n.__figIdx);
+    for (const k of ["root", "rootKey", "children", "rows", "cells", "options"]) if (n[k]) rec(n[k]);
+    if (n.root) rec(n.root);
+  };
+  rec(children);
+}
 function portraitSection(children) {
   return {
     properties: { page: { size: { width: A4_WIDTH, height: A4_HEIGHT }, margin: MARGIN_PORTRAIT } },
@@ -224,6 +240,6 @@ module.exports = {
   ImageRun, PageBreak, LevelFormat, Header, Footer, PageNumber, VerticalAlign,
   TEAL, TEAL_DARK, AMBER, RED, GRAY, LIGHT, LIGHT_AMBER,
   h1, h2, h3, p, pRich, bold, normal, italic, bullet, numbered, cell, makeTable,
-  figura, figurasPar, figurasApiladas, verificarFiguras, figuraTitulo, leyenda, pageBreak, codeBlock, DIA, EVI, CAP,
+  figura, figurasPar, figurasApiladas, verificarFiguras, ordenFiguras, figuraTitulo, leyenda, pageBreak, codeBlock, DIA, EVI, CAP,
   TableOfContents, portraitSection, landscapeSection, makeHeader, makeFooter,
 };
