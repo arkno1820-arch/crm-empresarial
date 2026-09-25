@@ -1,256 +1,209 @@
 ========================================================================
  CRM EMPRESARIAL - GUIA DE RESPALDO Y RESTAURACION
  Escrita para que la sigas paso a paso aunque hayas olvidado todo el resto.
- Ultima actualizacion: 13-09-2026 (agregada seccion 10: seguridad y datos)
+ Ultima actualizacion: 25-09-2026 (reescrita para Proxmox + Patroni;
+ seccion 10 y 11 sobre seguridad y chat se mantienen)
 ========================================================================
 
 --------------------------------------------------------------------
 1. QUE ES ESTO
 --------------------------------------------------------------------
-Tienes un sistema CRM (empleados, calendario, inventario, reservas)
-corriendo en tu computador con Docker. Vive en dos lugares:
+El CRM (empleados, calendario, inventario, reservas, chat) corre en
+maquinas virtuales dentro de Proxmox (ver INSTRUCCIONES_APAGADO_ENCENDIDO.txt).
+La epoca de Docker Desktop en tu PC termino: ya NO hay contenedor
+"crm_postgres" ni volumenes de Docker en Windows.
 
-  a) El CODIGO del sistema:
-     C:\Users\HP\Desktop\crm-empresarial
+Lo que hay que proteger es solo esto:
 
-  b) Los DATOS (lo que carga la gente cada dia: empleados, reservas,
-     usuarios, etc.): viven DENTRO de Docker, en un contenedor de
-     Postgres. NO son un archivo que puedas ver en el Explorador de
-     Windows - por eso hace falta un respaldo para poder recuperarlos.
+  a) LOS DATOS (empleados, usuarios, reservas, chat, etc.): viven en
+     PostgreSQL, dentro de los dos nucleos (crm-core y crm-core-b), que se
+     copian entre si con Patroni. Los documentos que la gente comparte por
+     el Chat tambien estan en la base de datos, asi que un solo volcado
+     los incluye.
 
-Si el disco duro falla, si borras la carpeta sin querer, o si algo se
-corrompe, SOLO puedes recuperar lo que hayas respaldado. Por eso existe
-este procedimiento.
+  b) EL CODIGO y la configuracion: carpeta del PC
+         C:\Users\HP\Desktop\crm-empresarial
+     (tambien esta en GitHub, pero SIN los archivos secretos).
+
+  c) LOS SECRETOS: el archivo .env (claves, incluida la que descifra los
+     datos de salud) y las contrasenas de PostgreSQL. Ver seccion 8.
+
+LA REDUNDANCIA NO ES RESPALDO: Patroni protege contra la caida de un
+nucleo, pero si alguien borra datos por error, el borrado se copia
+tambien al otro nucleo. Solo un respaldo permite volver atras.
 
 
 --------------------------------------------------------------------
-2. COSAS QUE DEBES SABER ANTES DE EMPEZAR
+2. ANTES DE EMPEZAR
 --------------------------------------------------------------------
-- Necesitas tener Docker Desktop ABIERTO y corriendo (el icono de la
-  ballena en la barra de tareas, sin animacion de "cargando").
-
-- Necesitas tener el sistema CRM encendido. Para encenderlo:
-    1. Abre una terminal (PowerShell). Se abre asi: click en el boton
-       de inicio de Windows, escribe "PowerShell", presiona Enter.
-    2. Escribe este comando y presiona Enter:
-
-         cd "C:\Users\HP\Desktop\crm-empresarial"
-
-    3. Escribe este otro comando y presiona Enter:
-
-         docker compose up -d
-
-    4. Espera unos 20-30 segundos a que todo termine de arrancar.
-
-- Para APAGAR el sistema cuando termines de usarlo (opcional, no es
-  obligatorio apagarlo cada dia):
-
-         docker compose down
-
-- Para ABRIR el panel en el navegador, ahora hay dos formas:
-
-    * http://localhost:3000   (como siempre, funciona igual que antes)
-    * https://localhost:3443  (RECOMENDADA: la conexion va cifrada)
-
-  La primera vez que abras la version https://, el navegador va a
-  mostrar una advertencia tipo "La conexion no es privada" o "Advanced/
-  Avanzado". Es normal y esperado: es porque el certificado de
-  seguridad es "autofirmado" (no lo emitio una autoridad externa, ya
-  que el sistema no tiene un dominio de internet propio). Haz click en
-  "Avanzado" y luego en "Continuar a localhost (no seguro)" o similar.
-
-  IMPORTANTE - HAY QUE HACER ESTO DOS VECES, NO UNA: el panel
-  (localhost:3443) y el "motor" que atiende los datos (localhost:8443)
-  tienen certificados separados, y el navegador los aprueba por
-  separado. Si solo aceptas el de 3443, el panel carga pero el login
-  falla con un error como "Failed to fetch". La primera vez que uses
-  https://, en ESE ORDEN:
-
-    1. Abre https://localhost:8443 en una pestana, acepta la
-       advertencia ("Avanzado" > "Continuar"). Deberia mostrar el
-       texto "CRM Empresarial - Gateway activo".
-    2. Recien ahi abre https://localhost:3443 e inicia sesion.
-
-  Se hace UNA sola vez por navegador/equipo y no vuelve a preguntar:
-  no es "cada vez que abres el sistema", es solo la primera vez que
-  ESE navegador en ESE equipo visita el sitio. Despues de eso, cerrar
-  y abrir la pestana, reiniciar el computador, etc. no vuelve a pedirlo.
-
-  Hay que repetir los 2 pasos de arriba de nuevo solo si:
-    - Usas OTRO navegador en el mismo equipo (ej. ya lo aceptaste en
-      Chrome y ahora abres Edge o Firefox por primera vez).
-    - Otra persona lo abre desde SU PROPIO computador.
-    - Usas una ventana de incognito/privada (no guardan la excepcion).
-    - Borras el historial/datos de navegacion de ese navegador.
-
-  Para el uso normal del dia a dia, en el mismo navegador de siempre:
-  no hace falta hacer nada de esto, entras directo por
-  https://localhost:3443.
+- Proxmox y la VM crm-edge deben estar encendidos, y al menos un nucleo
+  con Patroni sano (ver INSTRUCCIONES_APAGADO_ENCENDIDO.txt, seccion 3).
+- Necesitas tu llave SSH: C:\Users\HP\.ssh\id_ed25519_crm
+- Se ejecuta desde tu PC, en PowerShell. No necesitas Docker en el PC.
+- El CRM se abre en https://192.168.80.10 (ya no en localhost:3000).
 
 
 --------------------------------------------------------------------
 3. COMO HACER UN RESPALDO NUEVO (hazlo seguido, ej. 1 vez por semana)
 --------------------------------------------------------------------
-Paso a paso:
+  1. Abre PowerShell (boton de inicio > "PowerShell" > Enter).
 
-  1. Abre PowerShell (boton de inicio > escribe "PowerShell" > Enter).
-
-  2. Asegurate de que Docker Desktop este abierto y el CRM encendido
-     (ver punto 2 de esta guia).
-
-  3. Copia y pega este comando completo, y presiona Enter:
+  2. Copia y pega este comando y presiona Enter:
 
          powershell -ExecutionPolicy Bypass -File "C:\Users\HP\Desktop\crm-empresarial\scripts\backup.ps1"
 
-  4. Espera a que termine. Al final vas a ver un resumen como este:
+  3. Espera a que termine (menos de un minuto). Debe decir
+     "volcado verificado" y mostrar un resumen como:
 
-         Respaldo completo en: C:\Users\HP\Desktop\crm-empresarial-backups\20260913_182035
-         Name                          Tamano (MB)
-         crm-empresarial-source.zip    1.19
-         postgres_dump.sql             0.03
-         postgres_volume.tar.gz        16.56
-         chat_files.tar.gz             0.02
+         Respaldo completo en: C:\Users\HP\Desktop\crm-empresarial-backups\20260925_185627
+         crm-empresarial-source.zip     49.27
+         postgres_dump.sql               0.04
+         (y copias de estas instrucciones)
 
-  5. Listo. El respaldo quedo guardado en tu Escritorio, dentro de la
-     carpeta:
+  Cada ejecucion crea una carpeta NUEVA con fecha y hora. Se conservan
+  los ultimos 10 respaldos; los mas viejos se borran solos.
 
-         C:\Users\HP\Desktop\crm-empresarial-backups\
+  Como funciona (por si te da curiosidad): el script entra por SSH a
+  crm-edge, de ahi a un nucleo, y ejecuta pg_dumpall a traves de HAProxy
+  (puerto 5000), que siempre apunta al LIDER de Patroni. La contrasena
+  de PostgreSQL viaja por la conexion cifrada y no se guarda en ningun
+  archivo del respaldo. Si el volcado no termina bien, el script se
+  detiene con un error en vez de dejar un respaldo enganoso.
 
-     Cada vez que corras el script se crea una carpeta NUEVA con la
-     fecha y hora exacta (ej. "20260913_182035" = 13-sept-2026, 18:20:35).
-     El script guarda automaticamente solo los ultimos 10 respaldos y
-     borra los mas viejos (para no llenar el disco).
+  Si sale "No se pudo entrar a crm-edge": revisa que Proxmox y crm-edge
+  esten encendidos, y si SSH avisa de "huella cambiada" mira la seccion 6
+  de INSTRUCCIONES_APAGADO_ENCENDIDO.txt.
 
 
 --------------------------------------------------------------------
-4. QUE CONTIENE CADA RESPALDO (dentro de cada carpeta con fecha)
+4. QUE CONTIENE CADA RESPALDO
 --------------------------------------------------------------------
   - postgres_dump.sql
-      Todos los datos del sistema (empleados, reservas, usuarios,
-      calendario, inventario) en un archivo de texto. ESTE es el
-      archivo mas importante para recuperar informacion.
-
-  - postgres_volume.tar.gz
-      Una copia "cruda" extra de la base de datos, por si el archivo
-      anterior fallara. No necesitas abrirlo nunca a mano.
-
-  - chat_files.tar.gz
-      Los documentos que la gente comparte por el modulo Chat (fotos,
-      PDFs, etc.). Estos archivos NO estan dentro de Postgres, viven en
-      su propio espacio de Docker, por eso hace falta este archivo
-      aparte para no perderlos.
+      Todos los datos de las 6 bases (auth, calendario, chat, empleados,
+      inventario, reservas), incluidos los documentos del chat. ESTE es
+      el archivo mas importante. Los 4 datos de salud de cada empleado
+      van CIFRADOS dentro del volcado: sin la clave FIELD_ENCRYPTION_KEY
+      (que esta en .env) no se pueden leer.
 
   - crm-empresarial-source.zip
-      TODO el codigo del sistema (paginas, estilos, backend, la
-      configuracion de Docker, y el archivo .env con las claves).
-      Esto es lo que necesitas si perdieras la carpeta del proyecto
-      completa.
+      El codigo, la configuracion de Ansible/Terraform, la documentacion
+      y el archivo .env con las claves. Excluye .git, .terraform y las
+      carpetas de evidencia/presentacion (pesadas y regenerables o ya
+      guardadas aparte). Es lo que necesitas si se pierde la carpeta del
+      proyecto.
+
+  - Copias de las instrucciones.
 
 
 --------------------------------------------------------------------
 5. MUY IMPORTANTE: SACA UNA COPIA FUERA DE ESTE COMPUTADOR
 --------------------------------------------------------------------
-Tener el respaldo en el mismo disco duro NO te protege si el disco se
-rompe, se pierde el computador, o hay un virus. Cada cierto tiempo
-(ej. una vez al mes), copia la carpeta completa:
+El respaldo queda en tu propio PC (el mismo donde corre Proxmox): si el
+disco falla, se pierde TODO junto. Cada cierto tiempo (ej. una vez al
+mes) copia la carpeta completa:
 
     C:\Users\HP\Desktop\crm-empresarial-backups\
 
-...a alguno de estos lugares:
-    - Un pendrive o disco duro externo.
-    - Google Drive, OneDrive o Dropbox.
-    - Un correo a ti mismo con el archivo mas reciente (si es chico).
-
-El archivo .env que viaja dentro de crm-empresarial-source.zip tiene
-contrasenas. Igual puedes guardarlo en tu nube personal, pero NUNCA lo
-subas a un repositorio publico (como GitHub publico) ni lo compartas
-con nadie que no sea de confianza.
+...a un pendrive/disco externo o a una nube personal. El .env dentro del
+zip tiene contrasenas: NUNCA lo subas a un repositorio publico ni lo
+compartas con quien no sea de confianza.
+(Pendiente del proyecto: respaldo automatico fuera del PC, en la nube.)
 
 
 --------------------------------------------------------------------
-6. COMO RESTAURAR LOS DATOS (si algo se borro o se corrompio)
+6. COMO RESTAURAR LOS DATOS (algo se borro o se corrompio)
 --------------------------------------------------------------------
-Usa esto si el sistema esta funcionando pero PERDISTE DATOS (por
-ejemplo, alguien elimino empleados por error, o la base de datos se
-corrompio) y quieres volver a un respaldo anterior.
+ATENCION: esto REEMPLAZA los datos actuales por los del respaldo. Lo que
+se creo despues de ese respaldo se pierde. Hazlo con calma y, antes,
+saca un respaldo nuevo (seccion 3) por si necesitas volver atras.
+Este procedimiento es el estandar de PostgreSQL; no se ha ensayado aun
+sobre los datos reales de produccion: la primera vez, pidele a Claude que
+lo ejecute contigo.
 
-  1. Abre PowerShell.
+  1. Elige la carpeta de respaldo (ej. 20260925_185627) y copia el
+     volcado al bastion (PowerShell, en tu PC):
 
-  2. Ve a la carpeta del proyecto:
+         scp -i ~/.ssh/id_ed25519_crm -P 2211 "C:\Users\HP\Desktop\crm-empresarial-backups\20260925_185627\postgres_dump.sql" cesar@192.168.80.10:~/
 
-         cd "C:\Users\HP\Desktop\crm-empresarial"
+  2. Entra a crm-edge y de ahi a un nucleo (crm-core):
 
-  3. Asegurate de que el sistema este encendido:
+         ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10
+         scp ~/postgres_dump.sql cesar@10.10.10.10:~/
+         ssh cesar@10.10.10.10
 
-         docker compose up -d
+  3. Detener la aplicacion en AMBOS nucleos (para que nadie escriba
+     durante la restauracion). En este nucleo y luego en 10.10.10.11:
 
-  4. Elige la carpeta de respaldo que quieres restaurar (por ejemplo
-     "20260913_182035") y corre este comando, cambiando la fecha por
-     la que quieras usar:
+         cd ~/crm-empresarial && docker compose -f docker-compose.yml -f docker-compose.ha.yml stop
 
-         Get-Content "C:\Users\HP\Desktop\crm-empresarial-backups\20260913_182035\postgres_dump.sql" | docker exec -i crm_postgres psql -U crm_user postgres
+  4. Borrar las 6 bases actuales y cargar el respaldo (en el nucleo, por
+     HAProxy = lider). La contrasena esta en crm-edge: ~/.crm-secrets/pg_superuser
+     (pidesela a Claude o leela alli; no la escribas en chats ni correos):
 
-  5. Esto vuelve a cargar TODOS los datos tal como estaban en ese
-     respaldo. Los datos que se hayan creado DESPUES de ese respaldo
-     y no se hayan vuelto a respaldar, se pierden.
+         export PGPASSWORD='(contrasena)'
+         for b in auth_db calendario_db chat_db empleados_db inventario_db reservas_db; do
+           psql -h 127.0.0.1 -p 5000 -U postgres -c "DROP DATABASE IF EXISTS $b WITH (FORCE)"
+         done
+         psql -h 127.0.0.1 -p 5000 -U postgres -f ~/postgres_dump.sql
 
-  6. Recarga la pagina del CRM en el navegador (http://localhost:3000)
-     para ver los datos restaurados.
+     Es normal ver mensajes "role ... already exists": significa que los
+     usuarios ya estaban; no es un error.
+
+  5. Volver a encender la aplicacion en AMBOS nucleos:
+
+         cd ~/crm-empresarial && docker compose -f docker-compose.yml -f docker-compose.ha.yml up -d
+
+  6. Comprueba en https://192.168.80.10 que estan los datos, y en
+     "sudo patronictl -c /etc/patroni/config.yml list" que el otro nucleo
+     (Sync Standby) tiene "Lag in MB" = 0 (se copio solo lo restaurado).
+
+  7. Borra la copia del volcado de crm-edge y del nucleo (contiene
+     datos personales):   rm ~/postgres_dump.sql
 
 
 --------------------------------------------------------------------
-7. COMO RECUPERAR TODO DESDE CERO (ej. computador nuevo, o se borro
-   la carpeta completa del proyecto)
+7. COMO RECUPERAR TODO DESDE CERO (PC nuevo, o se perdio el proyecto)
 --------------------------------------------------------------------
-  1. Instala Docker Desktop en el computador nuevo:
-     https://www.docker.com/products/docker-desktop/
-     (abrelo y espera a que diga que esta corriendo).
+Recuperar Proxmox y las VMs es trabajo de infraestructura; el proyecto
+guarda el "plano" para reconstruirlo:
 
-  2. Copia la carpeta de respaldos (o al menos la carpeta con la
-     fecha mas reciente) al computador nuevo, por ejemplo a:
+  1. Copia la carpeta de respaldos al PC nuevo y descomprime
+     crm-empresarial-source.zip en C:\Users\HP\Desktop\crm-empresarial
+     (clic derecho > "Extraer todo...").
 
-         C:\Users\HP\Desktop\crm-empresarial-backups\
+  2. Instala VMware Workstation y recrea la VM de Proxmox con la red NAT
+     192.168.80.0/24 (ver seccion 7 de INSTRUCCIONES_APAGADO_ENCENDIDO.txt
+     y docs/practica-profesional/). Proxmox, sus VMs y el contenedor se
+     recrean con Terraform (infra/proxmox-terraform); el software de cada
+     una, con Ansible (infra/ansible/README.md).
 
-  3. Descomprime el archivo "crm-empresarial-source.zip" de esa
-     carpeta. Click derecho sobre el archivo > "Extraer todo..." >
-     elige como destino:
+  3. Con la base de datos de Patroni ya en marcha, carga el respaldo con
+     los pasos 1 a 7 de la seccion 6.
 
-         C:\Users\HP\Desktop\crm-empresarial
+  4. La llave SSH id_ed25519_crm y el certificado de la CA (infra/ca/) NO
+     estan en Git ni deben ir en la nube publica: son parte de lo que debes
+     guardar en un lugar seguro propio. Si se pierden, hay que regenerar
+     la CA y reinstalarla en cada equipo (ver informe, seccion de HTTPS).
 
-  4. Abre PowerShell y escribe:
-
-         cd "C:\Users\HP\Desktop\crm-empresarial"
-         docker compose up -d --build
-
-  5. Espera 1-2 minutos a que todo se construya y arranque.
-
-  6. Carga los datos del respaldo (reemplaza la fecha por la carpeta
-     que copiaste):
-
-         Get-Content "C:\Users\HP\Desktop\crm-empresarial-backups\20260913_182035\postgres_dump.sql" | docker exec -i crm_postgres psql -U crm_user postgres
-
-  7. Recupera los documentos compartidos por el chat (reemplaza la
-     fecha igual que en el paso anterior):
-
-         docker run --rm -v crm-empresarial_chat_files:/volume -v "C:\Users\HP\Desktop\crm-empresarial-backups\20260913_182035:/backup" alpine sh -c "tar xzf /backup/chat_files.tar.gz -C /volume"
-
-  8. Abre el navegador en http://localhost:3000 - deberia verse todo
-     exactamente como antes, con los mismos usuarios, empleados,
-     reservas, etc.
+  Si solo se cayo UN nucleo, no hay que restaurar nada: el otro ya atiende
+  y el caido se reconstruye desde el lider (ver infra/ansible/README.md).
 
 
 --------------------------------------------------------------------
 8. DONDE ESTAN LAS CONTRASENAS
 --------------------------------------------------------------------
-El archivo que tiene las claves del sistema (usuario admin, clave de
-la base de datos, clave secreta de sesiones) se llama ".env" y esta
-en la raiz del proyecto:
-
-    C:\Users\HP\Desktop\crm-empresarial\.env
-
-Tambien viaja una copia dentro de cada respaldo (crm-empresarial-source.zip).
-Ábrelo con el Bloc de notas si alguna vez necesitas ver o cambiar una
-clave.
+  - Claves de la aplicacion (JWT_SECRET, FIELD_ENCRYPTION_KEY, usuario
+    admin del CRM, etc.): archivo .env en la raiz del proyecto
+        C:\Users\HP\Desktop\crm-empresarial\.env
+    (no esta en Git; viaja dentro de cada respaldo, en el zip).
+  - Contrasenas de PostgreSQL/Patroni: en crm-edge, carpeta
+        ~/.crm-secrets/   (pg_superuser, pg_replicator)
+    Fuera de Git y fuera del respaldo a proposito. Si se perdieran, se
+    pueden reemplazar con Ansible, pero anotalas en tu gestor de claves.
+  - Llave SSH: C:\Users\HP\.ssh\id_ed25519_crm (solo tu PC).
+  - Contrasenas de Proxmox (root) y Uptime Kuma: solo las conoces tu.
+  - Recuerda que el usuario "admin" del CRM fue desactivado; revisa que
+    exista al menos otro usuario Administrador antes de restaurar datos.
 
 
 --------------------------------------------------------------------
@@ -262,8 +215,10 @@ clave.
   - Los respaldos quedan en:
       C:\Users\HP\Desktop\crm-empresarial-backups\
 
-  - Hazlo cada semana, y copia esa carpeta a una nube o disco externo
+  - Hazlo cada semana, y copia esa carpeta a un disco externo o nube
     cada mes.
+
+  - Redundancia (Patroni) NO reemplaza el respaldo.
 
 
 --------------------------------------------------------------------
@@ -305,9 +260,12 @@ prevision medica, contacto de emergencia) protegidos asi:
 
     Empieza por "LEEME_LEGAL.txt" dentro de esa carpeta.
 
+  - Como el respaldo contiene datos personales, guardalo solo en lugares
+    de confianza y borra las copias temporales del volcado.
+
 
 --------------------------------------------------------------------
-11. MODULO CHAT (agregado 14-09-2026)
+11. MODULO CHAT (agregado 14-09-2026; actualizado 25-09-2026)
 --------------------------------------------------------------------
 Mensajeria interna 1 a 1 entre usuarios (tipo WhatsApp), con opcion de
 compartir documentos (maximo 25 MB por archivo).
@@ -336,9 +294,10 @@ compartir documentos (maximo 25 MB por archivo).
     queda registrado y es auditable..."). No lo quites ni lo ocultes:
     hacerlo sin avisar no esta permitido.
 
-  - Los documentos compartidos viven en su PROPIO respaldo
-    (chat_files.tar.gz, ver secciones 3, 4 y 7 de esta guia) — no estan
-    dentro del volcado de Postgres.
+  - CAMBIO: los documentos compartidos ya NO viven en un volumen aparte.
+    Se guardan dentro de la base de datos (columna archivo_datos), por lo
+    que el volcado postgres_dump.sql los incluye y se replican entre los
+    dos nucleos como el resto de los datos.
 
 
 --------------------------------------------------------------------
