@@ -175,7 +175,7 @@ function makeHeader() {
   return new Header({
     children: [new Paragraph({
       alignment: AlignmentType.RIGHT,
-      children: [new TextRun({ text: "CHIC — CRM Empresarial · Informe de Práctica Profesional", size: 16, color: "999999" })],
+      children: [new TextRun({ text: "CHIC — Arquitectura de Redes y Virtualización · Informe de Práctica Profesional", size: 16, color: "999999" })],
     })],
   });
 }

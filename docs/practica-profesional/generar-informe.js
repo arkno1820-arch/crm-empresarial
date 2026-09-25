@@ -13,17 +13,18 @@ const {
 // valida al final con verificarFiguras).
 // ------------------------------------------------------------
 const FIG_KEYS = [
-  "justif", "contexto", "modulos", "secuencia", "infra", "gantt", "evm",
-  "vms", "tfplan",
+  "justif", "infra", "contexto", "modulos", "gantt", "evm",
   "vmwnat", "vmwnet", "ipconfig", "redpve", "crmnat", "iptables", "ping", "edgehw", "edgeci", "corehw", "coreci",
+  "vms", "tfplan",
   "certdet", "candado",
   "kumarojo", "kuma1", "kuma2", "kuma3", "kuma4", "kuma5", "kuma6",
-  "login", "empleados", "calendario", "inventario", "reservas", "habitaciones", "chataviso",
-  "usuarios", "permrrhh", "permemp", "permrec", "permadm",
-  "ficha", "hist1", "hist2", "hist3", "sinpermiso", "anonim", "chataud", "cifrado",
+  "login", "usuarios", "sinpermiso", "cifrado",
   "github", "ciclo", "crmfailover",
   "pveclean", "errordns", "cloudimg",
   "vm100", "vm101", "vm102", "vm103",
+  "empleados", "calendario", "inventario", "reservas", "habitaciones", "chataviso",
+  "permrrhh", "permemp", "permrec", "permadm", "ficha", "hist1", "hist2", "hist3", "anonim", "chataud",
+  "secuencia",
 ];
 const F = Object.fromEntries(FIG_KEYS.map((k, i) => [k, i + 1]));
 
@@ -35,11 +36,13 @@ const s1 = [
   new Paragraph({ alignment: AlignmentType.CENTER,
     children: [new TextRun({ text: "INFORME DE PRÁCTICA PROFESIONAL", bold: true, size: 30, color: "0F403C" })] }),
   new Paragraph({ spacing: { before: 300 }, alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "Diseño, Implementación y Gestión de un CRM Empresarial", bold: true, size: 40 })] }),
-  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 300 },
-    children: [new TextRun({ text: "para el Centro CHIC, con Infraestructura Virtualizada Redundante", bold: true, size: 40 })] }),
+    children: [new TextRun({ text: "Puesta en Marcha de una Arquitectura de Redes", bold: true, size: 40 })] }),
   new Paragraph({ alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "en Proxmox VE", bold: true, size: 40 })] }),
+    children: [new TextRun({ text: "y Virtualización Redundante en Proxmox VE", bold: true, size: 40 })] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 },
+    children: [new TextRun({ text: "para el Centro CHIC", bold: true, size: 40 })] }),
+  new Paragraph({ alignment: AlignmentType.CENTER,
+    children: [new TextRun({ text: "Caso de uso: sistema CRM Empresarial", italics: true, size: 26, color: "1F6F68" })] }),
   new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 400 },
     children: [new TextRun({ text: "Ingeniería en Conectividad y Redes", size: 24, italics: true, color: "535E5C" })] }),
   new Paragraph({ spacing: { before: 1200 } }),
@@ -55,7 +58,7 @@ const s1 = [
   new Paragraph({ alignment: AlignmentType.CENTER,
     children: [new TextRun({ text: "Periodo de la práctica: 28 de septiembre al 27 de noviembre de 2026 (360 horas)", size: 18, color: "535E5C" })] }),
   new Paragraph({ alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "Documento base, versión 2.0 — 25 de septiembre de 2026 (previo al inicio formal de la práctica)", size: 18, color: "535E5C" })] }),
+    children: [new TextRun({ text: "Documento base, versión 3.0 — 25 de septiembre de 2026 (previo al inicio formal de la práctica)", size: 18, color: "535E5C" })] }),
 ];
 
 // ============================================================
@@ -80,33 +83,32 @@ const s2b = [
 const s3 = [
   h1("Resumen Ejecutivo"),
   p(
-    "Este informe documenta el diseño, desarrollo y despliegue de “CRM Empresarial”, un sistema de " +
-    "gestión interna desarrollado como solución al problema real que enfrenta el Centro CHIC: sus " +
-    "trabajadores no contaban con un sistema unificado que agrupara sus necesidades operativas " +
-    "(gestión de personal, calendario, inventario, reservas y comunicación interna). La solución se " +
-    "diseñó de forma modular sobre contenedores Docker —el estándar de la industria actual— y " +
-    "evolucionó hasta una infraestructura virtualizada redundante sobre Proxmox VE, desplegada sobre " +
-    "el servidor físico ya existente en la infraestructura de CHIC."
+    "Este informe documenta la puesta en marcha de una arquitectura de redes y virtualización " +
+    "redundante sobre Proxmox VE para el Centro CHIC. Su finalidad es alojar, de forma segura y " +
+    "disponible, el sistema interno que los trabajadores del centro necesitaban (gestión de personal, " +
+    "calendario, inventario, reservas y comunicación). Ese sistema —un CRM en microservicios sobre " +
+    "contenedores Docker— es el caso de uso que justifica la infraestructura; el foco de la práctica es " +
+    "la infraestructura misma: redes virtuales y segmentación, NAT y publicación de servicios, " +
+    "redundancia con VRRP, infraestructura como código, seguridad de transporte con una autoridad " +
+    "certificadora propia y monitoreo."
   ),
   p(
-    "Siguiendo instrucciones explícitas de la jefatura del proyecto, la metodología de trabajo fue " +
-    "diseñar y validar primero en un entorno de simulación (Proxmox anidado sobre VMware) para adquirir " +
-    "la experiencia operativa necesaria, antes de migrar a producción sobre el servidor físico en modo " +
-    "nativo. Este informe cubre la fase de diseño, implementación y validación en el entorno de " +
-    "simulación, con evidencia real de diecisiete incidentes resueltos, pruebas de failover ejecutadas " +
-    "contra la infraestructura real, HTTPS con autoridad certificadora propia, monitoreo activo, una " +
-    "red virtual independiente de la red externa y la verificación de los controles de protección de " +
-    "datos del sistema. La migración a producción bare metal y el respaldo offsite en la nube se " +
-    "abordan como las siguientes fases formales de la práctica, con su cronograma y cotización de " +
-    "hardware ya definidos en este mismo documento."
+    "Siguiendo instrucciones explícitas de la jefatura del proyecto, la metodología fue diseñar y validar " +
+    "primero en un entorno de simulación (Proxmox anidado sobre VMware) para adquirir la experiencia " +
+    "operativa necesaria, antes de migrar a producción sobre el servidor físico de CHIC en modo nativo. " +
+    "Este informe cubre el diseño, la implementación y la validación en simulación, con evidencia real: " +
+    "una red NAT independiente de la red externa, aislamiento del núcleo verificado, failover de la " +
+    "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo y una " +
+    "bitácora de diecisiete incidentes resueltos. La migración a producción bare metal y el respaldo " +
+    "offsite en la nube se abordan como las siguientes fases formales de la práctica, con su " +
+    "cronograma y su cotización de hardware ya definidos en este documento."
   ),
   p(
     "El proyecto se usa como evidencia de práctica profesional para siete asignaturas de la carrera " +
-    "Ingeniería en Conectividad y Redes. El presente documento incluye, además de la arquitectura " +
-    "técnica en tres niveles de abstracción, los artefactos formales de Gestión de Proyectos (Acta de " +
-    "Constitución, EDT, cronograma de 360 horas, matriz RACI, registro de riesgos y línea base de Valor " +
-    "Planificado) construidos para el periodo real de la práctica (28 de septiembre al 27 de noviembre " +
-    "de 2026)."
+    "Ingeniería en Conectividad y Redes. Además de la arquitectura y su implementación, el documento " +
+    "incluye los artefactos formales de Gestión de Proyectos (Acta de Constitución, EDT, cronograma de " +
+    "360 horas, matriz RACI, registro de riesgos y línea base de Valor Planificado) construidos para el " +
+    "periodo real de la práctica (28 de septiembre al 27 de noviembre de 2026)."
   ),
 
   h1("1. Introducción"),
@@ -114,41 +116,54 @@ const s3 = [
   p(
     "El Centro CHIC identificó que sus trabajadores carecían de una herramienta propia para gestionar " +
     "las operaciones diarias del centro: administración de personal, calendario de actividades, " +
-    "inventario de recursos, reservas de espacios/equipos, y comunicación interna. Esta carencia se " +
+    "inventario de recursos, reservas de espacios y equipos, y comunicación interna. Esta carencia se " +
     "resolvía de forma manual o con herramientas genéricas no integradas entre sí, sin control interno " +
     "sobre dónde y cómo se almacena información sensible del personal bajo la Ley 21.719 de Protección " +
     "de Datos Personales, vigente en Chile."
   ),
   p(
-    "Como alumno en práctica, se me encargó diseñar una solución de software que agrupara estas " +
-    "necesidades en un sistema único, propio de la institución. La respuesta a ese encargo es el CRM " +
-    "Empresarial descrito en este informe: una aplicación modular en microservicios, contenedorizada " +
-    "con Docker, con seguridad de acceso por roles y cumplimiento de la normativa de protección de " +
-    "datos, desplegada sobre la infraestructura de virtualización propia del centro."
+    "Como alumno en práctica, se me encargó resolver esa necesidad. La solución tiene dos partes: un " +
+    "sistema de software propio de la institución (el CRM Empresarial) y, sobre todo, la " +
+    "infraestructura de red y virtualización que lo aloja con redundancia, seguridad y monitoreo, " +
+    "desplegada sobre el servidor que CHIC ya posee. Esta segunda parte es el objeto de este informe."
   ),
   h2("1.2 Objetivos"),
-  bullet("Diseñar y construir una aplicación CRM funcional, modular (microservicios), con seguridad de acceso por roles y cumplimiento de la normativa chilena de protección de datos, que agrupe las necesidades operativas reales de CHIC."),
-  bullet("Validar el diseño de infraestructura en un entorno de simulación (Proxmox sobre VMware), según la metodología instruida por la jefatura, antes de migrar a producción sobre el servidor físico real de la institución."),
-  bullet("Diseñar e implementar un esquema de redundancia (borde y núcleo) que tolere fallas de software/VM sin intervención manual, y verificarlo con pruebas de falla reales, no solo documentadas."),
-  bullet("Instrumentar monitoreo activo de los componentes críticos del sistema."),
-  bullet("Gestionar el proyecto con las herramientas formales de Gestión de Proyectos (EDT, cronograma, RACI, riesgos, valor planificado), encuadradas en el periodo oficial de la práctica profesional (360 horas)."),
+  bullet("Diseñar e implementar una arquitectura de virtualización y redes redundante sobre Proxmox VE —segmentación, NAT, publicación de servicios y VRRP— que aloje de forma segura y disponible el sistema interno de CHIC."),
+  bullet("Validar el diseño en un entorno de simulación (Proxmox sobre VMware), según la metodología instruida por la jefatura, antes de migrar a producción sobre el servidor físico real de la institución."),
+  bullet("Verificar la redundancia (borde y núcleo) y el aislamiento de red con pruebas de falla reales, no solo documentadas."),
+  bullet("Automatizar el despliegue con infraestructura como código (Terraform y Ansible), asegurar el transporte con una autoridad certificadora privada y monitorear los componentes críticos."),
+  bullet("Gestionar el proyecto con las herramientas formales de Gestión de Proyectos (EDT, cronograma, RACI, riesgos, valor planificado), encuadradas en el periodo oficial de la práctica (360 horas)."),
   h2("1.3 Alcance"),
   p(
-    "El alcance de esta práctica cubre el desarrollo completo de la aplicación (backend de 6 " +
-    "microservicios + gateway + frontend), la infraestructura como código (Terraform y Ansible) para " +
-    "desplegarla de forma redundante en el entorno de simulación, la seguridad de transporte (HTTPS con " +
-    "CA privada) y de aplicación (cifrado, auditoría), el monitoreo, y la documentación de gestión de " +
-    "proyecto."
+    "El alcance cubre la infraestructura de red y virtualización (VMware NAT, Proxmox como router, " +
+    "puentes virtuales, cuatro máquinas virtuales en pares redundantes), su automatización con " +
+    "Terraform y Ansible, la seguridad de transporte (HTTPS con CA privada), el monitoreo y la " +
+    "documentación de gestión de proyecto. Incluye también el sistema CRM que la infraestructura aloja, " +
+    "como carga de trabajo real, con sus controles de seguridad de acceso y de datos."
   ),
   p(
-    "Además, el alcance incluye activamente dos frentes de trabajo que se ejecutan durante el periodo " +
-    "formal de la práctica: (1) el respaldo offsite en la nube (Oracle Cloud, nivel gratuito), y (2) la " +
-    "cotización formal y gestión de adquisición de un segundo servidor físico, paso previo necesario " +
-    "para la migración a producción bare metal y para la migración en vivo real entre servidores. Ambos " +
-    "frentes están planificados dentro del cronograma de 360 horas (sección 5.3) y la cotización formal " +
-    "de hardware se presenta en la sección 5.7 de este informe."
+    "Además, el alcance incluye activamente dos frentes que se ejecutan durante el periodo formal de la " +
+    "práctica: (1) el respaldo offsite en la nube (Oracle Cloud, nivel gratuito), y (2) la cotización " +
+    "formal y gestión de adquisición de un segundo servidor físico, paso previo necesario para la " +
+    "migración a producción bare metal y para la migración en vivo real entre servidores. Ambos están " +
+    "planificados dentro del cronograma de 360 horas (sección 5.3) y la cotización de hardware se " +
+    "presenta en la sección 5.7."
   ),
-  h2("1.4 Nota sobre las evidencias"),
+  h2("1.4 Del software a la infraestructura: una habilidad desarrollada por necesidad"),
+  p(
+    "El CRM Empresarial nació de una necesidad real de CHIC y, como desarrollo de software, es una " +
+    "habilidad que tuve que adquirir, perfeccionar y trabajar a lo largo del proyecto: microservicios, " +
+    "contenedores, seguridad de acceso y cumplimiento normativo. Es un resultado valioso, pero no es el " +
+    "foco de esta práctica."
+  ),
+  p(
+    "El foco es la puesta en marcha de toda la arquitectura de Proxmox —redes virtuales, " +
+    "virtualización, redundancia, seguridad de transporte y monitoreo— y su justificación en las " +
+    "asignaturas de Ingeniería en Conectividad y Redes (sección 2). Por eso el informe trata la " +
+    "aplicación como la carga de trabajo que da sentido a la infraestructura, resume sus controles de " +
+    "seguridad en la sección 6.6 y traslada el detalle funcional del sistema al Anexo B."
+  ),
+  h2("1.5 Nota sobre las evidencias"),
   p(
     "Las capturas de pantalla de este informe fueron tomadas los días 23, 24 y 25 de septiembre de 2026, " +
     "porque el proyecto se adelantó respecto del inicio formal de la práctica (28 de septiembre). Se " +
@@ -207,12 +222,11 @@ const s5 = [
 const s6 = [
   h1("3. Arquitectura del Sistema"),
   p(
-    "La arquitectura se presenta en tres niveles de abstracción —inspirados en el modelo C4 de " +
-    "documentación de software—, seguidos de la vista física de infraestructura sobre Proxmox. Cada " +
-    "nivel responde una pregunta distinta: qué es el sistema (contexto), de qué módulos está hecho " +
-    "(contenedores), y cómo fluye una operación concreta dentro de él (secuencia). Los cuatro diagramas " +
-    `(figuras ${F.contexto} a ${F.infra}) se presentan en las páginas siguientes, en formato horizontal ` +
-    "para que el detalle sea legible."
+    "La arquitectura se presenta empezando por lo esencial: la vista física de la infraestructura de " +
+    `red y virtualización (figura ${F.infra}), que es el objeto de la práctica. Le siguen dos niveles de la ` +
+    `carga de trabajo que esa infraestructura aloja, inspirados en el modelo C4: el contexto (figura ${F.contexto}) ` +
+    `y los contenedores Docker (figura ${F.modulos}). El detalle de la secuencia de autenticación se incluye ` +
+    "en el Anexo C. Los diagramas se presentan en formato horizontal para que el detalle sea legible."
   ),
 ];
 
@@ -220,17 +234,14 @@ const s6 = [
 // SECCION 7 (landscape): diagramas de arquitectura, uno por hoja
 // ============================================================
 const s7 = [
-  ...figura(DIA, "01-alto-nivel-contexto.png", "Diagrama de contexto (nivel 1)",
-    "Qué se observa: quiénes usan el sistema y con qué otros sistemas interactúa. El CRM es autocontenido, sin integraciones externas salvo GitHub y el propio servidor de CHIC.", 1000, 540),
-  pageBreak(),
-  ...figura(DIA, "02-modulos-docker.png", "Diagrama de módulos / contenedores (nivel 2)",
-    "Qué se observa: los 9 contenedores Docker de la aplicación y el patrón “database per service”. Cada microservicio es dueño exclusivo de su base de datos y toda solicitud pasa por el gateway.", 1000, 540),
-  pageBreak(),
-  ...figura(DIA, "03-bajo-nivel-flujo-login.png", "Diagrama de secuencia (nivel 3)",
-    "Qué se observa: el flujo real de login y de una llamada autenticada posterior. El token JWT permite que cada microservicio valide una solicitud sin depender de auth-service en cada llamada (sin punto único de falla por autenticación).", 1000, 540),
-  pageBreak(),
   ...figura(DIA, "04-infraestructura-proxmox.png", "Vista física: infraestructura de virtualización y red",
     "Qué se observa: la red externa (Wi-Fi, hotspot o LAN) llega al PC; VMware la aísla con una red NAT (VMnet8) y el host Proxmox actúa como router de las VMs. El par de borde (Keepalived, VIP 10.10.10.5) y el par de núcleo (réplica de Postgres) viven solo en la red interna, y se declara el techo real: un solo servidor físico.", 1000, 540),
+  pageBreak(),
+  ...figura(DIA, "01-alto-nivel-contexto.png", "Diagrama de contexto de la carga de trabajo (nivel 1)",
+    "Qué se observa: quiénes usan el sistema alojado y con qué otros sistemas interactúa. El CRM es autocontenido, sin integraciones externas salvo GitHub y el propio servidor de CHIC.", 1000, 540),
+  pageBreak(),
+  ...figura(DIA, "02-modulos-docker.png", "Diagrama de módulos / contenedores de la carga de trabajo (nivel 2)",
+    "Qué se observa: los 9 contenedores Docker de la aplicación y el patrón “database per service”. Cada microservicio es dueño exclusivo de su base de datos y toda solicitud pasa por el gateway.", 1000, 540),
 ];
 
 // ============================================================
@@ -243,7 +254,7 @@ const adrs = [
   ["ADR-00", "Metodología: simulación antes de producción", "Instrucción explícita de la jefatura del proyecto: diseñar y validar primero en un entorno de simulación (Proxmox anidado sobre VMware) para adquirir experiencia operativa, antes de migrar a producción sobre el servidor físico de CHIC en modo nativo (bare metal). Este informe documenta la fase de simulación, ya validada; la migración a producción es la fase siguiente formal de la práctica."],
   ["ADR-01", "Redundancia activa-pasiva (no clúster de alta disponibilidad)", "Con un solo servidor físico disponible hoy, un clúster Proxmox multi-nodo o la migración en vivo real no son alcanzables todavía. Se optó por redundancia a nivel de VM (Keepalived + réplica de Postgres) dentro del entorno de simulación, documentando honestamente su techo: protege contra fallas de software, no contra la falla del servidor físico completo."],
   ["ADR-02", "Promoción de base de datos manual, no automática", "Automatizar de forma segura la promoción de un primario de base de datos exige resolver split-brain, un problema no trivial que no se justifica a esta escala. Se documentó un runbook de promoción manual en vez de una automatización a medias."],
-  ["ADR-03", "Salida a Internet solo para los bordes (NAT selectivo)", "El diseño original planteaba “sin salida a Internet” para crm-core, pero Ansible necesita instalar Docker y clonar el repositorio. Se distinguió aislamiento de entrada de aislamiento de salida. Una vez desplegado, el NAT de salida se restringió a crm-edge y crm-edge-b: el núcleo quedó sin entrada directa ni salida a Internet, y la regla amplia que lo permitía se eliminó y verificó (sección 6.3)."],
+  ["ADR-03", "Salida a Internet solo para los bordes (NAT selectivo)", "El diseño original planteaba “sin salida a Internet” para crm-core, pero Ansible necesita instalar Docker y clonar el repositorio. Se distinguió aislamiento de entrada de aislamiento de salida. Una vez desplegado, el NAT de salida se restringió a crm-edge y crm-edge-b: el núcleo quedó sin entrada directa ni salida a Internet, y la regla amplia que lo permitía se eliminó y verificó (sección 6.1)."],
   ["ADR-04", "CA privada en vez de certificados autofirmados sueltos", "Un certificado autofirmado por VM seguía mostrando advertencia de “no seguro” en cualquier dispositivo. Se construyó una autoridad certificadora propia, cuya llave privada nunca sale del equipo del responsable, permitiendo instalarla una sola vez por dispositivo y confiar automáticamente en cualquier certificado futuro que ella firme."],
   ["ADR-05", "Monitoreo nativo (Node.js) en vez de contenedorizado", "Uptime Kuma vive en crm-edge sin Docker, manteniendo el principio de diseño de esa VM (bastión liviano, sin Docker) y aprovechando que es la única VM con visibilidad simultánea hacia la red externa y hacia la red interna del núcleo."],
   ["ADR-06", "Red NAT de VMware en lugar de red puenteada (bridged)", "En modo bridged sobre Wi-Fi/hotspot, la red externa descartaba las direcciones MAC de las VMs anidadas (solo veía el PC), Proxmox llegó a compartir IP con el equipo host y tumbó su conexión, y cada cambio de red obligaba a reconfigurar todas las IPs. Con la red NAT VMnet8 (192.168.80.0/24) la infraestructura queda detrás del PC y su direccionamiento es independiente de la red externa."],
@@ -266,15 +277,16 @@ const s9 = [
   h2("5.1 Acta de Constitución del Proyecto (Project Charter)"),
 ];
 const charterRows = [
-  ["Nombre del proyecto", "CRM Empresarial: Sistema de Gestión Interna para el Centro CHIC"],
+  ["Nombre del proyecto", "Arquitectura de Redes y Virtualización Redundante sobre Proxmox VE para el Centro CHIC (caso de uso: CRM Empresarial)"],
   ["Patrocinador", "Centro CHIC"],
   ["Responsable del proyecto", "César Manríquez Figueroa (alumno en práctica / desarrollador / DevOps)"],
   ["Fecha de inicio de la práctica", "28 de septiembre de 2026"],
   ["Fecha de término de la práctica", "27 de noviembre de 2026 (360 horas)"],
   ["Justificación", "Los trabajadores de CHIC no contaban con un sistema propio que agrupara sus necesidades operativas (personal, calendario, inventario, reservas, comunicación), y la institución requería cumplir la Ley 21.719 sobre datos de su personal sin depender de un proveedor externo."],
-  ["Objetivo 1", "Desarrollar un CRM funcional con 6 módulos de negocio, cumpliendo la normativa de protección de datos."],
+  ["Objetivo 1", "Diseñar e implementar una arquitectura de redes y virtualización redundante sobre Proxmox VE que aloje de forma segura y disponible el sistema interno de CHIC."],
   ["Objetivo 2", "Validar el diseño en un entorno de simulación con redundancia activa-pasiva, verificada mediante pruebas de falla reales, antes de migrar a producción."],
   ["Objetivo 3", "Instrumentar monitoreo activo sobre el 100% de los componentes críticos del sistema."],
+  ["Objetivo 4", "Desarrollar el sistema CRM que da uso a la infraestructura, cumpliendo la normativa de protección de datos (habilidad de software desarrollada por necesidad; ver sección 1.4)."],
   ["Entregables", "Código fuente; infraestructura como código (Terraform/Ansible); documentación técnica y académica; 3 informes de avance; informe final; presentación (PPT); video final."],
   ["Restricciones", "Un solo servidor físico disponible en la infraestructura de CHIC durante la fase de simulación; un solo desarrollador; 360 horas totales de práctica."],
   ["Supuestos", "Disponibilidad continua del servidor de CHIC como host de Proxmox durante la práctica; conectividad a Internet estable; aprobación de la cotización del segundo servidor por parte de CHIC en un plazo razonable."],
@@ -285,8 +297,8 @@ s9.push(makeTable([2600, 7100], ["Campo", "Contenido"], charterRows));
 s9.push(h2("5.2 Estructura de Desglose del Trabajo (EDT / WBS)"));
 const edt = [
   "1. CRM Empresarial para el Centro CHIC",
-  "  1.1 Aplicación (producto de software)",
-  "    1.1.1 Núcleo funcional (autenticación, gateway, frontend base, RBAC)",
+  "  1.1 Carga de trabajo: aplicación CRM",
+  "    1.1.1 Núcleo funcional (autenticación, gateway, frontend base, roles)",
   "    1.1.2 Módulos de negocio (calendario, inventario, reservas)",
   "    1.1.3 Seguridad y cumplimiento (cifrado de datos, auditoría, Ley 21.719, chat interno)",
   "  1.2 Infraestructura de virtualización (entorno de simulación)",
@@ -370,7 +382,7 @@ const riskRows = [
   ["R12", "Punto único de falla del servidor físico durante la simulación", "Media", "Crítico", "Abierto — en gestión activa", "Cotización formal del segundo servidor en curso (sección 5.7), fase F5 del cronograma"],
   ["R13", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Abierto — en desarrollo activo", "Fase F4 del cronograma: desarrollo del respaldo hacia Oracle Cloud"],
   ["R14", "Compromiso de la llave privada de la CA interna", "Baja", "Crítico", "Abierto — mitigado por diseño", "La llave nunca sale del equipo del responsable; nunca se copia a ninguna VM"],
-  ["R15", "Documentos legales en borrador sin revisión jurídica", "Media", "Alto", "Abierto — pendiente", "Solicitar revisión de un abogado especializado antes de considerarlos oficiales (sección 6.6.5)"],
+  ["R15", "Documentos legales en borrador sin revisión jurídica", "Media", "Alto", "Abierto — pendiente", "Solicitar revisión de un abogado especializado antes de considerarlos oficiales (sección 6.6)"],
 ];
 s11.push(makeTable([700, 2700, 1100, 1000, 1600, 2600],
   ["ID", "Riesgo", "Prob.", "Impacto", "Estado", "Mitigación"], riskRows));
@@ -433,18 +445,19 @@ s13.push(bullet("La asistencia de IA acelera genuinamente la implementación de 
 
 s13.push(h1("6. Implementación Técnica"));
 s13.push(p(
-  "Esta sección documenta cómo se construyó y se verificó el sistema, con evidencia real para cada " +
-  "componente: infraestructura como código, configuración, red y aislamiento, HTTPS, monitoreo y la " +
-  "propia aplicación con sus controles de protección de datos. Las evidencias se toman de la " +
-  "infraestructura funcionando (ver la nota de la sección 1.4 sobre sus fechas)."
+  "Esta sección documenta cómo se construyó y se verificó la infraestructura, con evidencia real para cada " +
+  "componente: red y aislamiento, infraestructura como código, configuración, HTTPS, monitoreo y, al final, " +
+  "la carga de trabajo que se aloja y sus controles de seguridad. Las evidencias se toman de la " +
+  "infraestructura funcionando (ver la nota de la sección 1.5 sobre sus fechas)."
 ));
-s13.push(h2("6.1 Infraestructura como Código (Terraform)"));
-s13.push(p("El módulo `infra/proxmox-terraform/` automatiza, contra la API de Proxmox (proveedor `bpg/proxmox`), la creación de la red interna `vmbr1` y las 4 máquinas virtuales del entorno de simulación, clonadas desde una plantilla cloud-init."));
-s13.push(bullet("`crm-edge` / `crm-edge-b`: 2 vCPU / 2GB, una sola interfaz en la red interna `vmbr1`, 8GB de disco."));
-s13.push(bullet("`crm-core` / `crm-core-b`: 4 vCPU / 6GB, interfaz solo en la red interna, 25GB de disco."));
-s13.push(bullet("Aplicado con éxito contra el Proxmox real: 5 recursos creados en el primer despliegue y 2 modificados en caliente en la migración de red, 0 errores y 0 destruidos."));
-s13.push(h3("Definición vigente de crm-edge"));
-s13.push(codeBlock([
+const s13t = [];
+s13t.push(h2("6.2 Infraestructura como Código (Terraform)"));
+s13t.push(p("El módulo `infra/proxmox-terraform/` automatiza, contra la API de Proxmox (proveedor `bpg/proxmox`), la creación de la red interna `vmbr1` y las 4 máquinas virtuales del entorno de simulación, clonadas desde una plantilla cloud-init."));
+s13t.push(bullet("`crm-edge` / `crm-edge-b`: 2 vCPU / 2GB, una sola interfaz en la red interna `vmbr1`, 8GB de disco."));
+s13t.push(bullet("`crm-core` / `crm-core-b`: 4 vCPU / 6GB, interfaz solo en la red interna, 25GB de disco."));
+s13t.push(bullet("Aplicado con éxito contra el Proxmox real: 5 recursos creados en el primer despliegue y 2 modificados en caliente en la migración de red, 0 errores y 0 destruidos."));
+s13t.push(h3("Definición vigente de crm-edge"));
+s13t.push(codeBlock([
   'resource "proxmox_virtual_environment_vm" "crm_edge" {',
   '  name      = "crm-edge"',
   '  node_name = var.proxmox_node',
@@ -460,15 +473,15 @@ s13.push(codeBlock([
   '  }',
   '}',
 ]));
-s13.push(h3("Salida real de terraform apply: despliegue inicial (23 de septiembre)"));
-s13.push(codeBlock([
+s13t.push(h3("Salida real de terraform apply: despliegue inicial (23 de septiembre)"));
+s13t.push(codeBlock([
   "Plan: 5 to add, 0 to change, 0 to destroy.",
   "...",
   "proxmox_virtual_environment_vm.crm_edge: Creation complete after 6m40s [id=103]",
   "Apply complete! Resources: 5 added, 0 changed, 0 destroyed.",
 ]));
-s13.push(h3("Salida real de terraform apply: migración a la red interna (24-25 de septiembre)"));
-s13.push(codeBlock([
+s13t.push(h3("Salida real de terraform apply: migración a la red interna (24-25 de septiembre)"));
+s13t.push(codeBlock([
   "proxmox_virtual_environment_vm.crm_edge_b: Modifying... [id=102]",
   "proxmox_virtual_environment_vm.crm_edge: Modifying... [id=103]",
   "proxmox_virtual_environment_vm.crm_edge_b: Modifications complete after 8s [id=102]",
@@ -477,7 +490,7 @@ s13.push(codeBlock([
   'crm_edge_nodos = "crm-edge: 10.10.10.2 · crm-edge-b: 10.10.10.3 (solo red interna vmbr1)"',
   'crm_edge_vip  = "VIP interna (Keepalived): 10.10.10.5. ..."',
 ]));
-s13.push(p(
+s13t.push(p(
   `Un plan posterior (figura ${F.tfplan}) sigue reportando 2 cambios sin adiciones ni destrucciones: el ` +
   "proveedor `bpg/proxmox` mantiene una diferencia residual en el bloque `ip_config` ya eliminado. " +
   "La configuración efectiva en Proxmox, verificada en la pestaña Cloud-Init de cada VM (figuras " +
@@ -495,13 +508,15 @@ const s13a = [
 ];
 
 // ---- 6.2 Ansible
-const s14 = [
-  h2("6.2 Configuración (Ansible)"),
+const s14b = [
+  h2("6.3 Configuración (Ansible)"),
   p("El módulo `infra/ansible/` configura cada VM desde adentro: Nginx y Keepalived en el par de borde; Docker, el stack completo del CRM y la réplica de Postgres en el par de núcleo; Uptime Kuma en `crm-edge`, que actúa como nodo de control y bastión único de administración. Todo se ejecuta desde `crm-edge` con un inventario propio, y el rol `crm_edge` despliega el certificado firmado por la CA privada."),
   bullet("Los playbooks son idempotentes: una segunda ejecución muestra `changed` solo donde hubo una diferencia real."),
   bullet("La red interna es la única vía hacia el núcleo: el acceso a crm-core y crm-core-b se hace saltando por crm-edge (bastión)."),
 
-  h2("6.3 Red, segmentación y aislamiento"),
+];
+const s14n = [
+  h2("6.1 Red, segmentación y aislamiento"),
   p(
     "La red se diseñó en tres capas. En la capa externa, el PC físico puede estar conectado a cualquier red " +
     "(Wi-Fi, hotspot del celular o LAN); VMware Workstation la aísla mediante una red virtual NAT (VMnet8, " +
@@ -567,7 +582,7 @@ const s14a = [
 const s15 = [
   h2("6.4 HTTPS con Autoridad Certificadora Privada"),
   p("Se construyó una CA propia: su llave privada nunca sale del equipo del responsable ni se copia a ninguna VM. El certificado de `crm-edge`, firmado por esa CA, cubre como SAN la IP virtual y las IPs de ambos bordes, incluida la IP de Proxmox con la que se accede desde el PC (192.168.80.10), y tiene una vigencia de dos años; la CA se instala una sola vez en cada dispositivo."),
-  p(`Las figuras ${F.certdet} y ${F.candado} son las capturas originales de la validación del certificado (23 de septiembre, red de simulación anterior). La captura de acceso vigente, con el candado sobre https://192.168.80.10, se presenta en la sección 6.6.1 (figura ${F.login}).`),
+  p(`Las figuras ${F.certdet} y ${F.candado} son las capturas originales de la validación del certificado (23 de septiembre, red de simulación anterior). La captura de acceso vigente, con el candado sobre https://192.168.80.10, se presenta en la sección 6.6 (figura ${F.login}).`),
 ];
 const s15a = [
   ...figura(EVI, "2026-09-23-08-detalle-certificado-ca.png", "Detalle del certificado servido por el CRM",
@@ -607,94 +622,33 @@ const s16a = [
   ], 620, 250),
 ];
 
-// ---- 6.6 Aplicacion (portrait) ----
+// ---- 6.6 Carga de trabajo (portrait) ----
 const s17 = [
-  h2("6.6 Aplicación: evidencia funcional y protección de datos"),
-  p("Esta sección muestra el CRM funcionando sobre la infraestructura descrita y verifica, con evidencia, los controles de protección de datos personales que se diseñaron para cumplir la Ley 21.719. Todas las capturas se tomaron accediendo por https://192.168.80.10, es decir, atravesando el borde, la red NAT y el balanceo por VIP."),
-  h3("6.6.1 Acceso y autenticación"),
-  p(`El acceso se hace por HTTPS con certificado válido (candado en la barra de direcciones). Ante credenciales incorrectas el sistema responde con un mensaje genérico, “Credenciales inválidas”, sin revelar si falló el usuario o la contraseña (figura ${F.login}). Las contraseñas se almacenan con hash bcrypt y la sesión usa un token JWT con vencimiento de 8 horas.`),
-  h3("6.6.2 Módulos de negocio"),
-  p(`El CRM agrupa las necesidades operativas de CHIC en cinco módulos: Empleados (figura ${F.empleados}), Calendario (${F.calendario}), Inventario (${F.inventario}), Reservas con su gestión de habitaciones (${F.reservas} y ${F.habitaciones}) y Chat interno (${F.chataviso}). En Empleados y Reservas, los datos personales (RUT, teléfonos, correos) están difuminados en las capturas.`),
+  h2("6.6 Carga de trabajo: el CRM y sus controles de seguridad"),
+  p(`El sistema alojado es un CRM en microservicios (autenticación, empleados, calendario, inventario, reservas y chat) detrás de un gateway Nginx, sobre nueve contenedores Docker (figura ${F.modulos}). Desde el punto de vista de la infraestructura, lo que importa es lo que exige de ella: disponibilidad, transporte seguro y protección de datos personales. Esta sección resume los controles verificados con la infraestructura funcionando; el detalle funcional de cada módulo se encuentra en el Anexo B.`),
+  bullet(`Transporte seguro: el acceso es por HTTPS con el certificado firmado por la CA privada; ante credenciales incorrectas el sistema responde con un mensaje genérico, sin revelar si falló el usuario o la contraseña (figura ${F.login}).`),
+  bullet(`Control de acceso por roles: cuatro roles (Administrador, Recursos humanos, Recepción y Empleado) con permisos asignados por módulo; la cuenta genérica “admin” de fábrica permanece inactiva (figura ${F.usuarios}). Los formularios de permisos por perfil están en el Anexo B (figuras ${F.permrrhh} a ${F.permadm}).`),
+  bullet(`Protección de datos sensibles: los datos de salud solo los ve quien tiene el permiso específico (figura ${F.sinpermiso}) y se guardan cifrados en reposo con Fernet, de modo que un acceso directo a la base de datos o a un respaldo no revela su contenido (figura ${F.cifrado}). El consentimiento informado, el historial de accesos, la anonimización al eliminar y la auditoría del chat se muestran en el Anexo B.`),
+  bullet("Las contraseñas se almacenan con hash bcrypt y la sesión usa un token JWT con vencimiento de 8 horas."),
+  p("Junto al sistema se elaboraron dos documentos en la carpeta legal/ del repositorio: el Registro de Actividades de Tratamiento (qué datos personales se tratan, con qué finalidad, quién accede y con qué medidas de seguridad) y el Procedimiento ante Brechas de Seguridad. Ambos son borradores: requieren revisión de un abogado especializado y completar los datos de la institución antes de considerarse oficiales, lo que se registra como el riesgo R15."),
 ];
 const s17a = [
   ...figura(CAP, "crm-22-login-fallido-https.png", "Inicio de sesión con credenciales inválidas, sobre HTTPS",
     "Qué se observa: la barra de direcciones con https://192.168.80.10 y el candado (conexión segura), y el mensaje genérico “Credenciales inválidas” tras un intento con contraseña incorrecta.", 800, 520),
   pageBreak(),
-  ...figura(CAP, "crm-01-empleados.png", "Módulo Empleados",
-    "Qué se observa: listado de personal con cargo, departamento y estado, y acciones de editar y consultar el historial de accesos de cada ficha. RUT, teléfonos y correos aparecen difuminados por privacidad.", 1000, 500),
-  pageBreak(),
-  ...figura(CAP, "crm-02-calendario.png", "Módulo Calendario",
-    "Qué se observa: eventos agrupados por fecha, con horario, lugar, descripción, participantes y el usuario que los creó.", 1000, 500),
-  pageBreak(),
-  ...figura(CAP, "crm-03-inventario.png", "Módulo Inventario",
-    "Qué se observa: productos con stock (con indicador de color), precio unitario y ubicación, y acciones para ajustar existencias, editar o eliminar.", 1000, 500),
-  pageBreak(),
-  ...figura(CAP, "crm-04-reservas.png", "Módulo Reservas",
-    "Qué se observa: reservas con huésped, habitación, fechas, total y estado. Los correos de los huéspedes aparecen difuminados por privacidad.", 1000, 500),
-  pageBreak(),
-  ...figura(CAP, "crm-05-habitaciones.png", "Gestión de habitaciones",
-    "Qué se observa: el catálogo de habitaciones con tipo, capacidad, precio por noche y disponibilidad.", 1000, 500),
-  pageBreak(),
-  ...figura(CAP, "crm-06-chat-aviso-admin.png", "Chat interno con aviso de trazabilidad",
-    "Qué se observa: el aviso “Este chat interno queda registrado y es auditable por administración… los mensajes se conservan visibles 30 días”, que informa al usuario del tratamiento, y el botón Auditoría disponible solo para el administrador.", 1000, 500),
-];
-
-const s18 = [
-  h3("6.6.3 Control de acceso por roles (RBAC)"),
-  p(`El sistema distingue cuatro roles (Administrador, Recursos humanos, Recepción y Empleado) y asigna los permisos por módulo, independientemente del rol. La lista de usuarios (figura ${F.usuarios}) muestra a cada persona con su rol, sus módulos y su estado; la cuenta genérica “admin” de fábrica está inactiva, una buena práctica para no dejar credenciales por defecto habilitadas. Los formularios de perfil (figuras ${F.permrrhh} a ${F.permadm}) permiten marcar los módulos permitidos y bloquear una cuenta sin eliminarla. El permiso “Empleados: datos de salud (sensible)” es independiente y solo tiene efecto si la persona ya tiene el módulo Empleados.`),
-  p(`Los permisos determinan qué módulos aparecen en el menú lateral de cada persona y qué datos puede consultar; por ejemplo, el rol “Recursos humanos” no implica por sí solo acceso al módulo Empleados: los permisos se otorgan explícitamente por módulo, como muestran los cuatro perfiles de las figuras ${F.permrrhh} a ${F.permadm}.`),
-];
-const s18a = [
   ...figura(CAP, "crm-09-usuarios-lista.png", "Módulo Usuarios y accesos",
     "Qué se observa: usuarios con rol, módulos asignados y estado. El administrador tiene acceso total, y la cuenta genérica “admin” figura como Inactivo. Los correos aparecen difuminados por privacidad.", 1000, 480),
   pageBreak(),
-  figurasPar(CAP,
-    { file: "crm-10-permisos-rrhh.png", titulo: "Permisos del perfil Recursos humanos", texto: "Qué se observa: el rol RRHH con solo Inventario y Chat marcados; los permisos se asignan por módulo." },
-    { file: "crm-11-permisos-empleado.png", titulo: "Permisos del perfil Empleado", texto: "Qué se observa: Calendario, Reservas y Chat; sin Empleados, Inventario ni datos de salud." }, 500, 470),
-  pageBreak(),
-  figurasPar(CAP,
-    { file: "crm-12-permisos-recepcion.png", titulo: "Permisos del perfil Recepción", texto: "Qué se observa: acceso a Empleados, Calendario, Inventario, Reservas y Chat, pero sin datos de salud." },
-    { file: "crm-13-permisos-admin.png", titulo: "Permisos del perfil Administrador", texto: "Qué se observa: acceso total, incluidos los datos de salud sensibles." }, 500, 470),
-];
-
-const s19 = [
-  h3("6.6.4 Protección de datos personales (Ley 21.719)"),
-  p("El módulo Empleados separa los datos comunes de los datos sensibles de salud y contacto de emergencia (alergias, medicamentos, previsión médica). Sobre estos últimos se aplican cuatro controles, todos verificados:"),
-  bullet(`Consentimiento informado: la ficha registra explícitamente que el empleado autorizó la entrega de sus datos y la fecha de esa autorización (figura ${F.ficha}); los valores de la captura están difuminados.`),
-  bullet(`Acceso restringido y trazabilidad: solo quien tiene el permiso “datos de salud” ve esos campos; los demás ven un aviso de falta de permiso (figura ${F.sinpermiso}), y cada ficha guarda un historial de accesos con fecha, usuario y acción (figuras ${F.hist1} a ${F.hist3}).`),
-  bullet(`Cifrado en reposo: alergias, medicamentos, previsión médica y contacto de emergencia se guardan cifrados a nivel de columna (Fernet), de modo que un acceso directo a la base de datos o a un respaldo no revela su contenido (figura ${F.cifrado}).`),
-  bullet(`Anonimización en lugar de borrado: al eliminar a un empleado se conservan nombre, RUT, cargo, fechas y salario (exigidos por la ley laboral) y se eliminan sus datos de contacto y de salud; el sistema lo advierte antes de confirmar (figura ${F.anonim}).`),
-  p(`El chat interno agrega otro control: solo el administrador puede abrir la vista de auditoría, que muestra todos los mensajes sin el límite de 30 días (figura ${F.chataud}); el endpoint del servidor rechaza con código 403 a cualquier usuario que no sea administrador.`),
-];
-const s19a = [
-  ...figura(CAP, "crm-14-ficha-salud-consentimiento.png", "Ficha de empleado: salud y consentimiento",
-    "Qué se observa: la sección “Salud y contacto de emergencia” y la casilla de consentimiento marcada con su fecha de autorización (“Autorizado el 25 sept, 01:03”). Los valores de los campos están difuminados por privacidad.", 560, 500),
-  pageBreak(),
-  figurasPar(CAP,
-    { file: "crm-15-historial-1.png", titulo: "Historial de accesos de una ficha (1)", texto: "Qué se observa: fecha, usuario, acción y detalle del registro de auditoría de la ficha." },
-    { file: "crm-16-historial-2.png", titulo: "Historial de accesos de una ficha (2)", texto: "Qué se observa: el mismo registro para otra ficha, con el usuario que ejecutó la acción." }, 480, 300),
-  ...figura(CAP, "crm-17-historial-3.png", "Historial de accesos de una ficha (3)",
-    "Qué se observa: el registro de creación de una tercera ficha por el usuario administrador.", 520, 200),
-  pageBreak(),
   ...figura(CAP, "crm-18-sin-permiso-salud.png", "Ficha sin permiso de salud",
     "Qué se observa: un usuario sin el permiso “Empleados: datos de salud” no ve ni edita esos campos; el sistema le indica que debe solicitar el acceso a un administrador.", 1000, 400),
-  pageBreak(),
-  ...figura(CAP, "crm-19-anonimizacion.png", "Confirmación de anonimización al eliminar un empleado",
-    "Qué se observa: el aviso previo aclara qué se conserva (nombre, RUT, cargo, fechas y salario, por obligación laboral) y qué se elimina (datos de contacto y de salud), y que la acción no se puede deshacer. Se muestra que se accede por https://192.168.80.10.", 640, 400),
-  pageBreak(),
-  ...figura(CAP, "crm-20-chat-auditoria.png", "Chat: vista de auditoría del administrador",
-    "Qué se observa: “Vista de auditoría: se muestran TODOS los mensajes de todos los usuarios, sin límite de 30 días. Solo visible para administradores”, con filtro por usuario y la lista de mensajes con fecha, remitente, destinatario y contenido.", 1000, 480),
   pageBreak(),
   ...figura(CAP, "crm-21-cifrado-en-base-de-datos.png", "Cifrado en reposo: consulta directa a la base de datos",
     "Qué se observa: al consultar la tabla empleados directamente en PostgreSQL, las columnas alergias y medicamentos contienen texto cifrado que empieza con “gAAAA…” (formato Fernet), no el contenido real. Muestra que los datos de salud no son legibles sin la clave de la aplicación.", 900, 420),
 ];
 
 const s20 = [
-  h3("6.6.5 Documentación legal de respaldo"),
-  p("Junto al sistema se elaboraron dos documentos en la carpeta `legal/` del repositorio: el Registro de Actividades de Tratamiento (qué datos personales trata el CRM, con qué finalidad, quién accede, por cuánto tiempo y con qué medidas de seguridad) y el Procedimiento ante Brechas de Seguridad (cómo detectar, contener, evaluar y notificar un incidente). Ambos son borradores: requieren revisión de un abogado especializado y completar los datos de la institución antes de considerarse oficiales, lo que se registra como el riesgo R15."),
-
   h1("7. Control de Versiones (GitHub)"),
-  p("Todo el trabajo descrito en este informe está versionado con git y publicado en un repositorio real de GitHub (`arkno1820-arch/crm-empresarial`), con cada commit correspondiendo a un cambio real y verificable."),
+  p("Todo el trabajo descrito en este informe está versionado con git y publicado en un repositorio real de GitHub (arkno1820-arch/crm-empresarial), con cada commit correspondiendo a un cambio real y verificable."),
 ];
 const s20a = [
   ...figura(EVI, "2026-09-24-07-github-commits.png", "Historial de commits en GitHub",
@@ -763,7 +717,7 @@ s21.push(p(`Seis monitores activos en Uptime Kuma, todos en estado “Funcional�
 s21.push(h2("9.6 Verificación de aislamiento y protección de datos (Fase F3)"));
 s21.push(bullet(`Aislamiento del núcleo: el ping desde el PC hacia 10.10.10.10 termina con 100% de pérdida (figura ${F.ping}) y las reglas de NAT dejan salida solo a los bordes (figura ${F.iptables}).`));
 s21.push(bullet(`Cifrado en reposo: una consulta directa a PostgreSQL devuelve texto cifrado (gAAAA…) en las columnas de salud (figura ${F.cifrado}).`));
-s21.push(bullet(`Control de acceso: el menú y los datos de salud dependen del rol y de los permisos (figuras ${F.permrrhh} a ${F.permadm} y ${F.sinpermiso}).`));
+s21.push(bullet(`Control de acceso: el menú y los datos de salud dependen del rol y de los permisos (figura ${F.usuarios}, figura ${F.sinpermiso} y, en el Anexo B, figuras ${F.permrrhh} a ${F.permadm}).`));
 
 const s21a = [
   ...figura(CAP, "ha-01-ciclo-failover.png", "Ciclo completo de failover del borde",
@@ -793,26 +747,28 @@ const s22a = [
 const s23 = [
   h1("11. Conclusiones"),
   p(
-    "Este informe demuestra, con evidencia verificable y no simulada, un ciclo completo de ingeniería " +
-    "en respuesta a una necesidad real del Centro CHIC: desde el desarrollo de una aplicación de " +
-    "microservicios con seguridad y cumplimiento normativo, pasando por la validación metodológica en " +
-    "un entorno de simulación siguiendo instrucciones de la jefatura, hasta el diseño, implementación y " +
-    "prueba real de un esquema de redundancia, HTTPS confiable, monitoreo activo y una red virtual " +
-    "independiente de la red externa."
+    "Este informe demuestra, con evidencia verificable y no simulada, la puesta en marcha de una " +
+    "arquitectura de redes y virtualización completa en respuesta a una necesidad real del Centro CHIC: " +
+    "una red NAT independiente de la red externa, segmentación con aislamiento del núcleo verificado, " +
+    "Proxmox operando como router con publicación de servicios por DNAT, redundancia del borde con " +
+    "VRRP probada mediante fallas reales, infraestructura como código, HTTPS confiable con una " +
+    "autoridad certificadora propia y monitoreo activo."
   ),
   p(
-    "El valor de este trabajo no reside solo en el resultado —el sistema funcionando en simulación—, " +
-    "sino en el proceso documentado de diecisiete incidentes reales resueltos con su causa raíz " +
-    "identificada, en la verificación explícita de los controles de protección de datos (roles, cifrado, " +
-    "consentimiento, auditoría y anonimización), y en la experiencia adquirida que habilita, con " +
+    "El valor del trabajo no reside solo en el resultado —la infraestructura funcionando en " +
+    "simulación—, sino en el proceso documentado de diecisiete incidentes reales resueltos con su " +
+    "causa raíz identificada (varios de ellos de red: choque de IP, direcciones MAC descartadas por " +
+    "el hotspot, reglas de NAT persistentes), y en la experiencia adquirida que habilita, con " +
     "conocimiento real y no teórico, la migración responsable a producción sobre el servidor físico de CHIC."
   ),
   p(
-    "Las fases pendientes —respaldo offsite en Oracle Cloud, cotización y adquisición del segundo " +
-    "servidor, y la migración final a producción bare metal— están planificadas dentro del cronograma " +
-    "oficial de 360 horas de la práctica (sección 5.3) y se reportarán con evidencia real en los " +
-    "sucesivos informes de avance. Los documentos legales de respaldo permanecen como borradores a la " +
-    "espera de su revisión jurídica."
+    "El sistema CRM, desarrollado a partir de una necesidad real y perfeccionado durante el proyecto, es " +
+    "la carga de trabajo que da sentido a esa infraestructura y una habilidad de software adicional " +
+    "adquirida en el camino; su detalle funcional se conserva en el Anexo B. Las fases pendientes —" +
+    "respaldo offsite en Oracle Cloud, cotización y adquisición del segundo servidor, y la migración " +
+    "a producción bare metal— están planificadas dentro del cronograma oficial de 360 horas de la " +
+    "práctica (sección 5.3) y se reportarán con evidencia real en los sucesivos informes de avance. Los " +
+    "documentos legales de respaldo permanecen como borradores a la espera de su revisión jurídica."
   ),
 ];
 
@@ -832,6 +788,61 @@ const s24a = [
   new Paragraph({ children: [] }),
 ];
 
+const sB = [
+  h1("Anexo B. Detalle funcional del CRM (carga de trabajo)"),
+  p("Este anexo reúne la evidencia funcional del sistema alojado en la infraestructura: los módulos de negocio, la asignación de permisos por perfil y los controles de protección de datos personales (Ley 21.719). Todas las capturas se tomaron accediendo por https://192.168.80.10; los datos personales aparecen difuminados."),
+];
+const sBa = [
+  ...figura(CAP, "crm-01-empleados.png", "Módulo Empleados",
+    "Qué se observa: listado de personal con cargo, departamento y estado, y acciones de editar y consultar el historial de accesos de cada ficha. RUT, teléfonos y correos aparecen difuminados por privacidad.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "crm-02-calendario.png", "Módulo Calendario",
+    "Qué se observa: eventos agrupados por fecha, con horario, lugar, descripción, participantes y el usuario que los creó.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "crm-03-inventario.png", "Módulo Inventario",
+    "Qué se observa: productos con stock (con indicador de color), precio unitario y ubicación, y acciones para ajustar existencias, editar o eliminar.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "crm-04-reservas.png", "Módulo Reservas",
+    "Qué se observa: reservas con huésped, habitación, fechas, total y estado. Los correos de los huéspedes aparecen difuminados por privacidad.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "crm-05-habitaciones.png", "Gestión de habitaciones",
+    "Qué se observa: el catálogo de habitaciones con tipo, capacidad, precio por noche y disponibilidad.", 1000, 500),
+  pageBreak(),
+  ...figura(CAP, "crm-06-chat-aviso-admin.png", "Chat interno con aviso de trazabilidad",
+    "Qué se observa: el aviso “Este chat interno queda registrado y es auditable por administración… los mensajes se conservan visibles 30 días”, que informa al usuario del tratamiento, y el botón Auditoría disponible solo para el administrador.", 1000, 500),
+  pageBreak(),
+  figurasPar(CAP,
+    { file: "crm-10-permisos-rrhh.png", titulo: "Permisos del perfil Recursos humanos", texto: "Qué se observa: el rol RRHH con solo Inventario y Chat marcados; los permisos se asignan por módulo." },
+    { file: "crm-11-permisos-empleado.png", titulo: "Permisos del perfil Empleado", texto: "Qué se observa: Calendario, Reservas y Chat; sin Empleados, Inventario ni datos de salud." }, 500, 470),
+  pageBreak(),
+  figurasPar(CAP,
+    { file: "crm-12-permisos-recepcion.png", titulo: "Permisos del perfil Recepción", texto: "Qué se observa: acceso a Empleados, Calendario, Inventario, Reservas y Chat, pero sin datos de salud." },
+    { file: "crm-13-permisos-admin.png", titulo: "Permisos del perfil Administrador", texto: "Qué se observa: acceso total, incluidos los datos de salud sensibles." }, 500, 470),
+  pageBreak(),
+  ...figura(CAP, "crm-14-ficha-salud-consentimiento.png", "Ficha de empleado: salud y consentimiento",
+    "Qué se observa: la sección “Salud y contacto de emergencia” y la casilla de consentimiento marcada con su fecha de autorización (“Autorizado el 25 sept, 01:03”). Los valores de los campos están difuminados por privacidad.", 560, 500),
+  pageBreak(),
+  figurasPar(CAP,
+    { file: "crm-15-historial-1.png", titulo: "Historial de accesos de una ficha (1)", texto: "Qué se observa: fecha, usuario, acción y detalle del registro de auditoría de la ficha." },
+    { file: "crm-16-historial-2.png", titulo: "Historial de accesos de una ficha (2)", texto: "Qué se observa: el mismo registro para otra ficha, con el usuario que ejecutó la acción." }, 480, 300),
+  ...figura(CAP, "crm-17-historial-3.png", "Historial de accesos de una ficha (3)",
+    "Qué se observa: el registro de creación de una tercera ficha por el usuario administrador.", 520, 200),
+  pageBreak(),
+  ...figura(CAP, "crm-19-anonimizacion.png", "Confirmación de anonimización al eliminar un empleado",
+    "Qué se observa: el aviso previo aclara qué se conserva (nombre, RUT, cargo, fechas y salario, por obligación laboral) y qué se elimina (datos de contacto y de salud), y que la acción no se puede deshacer. Se muestra que se accede por https://192.168.80.10.", 640, 400),
+  pageBreak(),
+  ...figura(CAP, "crm-20-chat-auditoria.png", "Chat: vista de auditoría del administrador",
+    "Qué se observa: “Vista de auditoría: se muestran TODOS los mensajes de todos los usuarios, sin límite de 30 días. Solo visible para administradores”, con filtro por usuario y la lista de mensajes con fecha, remitente, destinatario y contenido. El servidor rechaza con código 403 a quien no sea administrador.", 1000, 480),
+];
+const sC = [
+  h1("Anexo C. Secuencia de autenticación de la carga de trabajo"),
+  p("Diagrama de nivel 3 del sistema alojado: el flujo de inicio de sesión y de una llamada autenticada posterior."),
+];
+const sCa = [
+  ...figura(DIA, "03-bajo-nivel-flujo-login.png", "Diagrama de secuencia del inicio de sesión (nivel 3)",
+    "Qué se observa: el flujo real de login y de una llamada autenticada posterior. El token JWT permite que cada microservicio valide una solicitud sin depender de auth-service en cada llamada (sin punto único de falla por autenticación).", 1000, 540),
+];
+
 verificarFiguras(FIG_KEYS.length);
 
 // ============================================================
@@ -839,8 +850,8 @@ verificarFiguras(FIG_KEYS.length);
 // ============================================================
 const doc = new Document({
   creator: "César Manríquez Figueroa",
-  title: "Informe de Práctica Profesional — CRM Empresarial para CHIC",
-  description: "Diseño, implementación y gestión de un CRM con infraestructura redundante en Proxmox",
+  title: "Informe de Práctica Profesional — Arquitectura de Redes y Virtualización en Proxmox para CHIC",
+  description: "Puesta en marcha de una arquitectura de redes y virtualización redundante sobre Proxmox VE (caso de uso: CRM Empresarial)",
   styles: {
     default: {
       document: { run: { font: "Calibri", size: 21 } },
@@ -874,19 +885,16 @@ const doc = new Document({
     portraitSection(s11),
     landscapeSection(s12),
     portraitSection(s13),
-    landscapeSection(s13a),
-    portraitSection(s14),
+    portraitSection(s14n),
     landscapeSection(s14a),
-    portraitSection(s15),
+    portraitSection(s13t),
+    landscapeSection(s13a),
+    portraitSection([...s14b, ...s15]),
     landscapeSection(s15a),
     portraitSection(s16),
     landscapeSection(s16a),
     portraitSection(s17),
     landscapeSection(s17a),
-    portraitSection(s18),
-    landscapeSection(s18a),
-    portraitSection(s19),
-    landscapeSection(s19a),
     portraitSection(s20),
     landscapeSection(s20a),
     portraitSection(s21),
@@ -896,6 +904,10 @@ const doc = new Document({
     portraitSection(s23),
     portraitSection(s24),
     landscapeSection(s24a),
+    portraitSection(sB),
+    landscapeSection(sBa),
+    portraitSection(sC),
+    landscapeSection(sCa),
   ],
 });
 
