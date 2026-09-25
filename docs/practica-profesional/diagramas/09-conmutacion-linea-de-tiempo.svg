@@ -1,0 +1,62 @@
+<svg viewBox="0 0 1300 620" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1300" height="620" fill="#f4f5f2"/>
+  <text x="650" y="40" text-anchor="middle" font-size="30" font-weight="700" fill="#161b1a">Línea de tiempo de la conmutación (datos reales del registro de Patroni)</text>
+  <text x="650" y="66" text-anchor="middle" font-size="17" fill="#535e5c">Nodo crm-core-b · 25 de septiembre de 2026 · horas en UTC</text>
+
+  <!-- eje -->
+  <line x1="80" y1="250" x2="1220" y2="250" stroke="#535e5c" stroke-width="3"/>
+  <!-- tramo estable -->
+  <rect x="80" y="236" width="300" height="28" rx="6" fill="#e2efec" stroke="#1f6f68"/>
+  <text x="230" y="255" text-anchor="middle" font-size="14" fill="#0f403c" font-weight="600">réplica siguiendo a crm-core</text>
+  <!-- tramo deteccion -->
+  <rect x="380" y="236" width="420" height="28" rx="6" fill="#f8e9eb" stroke="#9b3b47"/>
+  <text x="590" y="255" text-anchor="middle" font-size="14" fill="#9b3b47" font-weight="600">líder caído: espera del vencimiento del TTL (30 s)</text>
+  <!-- tramo conmutacion -->
+  <rect x="800" y="236" width="38" height="28" rx="6" fill="#fdf4e9" stroke="#8a5a1c"/>
+  <!-- tramo nuevo lider -->
+  <rect x="838" y="236" width="382" height="28" rx="6" fill="#e2efec" stroke="#1f6f68"/>
+  <text x="1030" y="255" text-anchor="middle" font-size="14" fill="#0f403c" font-weight="600">crm-core-b líder (TL 8) — escribe</text>
+
+  <!-- marcadores -->
+  <g font-size="14">
+    <line x1="80" y1="250" x2="80" y2="300" stroke="#535e5c"/>
+    <text x="80" y="322" font-size="15" font-weight="700" fill="#161b1a">17:25:51</text>
+    <text x="80" y="342" fill="#535e5c">estado estable:</text>
+    <text x="80" y="360" fill="#535e5c">réplica sincrónica, lag 0</text>
+
+    <line x1="380" y1="250" x2="380" y2="180" stroke="#9b3b47"/>
+    <text x="380" y="160" text-anchor="middle" font-size="15" font-weight="700" fill="#9b3b47">17:25:57</text>
+    <text x="380" y="140" text-anchor="middle" fill="#9b3b47">apagado de crm-core (Stop, VM 101)</text>
+
+    <line x1="590" y1="250" x2="590" y2="300" stroke="#535e5c"/>
+    <text x="590" y="322" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">17:26:02 y 17:26:12</text>
+    <text x="590" y="342" text-anchor="middle" fill="#535e5c">Patroni cambia de servidor etcd</text>
+    <text x="590" y="360" text-anchor="middle" fill="#535e5c">(10.10.10.3 y luego 10.10.10.2)</text>
+
+    
+    <!-- Tres marcas juntas (0,3 s): se escalonan en tres alturas distintas -->
+    <!-- 1) deteccion: alto, hacia la izquierda -->
+    <polyline points="800,236 800,112 786,112" fill="none" stroke="#8a5a1c" stroke-width="1.5"/>
+    <text x="780" y="106" text-anchor="end" font-size="15" font-weight="700" fill="#8a5a1c">17:26:24,131</text>
+    <text x="780" y="126" text-anchor="end" fill="#8a5a1c">1. detección: falla la API de crm-core</text>
+
+    <!-- 2) promocion: medio, hacia la derecha -->
+    <polyline points="819,236 819,166 850,166" fill="none" stroke="#8a5a1c" stroke-width="1.5"/>
+    <text x="858" y="160" text-anchor="start" font-size="15" font-weight="700" fill="#8a5a1c">17:26:24,179</text>
+    <text x="858" y="180" text-anchor="start" fill="#8a5a1c">2. promoted self to leader (+48 ms)</text>
+
+    <!-- 3) escrituras: bajo, hacia la derecha -->
+    <polyline points="838,236 838,214 862,214" fill="none" stroke="#1f6f68" stroke-width="1.5"/>
+    <text x="870" y="208" text-anchor="start" font-size="15" font-weight="700" fill="#1f6f68">17:26:24,427</text>
+    <text x="870" y="228" text-anchor="start" fill="#1f6f68">3. escrituras habilitadas (+296 ms)</text>
+  </g>
+
+  <!-- resumen -->
+  <rect x="80" y="410" width="1140" height="170" rx="12" fill="#ffffff" stroke="#d9dbd3" stroke-width="1.5"/>
+  <text x="100" y="440" font-size="18" font-weight="700" fill="#161b1a">Qué muestran los datos</text>
+  <text x="100" y="470" font-size="15" fill="#333">• Del apagado a la base aceptando escrituras pasaron 26,4 s; de la detección a las escrituras, solo 0,296 s: la promoción es casi instantánea.</text>
+  <text x="100" y="496" font-size="15" fill="#333">• Lo que domina la interrupción es la detección: Patroni espera a que venza la clave del líder en etcd (TTL de 30 s, sondeo cada 10 s).</text>
+  <text x="100" y="522" font-size="15" fill="#333">• No se perdieron datos: la réplica era sincrónica y la última transacción confirmada fue a las 17:25:24 UTC (antes de la falla).</text>
+  <text x="100" y="548" font-size="15" fill="#333">• Las aplicaciones no se reconfiguraron: HAProxy (:5000) redirigió al nuevo líder porque su chequeo GET /primary pasó a responder 200 en crm-core-b.</text>
+  <text x="100" y="570" font-size="13" fill="#8a8f8a">Apagado tomado del Task History de Proxmox (14:25:57 hora local = 17:25:57 UTC); las demás marcas son del registro de Patroni.</text>
+</svg>

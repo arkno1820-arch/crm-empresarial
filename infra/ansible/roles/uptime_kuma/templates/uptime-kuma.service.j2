@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=cesar
+User={{ kuma_user }}
 WorkingDirectory=/opt/uptime-kuma
 # Node no usa el almacen de certificados del sistema operativo por defecto,
 # asi que sin esto los monitores HTTPS contra la CA privada fallarian.

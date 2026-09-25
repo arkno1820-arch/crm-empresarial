@@ -1,0 +1,41 @@
+<svg viewBox="0 0 1300 620" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1300" height="620" fill="#f4f5f2"/>
+  <text x="650" y="40" text-anchor="middle" font-size="30" font-weight="700" fill="#161b1a">Conmutación del borde: la IP virtual pasa a crm-edge-b</text>
+  <text x="650" y="66" text-anchor="middle" font-size="17" fill="#535e5c">Prueba real: apagado de crm-edge (VM 103) · Keepalived/VRRP · 25 de septiembre de 2026 · horas en UTC</text>
+
+  <line x1="80" y1="250" x2="1220" y2="250" stroke="#535e5c" stroke-width="3"/>
+  <rect x="80" y="236" width="420" height="28" rx="6" fill="#e2efec" stroke="#1f6f68"/>
+  <text x="290" y="255" text-anchor="middle" font-size="14" fill="#0f403c" font-weight="600">crm-edge MASTER: sirve la IP virtual 10.10.10.5</text>
+  <rect x="500" y="236" width="120" height="28" rx="6" fill="#f8e9eb" stroke="#9b3b47"/>
+  <text x="560" y="255" text-anchor="middle" font-size="14" fill="#9b3b47" font-weight="600">≈ 3 s</text>
+  <rect x="620" y="236" width="600" height="28" rx="6" fill="#e2efec" stroke="#1f6f68"/>
+  <text x="920" y="255" text-anchor="middle" font-size="14" fill="#0f403c" font-weight="600">crm-edge-b MASTER: sirve la IP virtual 10.10.10.5</text>
+
+  <g font-size="14">
+    <line x1="500" y1="236" x2="500" y2="150" stroke="#9b3b47" stroke-width="1.5"/>
+    <text x="492" y="126" text-anchor="end" font-size="15" font-weight="700" fill="#9b3b47">17:55:11 — 17:55:13</text>
+    <text x="492" y="146" text-anchor="end" fill="#9b3b47">apagado de crm-edge (Stop, VM 103)</text>
+
+    <line x1="620" y1="236" x2="620" y2="176" stroke="#1f6f68" stroke-width="1.5"/>
+    <text x="628" y="160" font-size="15" font-weight="700" fill="#1f6f68">17:55:14</text>
+    <text x="628" y="180" fill="#1f6f68">crm-edge-b: Entering MASTER STATE</text>
+
+    <line x1="80" y1="250" x2="80" y2="300" stroke="#535e5c"/>
+    <text x="80" y="322" font-size="15" font-weight="700" fill="#161b1a">antes</text>
+    <text x="80" y="342" fill="#535e5c">crm-edge (prioridad 150) tiene la VIP;</text>
+    <text x="80" y="360" fill="#535e5c">crm-edge-b (prioridad 100) en espera</text>
+
+    <line x1="900" y1="264" x2="900" y2="300" stroke="#535e5c"/>
+    <text x="900" y="322" text-anchor="middle" font-size="15" font-weight="700" fill="#161b1a">después</text>
+    <text x="900" y="342" text-anchor="middle" fill="#535e5c">respuesta del CRM sin corte visible:</text>
+    <text x="900" y="360" text-anchor="middle" fill="#535e5c">solo un pico de ≈ 85 ms en BORDE · respaldo (14:55 hora local)</text>
+  </g>
+
+  <rect x="80" y="410" width="1140" height="170" rx="12" fill="#ffffff" stroke="#d9dbd3" stroke-width="1.5"/>
+  <text x="100" y="440" font-size="18" font-weight="700" fill="#161b1a">Qué muestran los datos</text>
+  <text x="100" y="470" font-size="15" fill="#333">• Del apagado a la nueva IP virtual pasaron unos 3 s: VRRP detecta la pérdida del maestro con anuncios cada 1 s, mucho más rápido que el núcleo.</text>
+  <text x="100" y="496" font-size="15" fill="#333">• El usuario casi no lo nota: el monitor ENLACE · IP virtual de servicio mantuvo respuestas de 20 a 30 ms, sin hueco.</text>
+  <text x="100" y="522" font-size="15" fill="#333">• Kuma (contenedor externo crm-mon) marcó en rojo BORDE · primario (EHOSTUNREACH 10.10.10.2:443) y siguió operativo.</text>
+  <text x="100" y="548" font-size="15" fill="#333">• No hubo intervención manual: Keepalived promovió a crm-edge-b por prioridad; Nginx y el frontend ya estaban activos en ambos bordes.</text>
+  <text x="100" y="570" font-size="13" fill="#8a8f8a">Apagado tomado del Task History de Proxmox (14:55:11 hora local = 17:55:11 UTC); MASTER y respuestas, de Keepalived y de Kuma. Prueba con crm-core también apagada.</text>
+</svg>

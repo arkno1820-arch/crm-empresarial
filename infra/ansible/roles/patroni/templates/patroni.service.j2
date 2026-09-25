@@ -8,6 +8,7 @@ Type=simple
 User=postgres
 Group=postgres
 ExecStart=/usr/bin/patroni /etc/patroni/config.yml
+ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 TimeoutSec=30
 Restart=no

@@ -1,4 +1,6 @@
 ---
+# Recarga (SIGHUP) en lugar de reiniciar: un cambio de configuracion o de pg_hba no debe
+# provocar una conmutacion innecesaria del primario.
 - name: Reiniciar Patroni
-  ansible.builtin.command: systemctl try-restart patroni
+  ansible.builtin.shell: systemctl daemon-reload && (systemctl reload patroni || true)
   changed_when: false

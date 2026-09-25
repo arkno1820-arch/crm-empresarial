@@ -9,6 +9,26 @@
 # /opt/uptime-kuma desde crm-edge por la red interna (tar por SSH). "npm run setup"
 # tiene un "creates" que se salta al encontrar dist/index.html.
 
+- name: Dependencias base (el contenedor LXC minimo no trae curl ni git)
+  ansible.builtin.apt:
+    name: [curl, ca-certificates, git]
+    state: present
+    update_cache: true
+    cache_valid_time: 86400
+
+- name: Carpeta y CA privada (Node no usa el almacen del sistema; sin esto los monitores HTTPS fallarian)
+  ansible.builtin.file:
+    path: /usr/local/share/ca-certificates
+    state: directory
+    mode: "0755"
+
+- name: Instalar la CA privada del CRM
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/roles/crm_edge/files/ca.crt"
+    dest: /usr/local/share/ca-certificates/crm-ca.crt
+    mode: "0644"
+    force: false
+
 - name: Agregar el repositorio oficial de NodeSource (Ubuntu trae una version de Node muy vieja)
   ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
   args:
@@ -19,6 +39,15 @@
     name: nodejs
     state: present
     update_cache: true
+    cache_valid_time: 86400
+
+- name: Propiedad del directorio ANTES de usar git (git rechaza repos de otro usuario, dubious ownership)
+  ansible.builtin.file:
+    path: /opt/uptime-kuma
+    state: directory
+    owner: "{{ kuma_user }}"
+    group: "{{ kuma_user }}"
+    recurse: true
 
 - name: Clonar Uptime Kuma (version fija, no "master" -- esa rama es de desarrollo)
   ansible.builtin.git:
@@ -27,11 +56,11 @@
     version: "2.5.5"
   register: kuma_clonado
 
-- name: Dar el directorio a cesar (npm no debe correr como root)
+- name: Dar el directorio al usuario de Kuma
   ansible.builtin.file:
     path: /opt/uptime-kuma
-    owner: cesar
-    group: cesar
+    owner: "{{ kuma_user }}"
+    group: "{{ kuma_user }}"
     recurse: true
 
 - name: Instalar dependencias y compilar el frontend (npm run setup, solo la primera vez)
@@ -40,7 +69,7 @@
     chdir: /opt/uptime-kuma
     creates: /opt/uptime-kuma/dist/index.html
   become: true
-  become_user: cesar
+  become_user: "{{ kuma_user }}"
 
 - name: Desplegar el servicio systemd de Uptime Kuma
   ansible.builtin.template:

@@ -9,3 +9,7 @@ output "crm_edge_nodos" {
 output "crm_core_internal_ip" {
   value = "crm-core (activo): 10.10.10.10 · crm-core-b (replica): 10.10.10.11 — ninguna alcanzable desde la LAN"
 }
+
+output "crm_monitoreo" {
+  value = "Uptime Kuma en el contenedor LXC crm-mon (10.10.10.20), fuera de las VMs. Acceso: http://<IP de Proxmox>:3001 (DNAT en crm-nat)."
+}

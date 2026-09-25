@@ -1,0 +1,4 @@
+---
+# Usuario que ejecuta Kuma: "cesar" en los bordes; "root" dentro del contenedor LXC
+# sin privilegios (crm-mon), que solo tiene root (mapeado a un uid sin privilegios).
+kuma_user: cesar

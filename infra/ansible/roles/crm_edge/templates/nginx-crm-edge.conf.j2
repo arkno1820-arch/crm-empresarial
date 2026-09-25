@@ -4,7 +4,7 @@
 {% for m in microservicios %}
 upstream crm_{{ m.nombre }} {
 {% for n in core_nodes %}
-    server {{ n.ip }}:{{ m.puerto }} max_fails=2 fail_timeout=10s;
+    server {{ n.ip }}:{{ m.puerto }} max_fails=1 fail_timeout=30s;
 {% endfor %}
 }
 {% endfor %}
@@ -24,7 +24,7 @@ server {
         proxy_pass http://crm_{{ m.nombre }}/;
         proxy_next_upstream error timeout http_502 http_503 http_504;
         proxy_next_upstream_tries 2;
-        proxy_connect_timeout 3s;
+        proxy_connect_timeout 1s;
 {% if m.nombre == 'chat' %}
         client_max_body_size 30M;
 {% endif %}
@@ -53,7 +53,7 @@ server {
         proxy_pass http://crm_{{ m.nombre }}/;
         proxy_next_upstream error timeout http_502 http_503 http_504;
         proxy_next_upstream_tries 2;
-        proxy_connect_timeout 3s;
+        proxy_connect_timeout 1s;
 {% if m.nombre == 'chat' %}
         client_max_body_size 30M;
 {% endif %}

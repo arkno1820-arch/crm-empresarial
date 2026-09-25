@@ -14,6 +14,13 @@
   roles:
     - uptime_kuma
 
+- name: "Monitoreo EXTERNO: Uptime Kuma en el contenedor crm-mon (fuera de las VMs)"
+  hosts: monitor
+  become: true
+  tags: [monitoreo_externo]
+  roles:
+    - uptime_kuma
+
 - name: "Arbitro de Patroni: cluster etcd de 3 miembros repartidos en 3 VMs"
   hosts: etcd
   become: true

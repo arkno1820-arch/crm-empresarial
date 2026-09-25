@@ -1,0 +1,79 @@
+<svg viewBox="0 0 1300 720" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1300" height="720" fill="#f4f5f2"/>
+  <text x="650" y="40" text-anchor="middle" font-size="30" font-weight="700" fill="#161b1a">Alta disponibilidad de la base de datos: dónde vive cada pieza</text>
+  <text x="650" y="66" text-anchor="middle" font-size="17" fill="#535e5c">Patroni + etcd + HAProxy + PostgreSQL 14 · red interna 10.10.10.0/24 · un agente de Patroni por nodo, ninguno es "el principal"</text>
+
+  <defs>
+    <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1f6f68"/></marker>
+    <marker id="o" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#8a5a1c"/></marker>
+  </defs>
+
+  <!-- ETCD: arbitro -->
+  <rect x="60" y="92" width="1180" height="150" rx="14" fill="#ffffff" stroke="#535e5c" stroke-width="2"/>
+  <text x="80" y="120" font-size="19" font-weight="700" fill="#161b1a">ETCD — el árbitro: guarda quién es el líder (clave con TTL de 30 s). 3 miembros en 3 VMs distintas; mayoría = 2</text>
+  <rect x="100" y="140" width="320" height="82" rx="10" fill="#eceee8" stroke="#8a8f8a"/>
+  <text x="260" y="168" text-anchor="middle" font-size="18" font-weight="700" fill="#161b1a">crm-edge</text>
+  <text x="260" y="190" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.2 : 2379</text>
+  <text x="260" y="210" text-anchor="middle" font-size="14" fill="#535e5c">miembro etcd (borde primario)</text>
+  <rect x="490" y="140" width="320" height="82" rx="10" fill="#eceee8" stroke="#8a8f8a"/>
+  <text x="650" y="168" text-anchor="middle" font-size="18" font-weight="700" fill="#161b1a">crm-edge-b</text>
+  <text x="650" y="190" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.3 : 2379</text>
+  <text x="650" y="210" text-anchor="middle" font-size="14" fill="#535e5c">miembro etcd (borde respaldo)</text>
+  <rect x="880" y="140" width="320" height="82" rx="10" fill="#fdf4e9" stroke="#8a5a1c" stroke-width="2"/>
+  <text x="1040" y="168" text-anchor="middle" font-size="18" font-weight="700" fill="#161b1a">crm-core-b</text>
+  <text x="1040" y="190" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.11 : 2379</text>
+  <text x="1040" y="210" text-anchor="middle" font-size="14" fill="#8a5a1c" font-weight="600">miembro etcd + nodo de datos (ver nota)</text>
+
+  <!-- flechas de consulta al arbitro -->
+  <path d="M 400 290 L 300 224" stroke="#8a8f8a" stroke-width="2" fill="none" stroke-dasharray="5,4" marker-end="url(#o)"/>
+  <path d="M 900 290 L 1000 224" stroke="#8a8f8a" stroke-width="2" fill="none" stroke-dasharray="5,4" marker-end="url(#o)"/>
+  <text x="640" y="272" text-anchor="middle" font-size="14" fill="#535e5c">cada Patroni renueva / disputa la clave del líder en etcd (loop 10 s)</text>
+
+  <!-- NODO 1 -->
+  <rect x="60" y="290" width="560" height="330" rx="14" fill="#ffffff" stroke="#1f6f68" stroke-width="2.5"/>
+  <text x="340" y="320" text-anchor="middle" font-size="22" font-weight="700" fill="#0f403c">crm-core — 10.10.10.10 (VM 101)</text>
+  <rect x="90" y="336" width="500" height="58" rx="10" fill="#e2efec" stroke="#1f6f68"/>
+  <text x="340" y="360" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">Patroni (servicio systemd, API REST :8008)</text>
+  <text x="340" y="382" text-anchor="middle" font-size="14" fill="#535e5c">/etc/patroni/config.yml · decide y ejecuta la promoción</text>
+  <line x1="340" y1="394" x2="340" y2="420" stroke="#1f6f68" stroke-width="2" marker-end="url(#g)"/>
+  <rect x="90" y="422" width="500" height="58" rx="10" fill="#ffffff" stroke="#1f6f68"/>
+  <text x="340" y="446" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">PostgreSQL 14 (nativo) :5433</text>
+  <text x="340" y="468" text-anchor="middle" font-size="14" fill="#535e5c">/var/lib/postgresql/14/patroni · réplica sincrónica o líder</text>
+  <rect x="90" y="498" width="240" height="50" rx="10" fill="#fdf4e9" stroke="#8a5a1c"/>
+  <text x="210" y="520" text-anchor="middle" font-size="15" font-weight="700" fill="#8a5a1c">HAProxy :5000</text>
+  <text x="210" y="539" text-anchor="middle" font-size="13" fill="#8a5a1c">chequea GET /primary</text>
+  <rect x="350" y="498" width="240" height="50" rx="10" fill="#e2efec" stroke="#1f6f68"/>
+  <text x="470" y="520" text-anchor="middle" font-size="15" font-weight="700" fill="#0f403c">Aplicación (Docker)</text>
+  <text x="470" y="539" text-anchor="middle" font-size="13" fill="#535e5c">8 contenedores, activa</text>
+  <line x1="350" y1="523" x2="332" y2="523" stroke="#1f6f68" stroke-width="2" marker-end="url(#g)"/>
+  <text x="340" y="590" text-anchor="middle" font-size="14" fill="#535e5c">La aplicación no sabe quién es el primario: siempre se conecta a HAProxy :5000</text>
+
+  <!-- NODO 2 -->
+  <rect x="680" y="290" width="560" height="330" rx="14" fill="#ffffff" stroke="#1f6f68" stroke-width="2.5"/>
+  <text x="960" y="320" text-anchor="middle" font-size="22" font-weight="700" fill="#0f403c">crm-core-b — 10.10.10.11 (VM 100)</text>
+  <rect x="710" y="336" width="500" height="58" rx="10" fill="#e2efec" stroke="#1f6f68"/>
+  <text x="960" y="360" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">Patroni (servicio systemd, API REST :8008)</text>
+  <text x="960" y="382" text-anchor="middle" font-size="14" fill="#535e5c">misma configuración, otro nombre de nodo</text>
+  <line x1="960" y1="394" x2="960" y2="420" stroke="#1f6f68" stroke-width="2" marker-end="url(#g)"/>
+  <rect x="710" y="422" width="500" height="58" rx="10" fill="#ffffff" stroke="#1f6f68"/>
+  <text x="960" y="446" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">PostgreSQL 14 (nativo) :5433</text>
+  <text x="960" y="468" text-anchor="middle" font-size="14" fill="#535e5c">/var/lib/postgresql/14/patroni · líder o réplica sincrónica</text>
+  <rect x="710" y="498" width="240" height="50" rx="10" fill="#fdf4e9" stroke="#8a5a1c"/>
+  <text x="830" y="520" text-anchor="middle" font-size="15" font-weight="700" fill="#8a5a1c">HAProxy :5000</text>
+  <text x="830" y="539" text-anchor="middle" font-size="13" fill="#8a5a1c">chequea GET /primary</text>
+  <rect x="970" y="498" width="240" height="50" rx="10" fill="#e2efec" stroke="#1f6f68"/>
+  <text x="1090" y="520" text-anchor="middle" font-size="15" font-weight="700" fill="#0f403c">Aplicación (Docker)</text>
+  <text x="1090" y="539" text-anchor="middle" font-size="13" fill="#535e5c">8 contenedores, activa</text>
+  <line x1="970" y1="523" x2="952" y2="523" stroke="#1f6f68" stroke-width="2" marker-end="url(#g)"/>
+  <text x="960" y="590" text-anchor="middle" font-size="14" fill="#535e5c">Se cambian los roles (líder / réplica) sin tocar nada de esta pila</text>
+
+  <!-- replicacion -->
+  <path d="M 620 455 L 680 455" stroke="#1f6f68" stroke-width="3" fill="none" marker-end="url(#g)"/>
+  <text x="650" y="440" text-anchor="middle" font-size="12" fill="#1f6f68" font-weight="600">WAL</text>
+  <text x="650" y="474" text-anchor="middle" font-size="12" fill="#1f6f68">sinc.</text>
+
+  <rect x="60" y="640" width="1180" height="56" rx="10" fill="#eceee8" stroke="#d9dbd3"/>
+  <text x="80" y="663" font-size="15" font-weight="700" fill="#161b1a">Nota de diseño:</text>
+  <text x="200" y="663" font-size="15" fill="#333">crm-core-b aloja dos piezas a la vez (un nodo de datos y un voto de etcd): perderla quita un nodo y un voto, y otra falla más dejaría sin mayoría.</text>
+  <text x="80" y="685" font-size="14" fill="#535e5c">El diseño tolera UNA falla a la vez. Secretos y configuración: generados por Ansible (roles etcd, patroni y haproxy_pg), fuera de git.</text>
+</svg>

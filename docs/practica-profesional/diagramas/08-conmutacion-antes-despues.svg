@@ -1,0 +1,88 @@
+<svg viewBox="0 0 1300 700" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1300" height="700" fill="#f4f5f2"/>
+  <text x="650" y="40" text-anchor="middle" font-size="30" font-weight="700" fill="#161b1a">Conmutación automática de la base de datos: antes y después</text>
+  <text x="650" y="66" text-anchor="middle" font-size="17" fill="#535e5c">Prueba real: apagado de crm-core (líder) — Patroni promueve a crm-core-b — timeline 7 → 8</text>
+
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1f6f68"/></marker>
+    <marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#9b3b47"/></marker>
+  </defs>
+
+  <!-- ===== ANTES ===== -->
+  <rect x="30" y="90" width="610" height="570" rx="14" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <text x="335" y="124" text-anchor="middle" font-size="22" font-weight="700" fill="#0f403c">ANTES — operación normal (TL 7)</text>
+
+  <rect x="200" y="146" width="270" height="56" rx="10" fill="#e2efec" stroke="#1f6f68" stroke-width="1.5"/>
+  <text x="335" y="170" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">Aplicaciones (ambos núcleos)</text>
+  <text x="335" y="190" text-anchor="middle" font-size="14" fill="#535e5c">se conectan a HAProxy :5000</text>
+  <line x1="335" y1="202" x2="335" y2="232" stroke="#1f6f68" stroke-width="2.5" marker-end="url(#a)"/>
+
+  <rect x="200" y="234" width="270" height="50" rx="10" fill="#fdf4e9" stroke="#8a5a1c" stroke-width="1.5"/>
+  <text x="335" y="256" text-anchor="middle" font-size="16" font-weight="700" fill="#8a5a1c">HAProxy :5000</text>
+  <text x="335" y="275" text-anchor="middle" font-size="14" fill="#8a5a1c">consulta GET /primary a cada nodo</text>
+  <line x1="290" y1="284" x2="170" y2="340" stroke="#1f6f68" stroke-width="3" marker-end="url(#a)"/>
+  <line x1="380" y1="284" x2="500" y2="340" stroke="#8a8f8a" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <rect x="50" y="342" width="240" height="150" rx="12" fill="#ffffff" stroke="#1f6f68" stroke-width="3"/>
+  <text x="170" y="372" text-anchor="middle" font-size="20" font-weight="700" fill="#161b1a">crm-core</text>
+  <rect x="100" y="384" width="140" height="30" rx="15" fill="#1f6f68"/>
+  <text x="170" y="405" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">LÍDER</text>
+  <text x="170" y="440" text-anchor="middle" font-size="14" fill="#535e5c">PostgreSQL 14 (Patroni)</text>
+  <text x="170" y="460" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.10 — escribe</text>
+  <text x="170" y="480" text-anchor="middle" font-size="14" fill="#1f6f68" font-weight="600">/primary → 200</text>
+
+  <rect x="380" y="342" width="240" height="150" rx="12" fill="#fbfbfa" stroke="#8a8f8a" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="500" y="372" text-anchor="middle" font-size="20" font-weight="700" fill="#161b1a">crm-core-b</text>
+  <rect x="405" y="384" width="190" height="30" rx="15" fill="#8a8f8a"/>
+  <text x="500" y="405" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">RÉPLICA SINCRÓNICA</text>
+  <text x="500" y="440" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.11 — solo lectura</text>
+  <text x="500" y="460" text-anchor="middle" font-size="14" fill="#535e5c">lag = 0</text>
+  <text x="500" y="480" text-anchor="middle" font-size="14" fill="#8a8f8a" font-weight="600">/primary → 503</text>
+  <path d="M 290 430 L 380 430" stroke="#1f6f68" stroke-width="2.5" fill="none" marker-end="url(#a)"/>
+  <text x="335" y="420" text-anchor="middle" font-size="13" fill="#1f6f68">WAL en vivo</text>
+
+  <rect x="120" y="524" width="430" height="110" rx="10" fill="#eceee8" stroke="#d9dbd3"/>
+  <text x="335" y="550" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">Árbitro: cluster etcd (3 miembros, mayoría = 2)</text>
+  <text x="335" y="574" text-anchor="middle" font-size="14" fill="#535e5c">crm-edge · crm-edge-b · crm-core-b</text>
+  <text x="335" y="596" text-anchor="middle" font-size="14" fill="#535e5c">guarda quién es el líder (clave con TTL de 30 s)</text>
+  <text x="335" y="618" text-anchor="middle" font-size="14" fill="#535e5c">los 3 miembros sanos</text>
+
+  <!-- ===== DESPUES ===== -->
+  <rect x="660" y="90" width="610" height="570" rx="14" fill="#ffffff" stroke="#9b3b47" stroke-width="2"/>
+  <text x="965" y="124" text-anchor="middle" font-size="22" font-weight="700" fill="#9b3b47">DESPUÉS — crm-core apagado (TL 8)</text>
+
+  <rect x="830" y="146" width="270" height="56" rx="10" fill="#e2efec" stroke="#1f6f68" stroke-width="1.5"/>
+  <text x="965" y="170" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">Aplicaciones (crm-core-b)</text>
+  <text x="965" y="190" text-anchor="middle" font-size="14" fill="#535e5c">sin cambiar su configuración</text>
+  <line x1="965" y1="202" x2="965" y2="232" stroke="#1f6f68" stroke-width="2.5" marker-end="url(#a)"/>
+
+  <rect x="830" y="234" width="270" height="50" rx="10" fill="#fdf4e9" stroke="#8a5a1c" stroke-width="1.5"/>
+  <text x="965" y="256" text-anchor="middle" font-size="16" font-weight="700" fill="#8a5a1c">HAProxy :5000</text>
+  <text x="965" y="275" text-anchor="middle" font-size="14" fill="#8a5a1c">ahora apunta al nuevo líder</text>
+  <line x1="920" y1="284" x2="800" y2="340" stroke="#9b3b47" stroke-width="2" stroke-dasharray="6,4"/>
+  <line x1="1010" y1="284" x2="1130" y2="340" stroke="#1f6f68" stroke-width="3" marker-end="url(#a)"/>
+
+  <rect x="680" y="342" width="240" height="150" rx="12" fill="#f8e9eb" stroke="#9b3b47" stroke-width="3"/>
+  <text x="800" y="372" text-anchor="middle" font-size="20" font-weight="700" fill="#9b3b47">crm-core</text>
+  <rect x="725" y="384" width="150" height="30" rx="15" fill="#9b3b47"/>
+  <text x="800" y="405" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">APAGADO</text>
+  <text x="800" y="440" text-anchor="middle" font-size="14" fill="#9b3b47">10.10.10.10</text>
+  <text x="800" y="460" text-anchor="middle" font-size="14" fill="#9b3b47">sin respuesta (EHOSTUNREACH)</text>
+  <text x="800" y="480" text-anchor="middle" font-size="14" fill="#9b3b47" font-weight="600">Kuma: alarma en rojo</text>
+
+  <rect x="1010" y="342" width="240" height="150" rx="12" fill="#ffffff" stroke="#1f6f68" stroke-width="3"/>
+  <text x="1130" y="372" text-anchor="middle" font-size="20" font-weight="700" fill="#161b1a">crm-core-b</text>
+  <rect x="1060" y="384" width="140" height="30" rx="15" fill="#1f6f68"/>
+  <text x="1130" y="405" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">NUEVO LÍDER</text>
+  <text x="1130" y="440" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.11 — escribe</text>
+  <text x="1130" y="460" text-anchor="middle" font-size="14" fill="#535e5c">promovido automáticamente</text>
+  <text x="1130" y="480" text-anchor="middle" font-size="14" fill="#1f6f68" font-weight="600">/primary → 200</text>
+
+  <rect x="750" y="524" width="430" height="110" rx="10" fill="#eceee8" stroke="#d9dbd3"/>
+  <text x="965" y="550" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">Árbitro: etcd sigue con mayoría</text>
+  <text x="965" y="574" text-anchor="middle" font-size="14" fill="#535e5c">crm-core-b adquiere la clave del líder (session lock)</text>
+  <text x="965" y="596" text-anchor="middle" font-size="14" fill="#535e5c">detección → escrituras habilitadas: 0,3 s</text>
+  <text x="965" y="618" text-anchor="middle" font-size="14" fill="#535e5c">sin pérdida de datos (réplica sincrónica)</text>
+
+  <text x="650" y="688" text-anchor="middle" font-size="14" fill="#8a8f8a">Datos del registro real de Patroni en crm-core-b, 25-sep-2026 (UTC). Una segunda falla simultánea en etcd dejaría sin mayoría: el diseño tolera una falla a la vez.</text>
+</svg>

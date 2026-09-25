@@ -23,6 +23,7 @@
       - python3-psycopg2
     state: present
     update_cache: true
+    cache_valid_time: 86400
 
 - name: Detener y deshabilitar el PostgreSQL de sistema (Patroni lo gestiona)
   ansible.builtin.systemd:
