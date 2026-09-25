@@ -1,0 +1,24 @@
+---
+# HAProxy en cada nucleo: publica en :5000 SIEMPRE el primario vigente de Patroni
+# (comprueba GET /primary en el puerto REST de cada nodo). La aplicacion se conecta
+# aqui, de modo que una conmutacion de PostgreSQL no exige reconfigurarla.
+
+- name: Instalar HAProxy
+  ansible.builtin.apt:
+    name: haproxy
+    state: present
+    update_cache: true
+
+- name: Configurar HAProxy hacia el primario de Patroni
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    mode: "0644"
+    validate: haproxy -c -f %s
+  notify: Recargar HAProxy
+
+- name: Habilitar e iniciar HAProxy
+  ansible.builtin.systemd:
+    name: haproxy
+    state: started
+    enabled: true

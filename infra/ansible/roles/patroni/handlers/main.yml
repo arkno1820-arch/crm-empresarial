@@ -1,0 +1,4 @@
+---
+- name: Reiniciar Patroni
+  ansible.builtin.command: systemctl try-restart patroni
+  changed_when: false

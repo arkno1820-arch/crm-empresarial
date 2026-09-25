@@ -1,3 +1,14 @@
+# Los dos nucleos sirven la aplicacion (activa-activa, stateless): si uno falla, Nginx
+# lo marca caido y usa el otro sin intervencion. La base de datos, en cambio, tiene un
+# unico primario elegido por Patroni; cada nucleo llega a el a traves de HAProxy.
+{% for m in microservicios %}
+upstream crm_{{ m.nombre }} {
+{% for n in core_nodes %}
+    server {{ n.ip }}:{{ m.puerto }} max_fails=2 fail_timeout=10s;
+{% endfor %}
+}
+{% endfor %}
+
 server {
     listen 80;
 
@@ -10,7 +21,10 @@ server {
 
 {% for m in microservicios %}
     location /api/{{ m.nombre }}/ {
-        proxy_pass http://{{ crm_core_ip }}:{{ m.puerto }}/;
+        proxy_pass http://crm_{{ m.nombre }}/;
+        proxy_next_upstream error timeout http_502 http_503 http_504;
+        proxy_next_upstream_tries 2;
+        proxy_connect_timeout 3s;
 {% if m.nombre == 'chat' %}
         client_max_body_size 30M;
 {% endif %}
@@ -36,7 +50,10 @@ server {
 
 {% for m in microservicios %}
     location /api/{{ m.nombre }}/ {
-        proxy_pass http://{{ crm_core_ip }}:{{ m.puerto }}/;
+        proxy_pass http://crm_{{ m.nombre }}/;
+        proxy_next_upstream error timeout http_502 http_503 http_504;
+        proxy_next_upstream_tries 2;
+        proxy_connect_timeout 3s;
 {% if m.nombre == 'chat' %}
         client_max_body_size 30M;
 {% endif %}

@@ -1,9 +1,24 @@
 repo_url: "https://github.com/arkno1820-arch/crm-empresarial.git"
 repo_dest: "/home/{{ ansible_user | default('cesar') }}/crm-empresarial"
 
-# Par de nucleo: crm-core (activo) escribe, crm-core-b (replica) recibe.
+# Par de nucleo: dos nodos PostgreSQL bajo Patroni (primario elegido automaticamente).
 crm_core_ip: "10.10.10.10"
-pg_secondary_ip: "10.10.10.11"
+crm_core_b_ip: "10.10.10.11"
+core_nodes:
+  - { nombre: crm-core, ip: "10.10.10.10" }
+  - { nombre: crm-core-b, ip: "10.10.10.11" }
+
+# Patroni + etcd (ver roles etcd, patroni y haproxy_pg)
+patroni_scope: crm-pg
+patroni_namespace: /crm/
+patroni_rest_port: 8008
+pg_version: "14"
+pg_port_directo: 5433       # 5432 lo ocupa el contenedor heredado hasta el traspaso; se conserva 5433 para no chocar
+pg_port_haproxy: 5000       # punto de entrada de la aplicacion: siempre el primario vigente
+etcd_client_port: 2379
+etcd_peer_port: 2380
+etcd_endpoints: "10.10.10.2:2379,10.10.10.3:2379,10.10.10.11:2379"
+etcd_cluster_token: crm-etcd
 
 # Par de borde: IP virtual que Keepalived mueve entre crm-edge y crm-edge-b.
 # Ajusta keepalived_interface si tu plantilla no nombra las NIC "eth0"/"eth1"

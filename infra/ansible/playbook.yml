@@ -2,6 +2,7 @@
 - name: "Configurar el par de borde: Nginx + frontend + Keepalived (VIP)"
   hosts: crm_edge
   become: true
+  tags: [borde]
   roles:
     - crm_edge
     - keepalived
@@ -9,12 +10,28 @@
 - name: "Monitoreo redundante: Uptime Kuma en AMBOS bordes, con monitoreo cruzado entre ellos"
   hosts: crm_edge
   become: true
+  tags: [monitoreo]
   roles:
     - uptime_kuma
 
-- name: "Configurar el par de nucleo: Docker + CRM completo + replica de Postgres"
+- name: "Arbitro de Patroni: cluster etcd de 3 miembros repartidos en 3 VMs"
+  hosts: etcd
+  become: true
+  tags: [etcd]
+  roles:
+    - etcd
+
+- name: "Base de datos redundante: PostgreSQL + Patroni + HAProxy en los dos nucleos"
   hosts: crm_core
   become: true
+  tags: [base_datos]
+  roles:
+    - patroni
+    - haproxy_pg
+
+- name: "Aplicacion del CRM: activa en ambos nucleos, conectada al primario vigente"
+  hosts: crm_core
+  become: true
+  tags: [app]
   roles:
     - crm_core
-    - pg_replica

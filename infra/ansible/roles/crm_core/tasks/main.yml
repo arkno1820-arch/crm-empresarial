@@ -64,7 +64,14 @@
       scp -o ProxyJump=cesar@172.20.10.11 .env cesar@10.10.10.10:{{ repo_dest }}/.env
   when: not env_file.stat.exists
 
-- name: Levantar el stack completo del CRM
-  ansible.builtin.shell: docker compose up --build -d
+- name: Retirar el PostgreSQL local heredado, si existe (la base vive ahora en Patroni; el volumen se conserva)
+  ansible.builtin.shell: docker compose rm -sf postgres
+  args:
+    chdir: "{{ repo_dest }}"
+  changed_when: false
+  failed_when: false
+
+- name: Levantar la aplicacion del CRM (activa en ambos nucleos; la base de datos vive en Patroni)
+  ansible.builtin.shell: docker compose -f docker-compose.yml -f docker-compose.ha.yml up --build -d
   args:
     chdir: "{{ repo_dest }}"

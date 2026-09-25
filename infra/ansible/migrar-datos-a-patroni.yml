@@ -1,0 +1,75 @@
+---
+# TRASPASO UNICO de datos: PostgreSQL en contenedor (crm-core) -> cluster Patroni.
+# La restauracion va por HAProxy (:5000), que siempre apunta al primario vigente.
+# Ejecutar DESPUES de "ansible-playbook playbook.yml --tags etcd,base_datos" y ANTES
+# de "--tags app". Corta el servicio unos minutos (los microservicios se detienen para
+# que no haya escrituras durante el volcado). El volumen del contenedor NO se borra: queda
+# como respaldo del estado previo.
+- name: "Traspaso de datos al cluster Patroni (solo crm-core, el primario inicial)"
+  hosts: crm-core
+  become: false
+  vars:
+    bases: [auth_db, empleados_db, calendario_db, inventario_db, reservas_db, chat_db]
+    servicios_app: [auth-service, empleados-service, calendario-service, inventario-service, reservas-service, chat-service, gateway, frontend]
+    carpeta: "/home/cesar/pg_migracion"
+  tasks:
+    - name: Verificar que el cluster tiene un primario alcanzable por HAProxy (cualquiera de los dos nodos)
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: "{{ pg_port_haproxy }}"
+        timeout: 30
+
+    - name: Leer usuario y contrasena de la aplicacion desde el .env real
+      ansible.builtin.shell: |
+        grep -E '^POSTGRES_USER=' {{ repo_dest }}/.env | cut -d= -f2- || echo crm_user
+      register: usuario
+      changed_when: false
+
+    - name: Leer la contrasena
+      ansible.builtin.shell: "grep -E '^POSTGRES_PASSWORD=' {{ repo_dest }}/.env | cut -d= -f2-"
+      register: clave
+      changed_when: false
+      no_log: true
+
+    - name: Detener los microservicios (sin escrituras durante el volcado)
+      ansible.builtin.shell: "docker compose stop {{ servicios_app | join(' ') }}"
+      args:
+        chdir: "{{ repo_dest }}"
+
+    - name: Carpeta de volcados
+      ansible.builtin.file:
+        path: "{{ carpeta }}"
+        state: directory
+        mode: "0700"
+
+    - name: Volcar cada base del contenedor heredado
+      ansible.builtin.shell: >-
+        docker exec crm_postgres pg_dump -U {{ usuario.stdout | trim }} --no-owner --no-privileges {{ item }}
+        > {{ carpeta }}/{{ item }}.sql
+      loop: "{{ bases }}"
+
+    - name: Restaurar en el primario de Patroni
+      ansible.builtin.shell: >-
+        PGPASSWORD='{{ clave.stdout }}' psql -h 127.0.0.1 -p {{ pg_port_haproxy }} -U {{ usuario.stdout | trim }}
+        -d {{ item }} -v ON_ERROR_STOP=1 -q -f {{ carpeta }}/{{ item }}.sql
+      loop: "{{ bases }}"
+      no_log: true
+
+    - name: Comparar el numero de tablas por base (origen vs destino)
+      ansible.builtin.shell: |
+        O=$(docker exec crm_postgres psql -U {{ usuario.stdout | trim }} -d {{ item }} -Atc "select count(*) from information_schema.tables where table_schema='public'")
+        D=$(PGPASSWORD='{{ clave.stdout }}' psql -h 127.0.0.1 -p {{ pg_port_haproxy }} -U {{ usuario.stdout | trim }} -d {{ item }} -Atc "select count(*) from information_schema.tables where table_schema='public'")
+        echo "{{ item }}: origen=$O destino=$D"; [ "$O" = "$D" ]
+      loop: "{{ bases }}"
+      register: comparacion
+      no_log: false
+
+    - name: Retirar el contenedor PostgreSQL heredado (el volumen se conserva como respaldo)
+      ansible.builtin.shell: "docker compose rm -sf postgres"
+      args:
+        chdir: "{{ repo_dest }}"
+
+    - name: Quitar el volcado periodico de 15 minutos (reemplazado por replicacion en vivo)
+      ansible.builtin.cron:
+        name: "pg_replica hacia crm-core-b"
+        state: absent

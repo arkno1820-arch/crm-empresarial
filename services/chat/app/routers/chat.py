@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
 
@@ -69,11 +69,11 @@ def enviar_archivo(
     if tamano > TAMANO_MAXIMO_BYTES:
         raise HTTPException(status_code=400, detail="El archivo supera el límite de 25 MB")
 
-    # Nombre generado por el servidor (no el del cliente): evita colisiones
-    # y cualquier intento de path traversal a través del nombre original.
-    nombre_en_disco = f"{uuid.uuid4().hex}{extension}"
-    with open(os.path.join(CARPETA_ARCHIVOS, nombre_en_disco), "wb") as destino:
-        destino.write(archivo.file.read())
+    # El contenido se guarda en la base de datos (replicada por Patroni); archivo_ruta
+    # solo marca el origen. Un uuid generado por el servidor evita colisiones y
+    # cualquier intento de path traversal con el nombre original.
+    nombre_en_disco = f"db:{uuid.uuid4().hex}{extension}"
+    contenido = archivo.file.read()
 
     nuevo = models.Mensaje(
         remitente=yo,
@@ -82,6 +82,7 @@ def enviar_archivo(
         archivo_ruta=nombre_en_disco,
         archivo_tipo=archivo.content_type,
         archivo_tamano=tamano,
+        archivo_datos=contenido,
     )
     db.add(nuevo)
     db.commit()
@@ -151,11 +152,20 @@ def descargar_archivo(mensaje_id: int, db: Session = Depends(get_db), user: dict
         if mensaje.fecha_envio < _limite_visibilidad():
             raise HTTPException(status_code=404, detail="Archivo no encontrado")
 
+    tipo = mensaje.archivo_tipo or "application/octet-stream"
+    if mensaje.archivo_datos is not None:
+        return Response(
+            content=bytes(mensaje.archivo_datos),
+            media_type=tipo,
+            headers={"Content-Disposition": f'attachment; filename="{mensaje.archivo_nombre}"'},
+        )
+
+    # Adjuntos anteriores a la migracion: siguen en el volumen local del nodo.
     ruta_completa = os.path.join(CARPETA_ARCHIVOS, mensaje.archivo_ruta)
     if not os.path.exists(ruta_completa):
         raise HTTPException(status_code=404, detail="El archivo ya no está disponible")
 
-    return FileResponse(ruta_completa, filename=mensaje.archivo_nombre, media_type=mensaje.archivo_tipo or "application/octet-stream")
+    return FileResponse(ruta_completa, filename=mensaje.archivo_nombre, media_type=tipo)
 
 
 @router.get("/auditoria", response_model=List[schemas.MensajeOut])

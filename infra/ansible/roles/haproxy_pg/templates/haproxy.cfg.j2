@@ -1,0 +1,25 @@
+# Gestionado por Ansible (rol haproxy_pg)
+global
+    log /dev/log local0
+    maxconn 300
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log global
+    mode tcp
+    retries 2
+    timeout client 30m
+    timeout connect 4s
+    timeout server 30m
+    timeout check 5s
+
+listen postgres_primario
+    bind *:{{ pg_port_haproxy }}
+    option httpchk GET /primary
+    http-check expect status 200
+    default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
+{% for n in core_nodes %}
+    server {{ n.nombre }} {{ n.ip }}:{{ pg_port_directo }} maxconn 200 check port {{ patroni_rest_port }}
+{% endfor %}

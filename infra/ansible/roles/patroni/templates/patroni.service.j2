@@ -1,0 +1,16 @@
+[Unit]
+Description=Patroni (alta disponibilidad de PostgreSQL)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=postgres
+Group=postgres
+ExecStart=/usr/bin/patroni /etc/patroni/config.yml
+KillMode=process
+TimeoutSec=30
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

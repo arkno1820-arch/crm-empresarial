@@ -1,0 +1,122 @@
+---
+# Patroni gestiona PostgreSQL nativo en crm-core y crm-core-b: replicacion en vivo
+# (streaming, modo sincrono) y conmutacion AUTOMATICA. El arbitro es el cluster etcd
+# de 3 miembros, asi que un nodo aislado nunca se promueve solo (sin split-brain).
+# Reemplaza al rol pg_replica (volcado cada 15 min + promocion manual, ADR-02).
+
+- name: Carpeta de secretos en el nodo de control (crm-edge), fuera de git
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user | default('cesar') }}/.crm-secrets"
+    state: directory
+    mode: "0700"
+  delegate_to: localhost
+  run_once: true
+  become: false
+
+- name: Instalar PostgreSQL {{ pg_version }}, Patroni y sus dependencias
+  ansible.builtin.apt:
+    name:
+      - "postgresql-{{ pg_version }}"
+      - "postgresql-client-{{ pg_version }}"
+      - patroni
+      - python3-etcd
+      - python3-psycopg2
+    state: present
+    update_cache: true
+
+- name: Detener y deshabilitar el PostgreSQL de sistema (Patroni lo gestiona)
+  ansible.builtin.systemd:
+    name: postgresql
+    state: stopped
+    enabled: false
+
+- name: Eliminar el cluster "main" que crea el paquete (Patroni necesita un directorio de datos propio)
+  ansible.builtin.shell: |
+    if pg_lsclusters | grep -q "^{{ pg_version }} main"; then pg_dropcluster --stop {{ pg_version }} main; fi
+  changed_when: false
+
+- name: Directorio de configuracion de Patroni
+  ansible.builtin.file:
+    path: /etc/patroni
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: "0750"
+
+- name: Configuracion de Patroni
+  ansible.builtin.template:
+    src: patroni.yml.j2
+    dest: /etc/patroni/config.yml
+    owner: postgres
+    group: postgres
+    mode: "0600"
+  notify: Reiniciar Patroni
+
+- name: Servicio systemd de Patroni
+  ansible.builtin.template:
+    src: patroni.service.j2
+    dest: /etc/systemd/system/patroni.service
+    mode: "0644"
+  notify: Reiniciar Patroni
+
+- name: Iniciar Patroni en crm-core primero (inicializa el cluster y queda como primario)
+  ansible.builtin.systemd:
+    name: patroni
+    state: started
+    enabled: true
+    daemon_reload: true
+  when: patroni_name == 'crm-core'
+
+- name: Esperar a que crm-core sea el primario
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ patroni_rest_port }}/primary"
+    status_code: 200
+  register: primario
+  until: primario.status == 200
+  retries: 30
+  delay: 4
+  when: patroni_name == 'crm-core'
+
+- name: Iniciar Patroni en crm-core-b (se clona del primario y queda como replica)
+  ansible.builtin.systemd:
+    name: patroni
+    state: started
+    enabled: true
+    daemon_reload: true
+  when: patroni_name == 'crm-core-b'
+
+- name: Esperar a que crm-core-b sea una replica sana
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ patroni_rest_port }}/replica"
+    status_code: 200
+  register: replica
+  until: replica.status == 200
+  retries: 40
+  delay: 5
+  when: patroni_name == 'crm-core-b'
+
+- name: Leer la contrasena de la aplicacion desde el .env real (nunca vive en git)
+  ansible.builtin.shell: "grep -E '^POSTGRES_PASSWORD=' {{ repo_dest }}/.env | cut -d= -f2-"
+  register: clave_app
+  changed_when: false
+  no_log: true
+
+- name: Leer el usuario de la aplicacion desde el .env real
+  ansible.builtin.shell: "grep -E '^POSTGRES_USER=' {{ repo_dest }}/.env | cut -d= -f2- || true"
+  register: usuario_app_env
+  changed_when: false
+
+- name: Crear el usuario y las bases de la aplicacion (solo en el primario, idempotente)
+  ansible.builtin.shell: |
+    set -e
+    export PGPASSWORD='{{ lookup('password', '/home/cesar/.crm-secrets/pg_superuser length=24 chars=ascii_letters,digits') }}'
+    APP_USER='{{ (usuario_app_env.stdout | trim) if (usuario_app_env.stdout | trim) else 'crm_user' }}'
+    P="psql -h 127.0.0.1 -p {{ pg_port_directo }} -U postgres -v ON_ERROR_STOP=1 -Atq"
+    $P -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='$APP_USER') THEN CREATE ROLE $APP_USER LOGIN; END IF; END \$\$;"
+    $P -c "ALTER ROLE $APP_USER WITH LOGIN PASSWORD '{{ clave_app.stdout }}';"
+    for db in auth_db empleados_db calendario_db inventario_db reservas_db chat_db; do
+      $P -c "SELECT 'CREATE DATABASE '||'$db'||' OWNER $APP_USER' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname='$db')" | $P
+    done
+  no_log: true
+  changed_when: false
+  when: patroni_name == 'crm-core'

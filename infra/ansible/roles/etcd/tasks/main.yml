@@ -1,0 +1,40 @@
+---
+# etcd: el "arbitro" de Patroni. Tres miembros en tres VMs distintas (crm-edge,
+# crm-edge-b y crm-core-b): con la caida de cualquiera queda mayoria y Patroni
+# puede elegir primario sin riesgo de split-brain, sin necesitar un tercer servidor.
+# Se usa la API v2 (la del paquete de Ubuntu 22.04, etcd 3.3).
+
+- name: Instalar etcd
+  ansible.builtin.apt:
+    name:
+      - etcd-server
+      - etcd-client
+    state: present
+    update_cache: true
+
+- name: Configurar el miembro del cluster etcd
+  ansible.builtin.template:
+    src: etcd.default.j2
+    dest: /etc/default/etcd
+    mode: "0644"
+  notify: Reiniciar etcd
+
+# El paquete arranca etcd solo, con una configuracion por defecto de un unico nodo:
+# hay que aplicar la nuestra ANTES de seguir (los tres miembros reinician a la vez).
+- name: Aplicar la configuracion (reinicio simultaneo de los tres miembros)
+  ansible.builtin.meta: flush_handlers
+
+- name: Habilitar e iniciar etcd (los tres miembros arrancan juntos)
+  ansible.builtin.systemd:
+    name: etcd
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: Esperar a que el cluster tenga quorum
+  ansible.builtin.command: etcdctl --endpoints http://{{ etcd_ip }}:{{ etcd_client_port }} cluster-health
+  register: etcd_salud
+  until: etcd_salud.rc == 0 and "cluster is healthy" in etcd_salud.stdout
+  retries: 20
+  delay: 3
+  changed_when: false

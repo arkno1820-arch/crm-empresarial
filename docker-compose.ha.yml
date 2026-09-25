@@ -1,0 +1,57 @@
+# Override para el despliegue REDUNDANTE del nucleo (Patroni).
+#
+# Uso (lo aplica el rol Ansible crm_core en crm-core y crm-core-b):
+#   docker compose -f docker-compose.yml -f docker-compose.ha.yml up --build -d
+#
+# Diferencias respecto al docker-compose.yml base:
+#  - PostgreSQL ya NO corre en un contenedor local: vive en cada VM de nucleo bajo
+#    Patroni (nativo) y HAProxy publica en :5000 el primario vigente. Los
+#    microservicios se conectan a ese punto de entrada, asi la aplicacion no
+#    necesita saber cual nodo es el primario ni reiniciarse en una conmutacion.
+#  - La aplicacion corre ACTIVA en los dos nucleos (es stateless: JWT sin sesion en
+#    servidor y adjuntos del chat dentro de la base de datos).
+#  - El contenedor postgres local queda detras del perfil "local-db" (solo para
+#    desarrollo en un equipo suelto).
+x-db-host: &db-host
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+services:
+  postgres:
+    profiles: ["local-db"]
+
+  auth-service:
+    <<: *db-host
+    depends_on: !reset []
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@host.docker.internal:5000/auth_db
+
+  empleados-service:
+    <<: *db-host
+    depends_on: !reset []
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@host.docker.internal:5000/empleados_db
+
+  calendario-service:
+    <<: *db-host
+    depends_on: !reset []
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@host.docker.internal:5000/calendario_db
+
+  inventario-service:
+    <<: *db-host
+    depends_on: !reset []
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@host.docker.internal:5000/inventario_db
+
+  reservas-service:
+    <<: *db-host
+    depends_on: !reset []
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@host.docker.internal:5000/reservas_db
+
+  chat-service:
+    <<: *db-host
+    depends_on: !reset []
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crm_user}:${POSTGRES_PASSWORD:-crm_password}@host.docker.internal:5000/chat_db
