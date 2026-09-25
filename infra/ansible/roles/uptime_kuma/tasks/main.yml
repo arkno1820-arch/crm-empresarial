@@ -1,9 +1,13 @@
 ---
-# Uptime Kuma vive solo en crm-edge (no en crm-edge-b): es la unica VM con
-# visibilidad simultanea hacia la LAN (vmbr0) y hacia la red interna (vmbr1),
-# asi que es la unica que puede monitorear el par de nucleo sin abrir mas
-# rutas de red de las que ya existen. Nativo (Node.js), no Docker, para
-# mantener el principio de diseno de crm-edge sin Docker.
+# Uptime Kuma corre en AMBOS bordes (crm-edge y crm-edge-b), cada uno con su propia
+# base local. Ambos tienen vista hacia la red interna (vmbr1), asi que pueden monitorear
+# el par de nucleo, y cada uno vigila tambien a su par: si un borde cae, el otro sigue
+# monitoreando y detecta la caida (antes, al apagar crm-edge se caia todo el monitoreo).
+# Nativo (Node.js), no Docker, para mantener el principio de diseno de los bordes.
+#
+# Sembrado inicial de crm-edge-b sin descargar dependencias por Internet: copiar
+# /opt/uptime-kuma desde crm-edge por la red interna (tar por SSH). "npm run setup"
+# tiene un "creates" que se salta al encontrar dist/index.html.
 
 - name: Agregar el repositorio oficial de NodeSource (Ubuntu trae una version de Node muy vieja)
   ansible.builtin.shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -

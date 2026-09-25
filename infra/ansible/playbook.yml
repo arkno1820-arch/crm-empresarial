@@ -6,8 +6,8 @@
     - crm_edge
     - keepalived
 
-- name: "Monitoreo: Uptime Kuma (solo en crm-edge, es la unica VM con vista a ambas redes)"
-  hosts: localhost
+- name: "Monitoreo redundante: Uptime Kuma en AMBOS bordes, con monitoreo cruzado entre ellos"
+  hosts: crm_edge
   become: true
   roles:
     - uptime_kuma
