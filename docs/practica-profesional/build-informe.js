@@ -91,6 +91,7 @@ function makeTable(widths, headerRow, dataRows, headerShading = TEAL_DARK) {
   }));
   dataRows.forEach((r, idx) => {
     rows.push(new TableRow({
+      cantSplit: true,
       children: r.map((t, i) => cell(t, { width: widths[i], shading: idx % 2 === 0 ? "F4F5F2" : "FFFFFF", size: 18 })),
     }));
   });

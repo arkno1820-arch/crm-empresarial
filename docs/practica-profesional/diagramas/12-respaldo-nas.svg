@@ -1,0 +1,104 @@
+<svg viewBox="0 0 1300 790" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f6f68"/></marker>
+    <marker id="o" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b5651d"/></marker>
+  </defs>
+  <rect width="1300" height="790" fill="#f4f5f2"/>
+  <text x="650" y="38" text-anchor="middle" font-size="28" font-weight="700" fill="#161b1a">Respaldo y recuperación: qué se copia, hacia dónde y cómo se protege</text>
+  <text x="650" y="64" text-anchor="middle" font-size="16" fill="#535e5c">NAS simulada: contenedor crm-nas sobre un disco virtual alojado en el disco externo del PC · desde el 25-09-2026</text>
+
+  <!-- PC anfitrion -->
+  <rect x="20" y="84" width="1260" height="660" rx="14" fill="none" stroke="#9aa5a2" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="36" y="108" font-size="15" font-weight="600" fill="#535e5c">PC físico (Windows) · VMware Workstation</text>
+
+  <!-- Proxmox -->
+  <rect x="40" y="122" width="900" height="606" rx="12" fill="#eaf1ef" stroke="#1f6f68" stroke-width="2.5"/>
+  <text x="58" y="148" font-size="17" font-weight="700" fill="#0f403c">Proxmox VE · 192.168.80.10 · red interna 10.10.10.0/24</text>
+
+  <!-- nucleos -->
+  <rect x="62" y="166" width="205" height="128" rx="8" fill="#ffffff" stroke="#1f6f68" stroke-width="1.8"/>
+  <text x="164" y="192" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">crm-core (VM 101)</text>
+  <text x="164" y="215" text-anchor="middle" font-size="14" fill="#333">cada noche 03:00</text>
+  <text x="164" y="236" text-anchor="middle" font-size="14" fill="#333">1. pg_dumpall local</text>
+  <text x="164" y="256" text-anchor="middle" font-size="14" fill="#333">2. cifra (GPG, clave pública)</text>
+  <text x="164" y="276" text-anchor="middle" font-size="14" fill="#333">3. sube por SSH</text>
+
+  <rect x="285" y="166" width="205" height="128" rx="8" fill="#ffffff" stroke="#1f6f68" stroke-width="1.8"/>
+  <text x="387" y="192" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">crm-core-b (VM 100)</text>
+  <text x="387" y="215" text-anchor="middle" font-size="14" fill="#333">cada noche 03:30</text>
+  <text x="387" y="236" text-anchor="middle" font-size="14" fill="#333">1. pg_dumpall local</text>
+  <text x="387" y="256" text-anchor="middle" font-size="14" fill="#333">2. cifra (GPG, clave pública)</text>
+  <text x="387" y="276" text-anchor="middle" font-size="14" fill="#333">3. sube por SSH</text>
+
+  <!-- VMs para vzdump -->
+  <rect x="520" y="166" width="400" height="128" rx="8" fill="#ffffff" stroke="#b5651d" stroke-width="1.8"/>
+  <text x="720" y="192" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">Las 4 VMs y crm-mon (100 a 104)</text>
+  <text x="720" y="218" text-anchor="middle" font-size="14" fill="#333">Proxmox las copia enteras (vzdump)</text>
+  <text x="720" y="240" text-anchor="middle" font-size="14" fill="#333">cada domingo 02:00 · modo snapshot,</text>
+  <text x="720" y="260" text-anchor="middle" font-size="14" fill="#333">sin apagar nada · se conservan las 3 últimas</text>
+
+  <!-- crm-nas -->
+  <rect x="62" y="356" width="428" height="150" rx="8" fill="#ffffff" stroke="#1f6f68" stroke-width="2.4"/>
+  <text x="276" y="384" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">crm-nas (contenedor 105) · 10.10.10.30</text>
+  <text x="276" y="410" text-anchor="middle" font-size="14" fill="#333">Receptor de SOLO ESCRITURA: la llave de cada núcleo</text>
+  <text x="276" y="430" text-anchor="middle" font-size="14" fill="#333">solo permite subir un archivo nuevo (no lee, lista,</text>
+  <text x="276" y="450" text-anchor="middle" font-size="14" fill="#333">sobrescribe ni borra) · sin salida a Internet</text>
+  <text x="276" y="476" text-anchor="middle" font-size="14" font-weight="600" fill="#1f6f68">/srv/respaldos/db · limpieza a los 30 días</text>
+
+  <!-- Kuma -->
+  <rect x="520" y="356" width="400" height="150" rx="8" fill="#ffffff" stroke="#6b4c9a" stroke-width="1.8"/>
+  <text x="720" y="384" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">crm-mon · Uptime Kuma (monitores 11 y 12)</text>
+  <text x="720" y="410" text-anchor="middle" font-size="14" fill="#333">11 · enlace: TCP al puerto 22 de crm-nas (cada 30 s)</text>
+  <text x="720" y="432" text-anchor="middle" font-size="14" fill="#333">12 · último respaldo: cada núcleo avisa al terminar;</text>
+  <text x="720" y="452" text-anchor="middle" font-size="14" fill="#333">si pasan 26 horas sin aviso, alarma en rojo</text>
+  <text x="720" y="484" text-anchor="middle" font-size="13" fill="#6b4c9a">(detecta un respaldo que dejó de correr sin que nadie lo note)</text>
+
+  <!-- almacenamiento -->
+  <rect x="62" y="560" width="858" height="150" rx="10" fill="#ffffff" stroke="#0f403c" stroke-width="2.6"/>
+  <text x="491" y="588" text-anchor="middle" font-size="17" font-weight="700" fill="#0f403c">Almacenamiento «nas-respaldos» · ext4 · /dev/sdb · 195 GB</text>
+  <rect x="82" y="606" width="390" height="84" rx="6" fill="#eaf1ef" stroke="#1f6f68"/>
+  <text x="277" y="634" text-anchor="middle" font-size="14" font-weight="600" fill="#161b1a">Disco raíz de crm-nas (100 GB, dinámico)</text>
+  <text x="277" y="656" text-anchor="middle" font-size="14" fill="#333">volcados de la base de datos, cifrados</text>
+  <text x="277" y="674" text-anchor="middle" font-size="14" fill="#333">(db-crm-core-…sql.gpg)</text>
+  <rect x="510" y="606" width="390" height="84" rx="6" fill="#fbf1e6" stroke="#b5651d"/>
+  <text x="705" y="634" text-anchor="middle" font-size="14" font-weight="600" fill="#161b1a">dump/ · respaldos de máquinas completas</text>
+  <text x="705" y="656" text-anchor="middle" font-size="14" fill="#333">VMs 100 a 103 y contenedor 104, comprimidos</text>
+  <text x="705" y="674" text-anchor="middle" font-size="14" fill="#333">(zstd) · ≈ 8,8 GB en la prueba</text>
+
+  <!-- flechas -->
+  <path d="M164,294 L164,356" stroke="#1f6f68" stroke-width="2.6" fill="none" marker-end="url(#a)"/>
+  <path d="M387,294 L387,356" stroke="#1f6f68" stroke-width="2.6" fill="none" marker-end="url(#a)"/>
+  <text x="176" y="330" font-size="13" fill="#1f6f68">SSH</text>
+  <text x="399" y="330" font-size="13" fill="#1f6f68">SSH</text>
+  <path d="M276,506 L276,560" stroke="#1f6f68" stroke-width="2.6" fill="none" marker-end="url(#a)"/>
+  <path d="M920,230 L930,230 L930,540 L880,540 L880,560" stroke="#b5651d" stroke-width="2.6" fill="none" marker-end="url(#o)"/>
+  <text transform="translate(924,430) rotate(-90)" text-anchor="middle" font-size="13" fill="#b5651d">vzdump</text>
+  <path d="M520,431 L490,431" stroke="#6b4c9a" stroke-width="2" fill="none" stroke-dasharray="5 4" marker-end="url(#a)"/>
+
+  <!-- disco externo -->
+  <rect x="970" y="122" width="290" height="270" rx="12" fill="#ffffff" stroke="#535e5c" stroke-width="2.4"/>
+  <text x="1115" y="150" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">Disco externo (K:)</text>
+  <text x="1115" y="176" text-anchor="middle" font-size="14" fill="#333">NTFS · no se formatea ni</text>
+  <text x="1115" y="196" text-anchor="middle" font-size="14" fill="#333">se toca su contenido</text>
+  <rect x="990" y="216" width="250" height="88" rx="6" fill="#eef0ef" stroke="#9aa5a2"/>
+  <text x="1115" y="242" text-anchor="middle" font-size="14" font-weight="600" fill="#161b1a">K:\crm-nas\respaldos.vmdk</text>
+  <text x="1115" y="264" text-anchor="middle" font-size="14" fill="#333">disco virtual de 200 GB,</text>
+  <text x="1115" y="284" text-anchor="middle" font-size="14" fill="#333">crece solo según se usa</text>
+  <text x="1115" y="340" text-anchor="middle" font-size="13" fill="#b5651d">Si se desconecta con Proxmox</text>
+  <text x="1115" y="358" text-anchor="middle" font-size="13" fill="#b5651d">encendido, VMware pausa la VM</text>
+  <text x="1115" y="376" text-anchor="middle" font-size="13" fill="#b5651d">(incidente 26): elegir «Retry»</text>
+  <path d="M970,300 L955,300 L955,640 L920,640" stroke="#535e5c" stroke-width="2.6" fill="none" marker-end="url(#a)"/>
+
+  <!-- administrador -->
+  <rect x="970" y="430" width="290" height="190" rx="12" fill="#ffffff" stroke="#8a3b3b" stroke-width="2.2"/>
+  <text x="1115" y="458" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">Equipo del administrador</text>
+  <text x="1115" y="484" text-anchor="middle" font-size="14" fill="#333">Clave PRIVADA de GPG</text>
+  <text x="1115" y="504" text-anchor="middle" font-size="14" fill="#333">(solo existe aquí, no en las VMs)</text>
+  <text x="1115" y="532" text-anchor="middle" font-size="14" fill="#333">Descifra los volcados para</text>
+  <text x="1115" y="552" text-anchor="middle" font-size="14" fill="#333">restaurar. Un núcleo comprometido</text>
+  <text x="1115" y="572" text-anchor="middle" font-size="14" fill="#333">no puede leer los respaldos.</text>
+  <text x="1115" y="602" text-anchor="middle" font-size="13" font-weight="600" fill="#8a3b3b">Sin esta clave no hay restauración</text>
+
+  <!-- pie -->
+  <text x="650" y="770" text-anchor="middle" font-size="14" fill="#535e5c">Límite declarado: todo sigue en el mismo PC. La copia en otro lugar físico (nube o disco guardado aparte) es una fase pendiente.</text>
+</svg>

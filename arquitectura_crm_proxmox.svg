@@ -1,5 +1,5 @@
-<svg viewBox="0 0 1300 1010" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
-  <rect width="1300" height="1010" fill="#f4f5f2"/>
+<svg viewBox="0 0 1300 1140" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1300" height="1140" fill="#f4f5f2"/>
   <defs>
     <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#8a5a1c"/></marker>
     <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1f6f68"/></marker>
@@ -19,7 +19,7 @@
   <line x1="650" y1="186" x2="650" y2="204" stroke="#4b5563" stroke-width="2"/>
 
   <!-- Proxmox -->
-  <rect x="40" y="204" width="1220" height="770" rx="14" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
+  <rect x="40" y="204" width="1220" height="864" rx="14" fill="#ffffff" stroke="#1f6f68" stroke-width="2"/>
   <text x="60" y="230" font-size="18" font-weight="700" fill="#0f403c">Proxmox VE — hipervisor y router de las VMs — 192.168.80.10</text>
 
   <rect x="70" y="244" width="1160" height="28" rx="6" fill="#e2efec" stroke="#1f6f68"/>
@@ -100,7 +100,7 @@
   <!-- Monitoreo y arbitro -->
   <rect x="70" y="832" width="480" height="98" rx="10" fill="#f8f1e0" stroke="#8a5a1c" stroke-width="2"/>
   <text x="310" y="856" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">crm-mon (contenedor LXC 104) — 10.10.10.20</text>
-  <text x="310" y="877" text-anchor="middle" font-size="14" fill="#333">Uptime Kuma PRINCIPAL — 10 monitores, fuera de las VMs</text>
+  <text x="310" y="877" text-anchor="middle" font-size="14" fill="#333">Uptime Kuma PRINCIPAL — 12 monitores, fuera de las VMs</text>
   <text x="310" y="897" text-anchor="middle" font-size="13" fill="#666">arranque automático (orden 1) · 768 MB · sin Internet</text>
   <text x="310" y="916" text-anchor="middle" font-size="13" fill="#666">vigilado a su vez por el centinela de crm-edge</text>
 
@@ -113,6 +113,18 @@
   <line x1="310" y1="832" x2="310" y2="806" stroke="#8a5a1c" stroke-width="1.5" stroke-dasharray="4,3"/>
   <text x="326" y="826" font-size="12.5" fill="#8a5a1c">vigila todas las capas por vmbr1</text>
 
-  <text x="60" y="958" font-size="14" fill="#535e5c">Protege contra la falla de UNA VM o servicio a la vez (borde, núcleo o monitoreo). No protege contra la falla del servidor físico completo: eso requiere el segundo servidor (cotizado).</text>
-  <text x="60" y="1000" font-size="13" fill="#8a8f8a">Actualizado 2026-09-26 — núcleo con Patroni + etcd + HAProxy, monitoreo externo en LXC con centinela, red NAT (VMnet8).</text>
+  <rect x="70" y="946" width="480" height="98" rx="10" fill="#e8f1ef" stroke="#1f6f68" stroke-width="2"/>
+  <text x="310" y="970" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">crm-nas (contenedor LXC 105) — 10.10.10.30</text>
+  <text x="310" y="991" text-anchor="middle" font-size="14" fill="#333">NAS de respaldos sobre el disco externo del PC (K:)</text>
+  <text x="310" y="1011" text-anchor="middle" font-size="13" fill="#666">recibe por SSH (solo escritura) los volcados cifrados de la BD</text>
+  <text x="310" y="1030" text-anchor="middle" font-size="13" fill="#666">almacenamiento «nas-respaldos» · arranque automático (orden 2)</text>
+
+  <rect x="750" y="946" width="480" height="98" rx="10" fill="#eceee8" stroke="#8a8f8a" stroke-width="1.5"/>
+  <text x="990" y="970" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">Respaldos automáticos</text>
+  <text x="990" y="991" text-anchor="middle" font-size="14" fill="#333">BD cifrada: cada noche (03:00 y 03:30), 30 días</text>
+  <text x="990" y="1011" text-anchor="middle" font-size="13" fill="#666">VMs y crm-mon completos (vzdump): domingos 02:00, últimas 3</text>
+  <text x="990" y="1030" text-anchor="middle" font-size="13" fill="#666">Kuma vigila el enlace y avisa si pasan 26 h sin respaldo</text>
+
+  <text x="60" y="1096" font-size="14" fill="#535e5c">Protege contra la falla de UNA VM o servicio a la vez (borde, núcleo o monitoreo). No protege contra la falla del servidor físico completo: eso requiere el segundo servidor (cotizado).</text>
+  <text x="60" y="1120" font-size="13" fill="#8a8f8a">Actualizado 2026-09-26 — núcleo con Patroni + etcd + HAProxy, monitoreo externo en LXC con centinela, NAS de respaldos en disco externo, red NAT (VMnet8).</text>
 </svg>

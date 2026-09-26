@@ -65,7 +65,7 @@ const s1 = [
   new Paragraph({ alignment: AlignmentType.CENTER,
     children: [new TextRun({ text: "Periodo de la práctica: 28 de septiembre al 27 de noviembre de 2026 (360 horas)", size: 18, color: "535E5C" })] }),
   new Paragraph({ alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "Documento base, versión 3.0 — 25 de septiembre de 2026 (previo al inicio formal de la práctica)", size: 18, color: "535E5C" })] }),
+    children: [new TextRun({ text: "Documento base, versión 5.0 — 25 de septiembre de 2026 (previo al inicio formal de la práctica)", size: 18, color: "535E5C" })] }),
 ];
 
 // ============================================================
@@ -105,8 +105,8 @@ const s3 = [
     "operativa necesaria, antes de migrar a producción sobre el servidor físico de CHIC en modo nativo. " +
     "Este informe cubre el diseño, la implementación y la validación en simulación, con evidencia real: " +
     "una red NAT independiente de la red externa, aislamiento del núcleo verificado, failover de la " +
-    "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo y una " +
-    "bitácora de veinticinco incidentes resueltos. La migración a producción bare metal y el respaldo " +
+    "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo, respaldos cifrados automáticos hacia una NAS simulada en un disco externo y una " +
+    "bitácora de veintiocho incidentes resueltos. La migración a producción bare metal y el respaldo " +
     "offsite en la nube se abordan como las siguientes fases formales de la práctica, con su " +
     "cronograma y su cotización de hardware ya definidos en este documento."
   ),
@@ -269,7 +269,9 @@ const adrs = [
   ["ADR-08", "Monitoreo redundante: una instancia de Kuma por borde (SUPERADA por ADR-10)", "Solución intermedia a un hallazgo de una prueba de estrés: al apagar crm-edge desaparecía el monitoreo, porque Kuma corría solo en ese nodo. Se instaló una instancia en cada borde con monitoreo cruzado. Una tercera prueba mostró que seguía atada a las VMs de borde; ver ADR-10."],
   ["ADR-09", "Núcleo con Patroni, etcd y HAProxy (conmutación automática de la base de datos)", "Una prueba de estrés mostró que apagar crm-core tumbaba la base de datos y el servicio: las dos VMs del núcleo no compartían la base en vivo (volcado cada 15 min, promoción manual). Se reemplazó por PostgreSQL 14 nativo bajo Patroni en ambos núcleos, con replicación sincrónica, un clúster etcd de tres miembros repartido en tres VMs como árbitro (evita el split-brain sin un tercer servidor) y HAProxy en cada núcleo apuntando siempre al primario vigente. La aplicación pasó a correr activa en ambos núcleos, y los adjuntos del chat se guardan en la base para replicarse con ella. Límite declarado: se tolera la caída de UNA VM a la vez."],
   ["ADR-10", "Monitoreo externo en contenedor LXC con un centinela secundario", "El monitoreo debe sobrevivir a la caída de cualquier VM. Se movió Uptime Kuma a un contenedor LXC del propio nodo Proxmox (crm-mon, 10.10.10.20, arranque automático con orden 1, 768 MB), fuera de las cuatro VMs. Como el monitor no se vigila a sí mismo, el Kuma del borde se redujo a un centinela con solo dos monitores (el principal y el servicio extremo a extremo), en tema oscuro para distinguirlo. Se prefirió detectar y avisar antes que reiniciar automáticamente, para no ocultar la falla. Límite declarado: ambos comparten servidor físico."],,
-  ["ADR-11", "Acceso desde otros equipos mediante reenvío de puertos en el PC anfitrión", "La red NAT aísla la infraestructura, pero un equipo externo no podía abrir el CRM. En lugar de volver a una red puenteada (que causó los incidentes 13 y 14), se reenvían los puertos 80 y 443 del PC hacia la infraestructura y se reemitió el certificado con la dirección del PC en la red del celular. Se conserva el aislamiento y se gana acceso; límite declarado: la dirección la asigna el celular y puede cambiar (sección 6.4.1)."]
+  ["ADR-11", "Acceso desde otros equipos mediante reenvío de puertos en el PC anfitrión", "La red NAT aísla la infraestructura, pero un equipo externo no podía abrir el CRM. En lugar de volver a una red puenteada (que causó los incidentes 13 y 14), se reenvían los puertos 80 y 443 del PC hacia la infraestructura y se reemitió el certificado con la dirección del PC en la red del celular. Se conserva el aislamiento y se gana acceso; límite declarado: la dirección la asigna el celular y puede cambiar (sección 6.4.1)."],
+  ["ADR-12", "NAS de respaldos simulada sobre el disco externo (disco virtual + contenedor)", "El respaldo del PC (backup.ps1) dependía de Docker Desktop, ya retirado, y la redundancia de Patroni no protege contra un borrado por error, porque el borrado se replica. Se creó una NAS simulada: un contenedor LXC (crm-nas) cuyo disco raíz vive en un almacenamiento de Proxmox respaldado por un disco virtual (.vmdk de 200 GB, dinámico) alojado en el disco externo del PC. Se descartó formatear el disco (contiene datos del usuario) y pasarlo por USB a una VM anidada (menos estable). No se cifra el disco con LUKS: exigiría una clave manual en cada reinicio y rompería el arranque automático; el cifrado se aplica a cada respaldo (ADR-13). Ver sección 6.9."],
+  ["ADR-13", "Respaldos cifrados con clave asimétrica y entregados a un receptor SSH de solo escritura", "Los núcleos solo tienen la clave pública de cifrado y una llave SSH que únicamente permite subir archivos nuevos a crm-nas; la clave privada existe solo en el equipo del administrador. Un núcleo comprometido no puede leer, sobrescribir ni borrar los respaldos. Se eligió SSH y no NFS porque un servidor NFS de kernel no funciona en un contenedor sin privilegios y uno privilegiado ampliaría la superficie de ataque del host. Ver sección 6.9."],
 ];
 s8.push(makeTable([1200, 3100, 5400], ["ID", "Decisión", "Justificación"], adrs));
 
@@ -377,7 +379,7 @@ s11.push(p(
 ));
 
 s11.push(h2("5.5 Registro de Riesgos"));
-s11.push(p("Los primeros trece riesgos ya se materializaron durante la fase de simulación (ver bitácora de incidentes, sección 8) y se documentan con su probabilidad e impacto originales. Los últimos cinco son riesgos abiertos y activos en la fase de práctica actual."));
+s11.push(p("Los riesgos R1 a R13 y R19 ya se materializaron durante la fase de simulación (ver bitácora de incidentes, sección 8) y se documentan con su probabilidad e impacto originales. Los demás (R14 a R18 y R20) son riesgos abiertos y activos en la fase de práctica actual."));
 const riskRows = [
   ["R1", "Hardware insuficiente para el diseño de virtualización planeado", "Alta", "Alto", "Materializado", "Pivote de arquitectura (laptop→LXC→PC de escritorio con VMs reales)"],
   ["R2", "Conflicto de virtualización VT-x entre Docker Desktop y Proxmox", "Media", "Alto", "Materializado", "Retiro de Docker Desktop del host físico; Hyper-V desactivado"],
@@ -394,9 +396,11 @@ const riskRows = [
   ["R13", "Núcleo sin redundancia real: la caída de crm-core tumbaba la base de datos", "Alta", "Crítico", "Materializado", "Patroni + etcd + HAProxy con conmutación automática (ADR-09, sección 6.7)"],
   ["R14", "Pérdida de mayoría de etcd por dos fallas simultáneas", "Baja", "Alto", "Abierto — límite declarado", "El diseño tolera UNA falla a la vez; con dos VMs de etcd caídas el sistema se detiene por seguridad (sin split-brain) y se recupera solo al volver la mayoría"],
   ["R15", "Punto único de falla del servidor físico durante la simulación", "Media", "Crítico", "Abierto — en gestión activa", "Cotización formal del segundo servidor en curso (sección 5.7), fase F5 del cronograma"],
-  ["R16", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Abierto — en desarrollo activo", "Fase F4 del cronograma: desarrollo del respaldo hacia Oracle Cloud"],
+  ["R16", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Abierto — mitigado parcialmente", "Respaldo local automático y cifrado en la NAS del disco externo (ADR-12, sección 6.9); falta la copia en otra ubicación física (fase F4, Oracle Cloud)"],
   ["R17", "Compromiso de la llave privada de la CA interna", "Baja", "Crítico", "Abierto — mitigado por diseño", "La llave nunca sale del equipo del responsable; nunca se copia a ninguna VM"],
   ["R18", "Documentos legales en borrador sin revisión jurídica", "Media", "Alto", "Abierto — pendiente", "Solicitar revisión de un abogado especializado antes de considerarlos oficiales (sección 6.6)"],
+  ["R19", "Desconexión del disco externo con Proxmox encendido (pausa de la VM anfitriona)", "Media", "Alto", "Materializado", "Desactivar el ahorro de energía USB, conexión directa al PC y procedimiento «Retry» documentado (incidente 26, sección 6.9.6)"],
+  ["R20", "Pérdida de la clave privada que descifra los respaldos", "Baja", "Crítico", "Abierto — mitigado por procedimiento", "Copia de la clave en un lugar seguro y protegida con contraseña; solo existe en el equipo del administrador (ADR-13)"],
 ];
 s11.push(makeTable([700, 2700, 1100, 1000, 1600, 2600],
   ["ID", "Riesgo", "Prob.", "Impacto", "Estado", "Mitigación"], riskRows));
@@ -623,7 +627,7 @@ const s16 = [
   h2("6.5 Monitoreo: centro de operaciones (NOC) con Uptime Kuma"),
   p("El monitoreo es los “ojos” del sistema y por eso su diseño sigue una regla: no puede caer junto con lo que vigila. Su despliegue pasó por tres etapas, cada una motivada por una prueba real (secciones 6.5.1 y 9): una instancia única en crm-edge, una instancia por borde, y finalmente la arquitectura vigente, con un panel principal fuera de las máquinas virtuales y un centinela secundario."),
   h3("6.5.1 Arquitectura vigente"),
-  bullet("Panel principal (crm-mon): Uptime Kuma nativo (Node.js) en un contenedor LXC del propio nodo Proxmox (VM id 104, 10.10.10.20, 768 MB, arranque automático con orden 1). Está fuera de las cuatro VMs, así que sobrevive a la caída de cualquiera de ellas. Se publica en http://192.168.80.10:3001 mediante DNAT y vigila diez elementos con intervalo de 15 segundos."),
+  bullet("Panel principal (crm-mon): Uptime Kuma nativo (Node.js) en un contenedor LXC del propio nodo Proxmox (VM id 104, 10.10.10.20, 768 MB, arranque automático con orden 1). Está fuera de las cuatro VMs, así que sobrevive a la caída de cualquiera de ellas. Se publica en http://192.168.80.10:3001 mediante DNAT y vigila doce elementos (intervalo de 5 segundos; 30 s el enlace a la NAS)."),
   bullet("Centinela secundario (en crm-edge): un Kuma reducido a dos monitores, en tema oscuro para distinguirlo del principal —el principal (crm-mon) y el servicio extremo a extremo por la IP virtual—, con intervalo de 5 segundos. Si el principal cae, el centinela lo marca en rojo y evita quedar sin visibilidad mientras se verifica qué ocurrió."),
   bullet("Convención de nombres de NOC: “CAPA · elemento · función”, para que el panel se lea como un diagrama de red y el operador vea qué enlace o servicio cayó, no qué herramienta lo mide."),
   p("Se prefirió detectar y avisar antes que reiniciar automáticamente el contenedor caído: un reinicio silencioso ocultaría la falla, y en un NOC se separa observar de actuar. El límite declarado es que ambos paneles residen en el mismo servidor físico; la caída del equipo completo se resuelve con el segundo servidor (sección 5.7)."),
@@ -640,9 +644,12 @@ const nocRows = [
   ["BD · Acceso de las aplicaciones · CORE-b", "TCP a 10.10.10.11:5000", "Base de datos", "Lo mismo para crm-core-b: si cae un núcleo, solo se pone en rojo el suyo y el otro sigue en verde."],
   ["BD · Gestor de la base (Patroni) · CORE", "HTTP a 10.10.10.10:8008/health", "Base de datos", "¿El encargado de la base en crm-core está despierto? Patroni decide quién manda y ejecuta la conmutación; el nombre no fija el rol porque el líder cambia."],
   ["BD · Gestor de la base (Patroni) · CORE-b", "HTTP a 10.10.10.11:8008/health", "Base de datos", "Lo mismo en crm-core-b."],
+  ["RESPALDO · Almacén NAS (crm-nas) · enlace", "TCP a 10.10.10.30:22, cada 30 s", "Respaldo", "Que la NAS de respaldos está viva y alcanzable desde la red interna; si cae, los núcleos no pueden entregar sus volcados."],
+  ["RESPALDO · Base de datos cifrada · último respaldo", "Monitor «push»: cada núcleo avisa a Kuma al terminar un respaldo; alarma si pasan 26 horas sin aviso", "Respaldo", "Que el respaldo nocturno sigue corriendo. Detecta lo que ningún monitor de enlace ve: un respaldo que dejó de ejecutarse sin que nadie lo note. Basta con que uno de los dos núcleos avise."],
 ];
 s16.push(makeTable([2600, 2100, 1300, 3600], ["Monitor (nombre de NOC)", "Qué consulta", "Capa", "Qué evidencia si falla"], nocRows));
-s16.push(p(`Las capturas de los diez monitores (figuras ${F.noc1} a ${F.noc10}; la lista completa está en la figura ${F.noc11}) muestran su estado “Funcional”, el tiempo de respuesta y la disponibilidad acumulada; en ellas, los tramos rojos de los gráficos corresponden a las pruebas de resiliencia de la sección 9. El contenedor que aloja el panel se ve en Proxmox junto a las cuatro VMs (figura ${F.pvemon}).`, { size: 21 }));
+s16.push(new Paragraph({ children: [] }));
+s16.push(p(`Las capturas de los diez monitores (figuras ${F.noc1} a ${F.noc10}; la lista de esos diez está en la figura ${F.noc11} y la de los doce, con los dos monitores de respaldo, en la figura ${F.noc12}) muestran su estado “Funcional”, el tiempo de respuesta y la disponibilidad acumulada; en ellas, los tramos rojos de los gráficos corresponden a las pruebas de resiliencia de la sección 9. El contenedor que aloja el panel se ve en Proxmox junto a las cuatro VMs (figura ${F.pvemon}).`, { size: 21 }));
 s16.push(h3("6.5.3 Tabla del centinela"));
 s16.push(makeTable([3300, 2600, 3700], ["Monitor del centinela", "Qué consulta", "Pregunta que responde"], [
   ["MONITOREO · Kuma principal · crm-mon", "HTTP a http://10.10.10.20:3001", "¿Está vivo el vigilante principal?"],
@@ -691,6 +698,9 @@ const s16a = [
   pageBreak(),
   ...figura(CAP, "noc-11-lista-diez-monitores.png", "Panel principal con los diez monitores",
     "Qué se observa: la lista lateral del panel principal con los diez monitores del NOC, todos en “Funcional”, ordenados por capa: aplicación, base de datos (uno por nodo y uno por agente de Patroni), borde, enlace e infraestructura.", 640, 480),
+  pageBreak(),
+  ...figura(CAP, "noc-12-lista-doce-monitores.png", "Panel principal con los doce monitores",
+    "Qué se observa: la lista del panel principal con los dos monitores nuevos de la capa RESPALDO al final —el enlace a crm-nas y el aviso «último respaldo»—, ambos en 100 % de disponibilidad. Sus barras son cortas porque se crearon después de los otros diez.", 640, 480),
   pageBreak(),
   ...figura(CAP, "kuma-00-monitores-tras-cambio-de-ip.png", "Monitores tras el cambio de direccionamiento",
     "Qué se observa: los monitores EDGE activo, EDGE stand-by e IP Virtual VRRP en rojo (apuntaban a las IPs antiguas) mientras CORE activo, CORE stand-by y POSTGRES siguen en verde.", 520, 480),
@@ -768,9 +778,13 @@ const toolRows = [
   ["Patroni", "Gestiona PostgreSQL en cada núcleo: replicación sincrónica y conmutación automática del primario.", "Un agente por núcleo (no hay uno “principal”)", "Un agente caído provoca la elección de otro líder."],
   ["etcd", "Árbitro de Patroni: guarda quién es el líder (clave con TTL de 30 s); tres miembros, mayoría de dos.", "crm-edge, crm-edge-b y crm-core-b", "Tolera una caída; con dos caídas se detiene por seguridad (sin split-brain)."],
   ["HAProxy", "Punto de entrada único a la base (puerto 5000): comprueba /primary y dirige al líder vigente.", "crm-core y crm-core-b", "Cada núcleo tiene el suyo."],
-  ["Uptime Kuma", "Monitoreo tipo NOC: diez monitores en el panel principal y dos en el centinela; alertas por cambio de estado.", "Contenedor crm-mon; centinela en crm-edge", "El centinela vigila al principal."],
+  ["Uptime Kuma", "Monitoreo tipo NOC: doce monitores en el panel principal (dos de ellos vigilan los respaldos) y dos en el centinela; alertas por cambio de estado.", "Contenedor crm-mon; centinela en crm-edge", "El centinela vigila al principal."],
   ["Autoridad certificadora privada (openssl)", "Emite el certificado HTTPS de los bordes; su llave nunca sale del equipo del responsable.", "Equipo del operador", "Si caduca, hay que renovarlo (vigencia de 2 años)."],
   ["Git y GitHub", "Versionan el código, la infraestructura y el informe; cada cambio queda con su commit.", "Repositorio en GitHub", "No afecta al servicio."],
+  ["vzdump (Proxmox)", "Respalda máquinas virtuales y contenedores completos, en caliente (modo snapshot) y comprimidos con zstd; trabajo semanal.", "Nodo Proxmox, hacia el almacenamiento nas-respaldos", "Si falla, se pierde solo la copia de máquinas completas; los datos siguen respaldados cada noche por separado."],
+  ["crm-nas (LXC + OpenSSH con comando forzado)", "NAS de respaldos: recibe los volcados cifrados por SSH; la llave de cada núcleo solo permite subir archivos nuevos (no leer, listar, sobrescribir ni borrar).", "Contenedor 105, sobre el disco externo", "Sin él los núcleos no pueden entregar respaldos; el monitor de enlace lo detecta."],
+  ["GnuPG", "Cifra cada volcado con clave asimétrica antes de salir del núcleo; la clave privada solo existe en el equipo del administrador.", "Clave pública en los núcleos; privada en el PC", "Sin la clave privada los respaldos no se pueden abrir."],
+  ["systemd timers", "Programan el respaldo nocturno de la base de datos (03:00 y 03:30) y la limpieza a los 30 días; recuperan una ejecución perdida si la máquina estaba apagada.", "crm-core, crm-core-b y crm-nas", "Un temporizador que deja de correr lo detecta el monitor «último respaldo»."],
   ["iptables (NAT/DNAT)", "Publica el CRM y el acceso de administración en Proxmox y limita la salida a Internet solo a los bordes.", "Nodo Proxmox", "Persistente por script idempotente."],
 ];
 s67.push(makeTable([2200, 3600, 1700, 2100], ["Herramienta", "Función en el sistema", "Dónde vive", "Si falla"], toolRows));
@@ -781,6 +795,69 @@ const s67a = [
   ...figura(DIA, "08-conmutacion-antes-despues.png", "Conmutación automática de la base de datos: antes y después",
     "Qué se observa: a la izquierda, operación normal con crm-core como líder y crm-core-b como réplica sincrónica; a la derecha, tras apagar crm-core, crm-core-b es el nuevo líder y HAProxy dirige a él sin cambiar la configuración de las aplicaciones.", 1000, 540),
 ];
+
+// ============================================================
+// 6.9 Respaldo y recuperacion: NAS simulada en el disco externo
+// ============================================================
+const s69 = [
+  h2("6.9 Respaldo y recuperación: NAS simulada sobre el disco externo"),
+  h3("6.9.1 Punto de partida y objetivo"),
+  p("La redundancia de la sección 6.7 protege el servicio cuando falla una máquina, pero no protege los datos de un error humano: si alguien borra registros, el borrado se replica al otro núcleo en segundos. Solo un respaldo permite volver atrás. La revisión del estado real mostró además que el único respaldo existente (un script en el PC, pensado para el esquema anterior de Docker Desktop) ya no correspondía a la infraestructura: dependía de contenedores y volúmenes que dejaron de existir."),
+  p("El objetivo fue construir una unidad de respaldo que simule una NAS, usando el disco externo del PC (700 GB disponibles, con datos del usuario que no podían borrarse), con cuatro propiedades: automática (sin depender de que alguien la ejecute), cifrada (los datos incluyen información de salud de los trabajadores), resistente a un núcleo comprometido y vigilada por el propio NOC."),
+  h3("6.9.2 Diseño"),
+  p(`La figura ${F.nasdiag} resume el diseño. Tres capas se apilan: (1) en el disco externo (K:, NTFS, sin formatear) se crea un disco virtual de 200 GB, dinámico, que VMware presenta a Proxmox como un segundo disco; (2) Proxmox lo formatea en ext4 y lo registra como el almacenamiento «nas-respaldos» (195 GB útiles); (3) sobre ese almacenamiento vive el contenedor crm-nas (ID 105, 10.10.10.30, 256 MB de memoria, sin salida a Internet), definido en Terraform (nas.tf) como el resto de la infraestructura. El diagrama de infraestructura de la figura ${F.infra} incluye ahora el contenedor y los respaldos.`),
+  p("Dos flujos alimentan la NAS. Cada noche, cada núcleo hace un volcado completo de su PostgreSQL local (pg_dumpall, que funciona igual en el líder y en la réplica), verifica que el volcado esté completo, lo cifra con GnuPG y lo entrega por SSH: crm-core a las 03:00 y crm-core-b a las 03:30, de modo que si uno está caído lo hace el otro. Cada domingo a las 02:00, Proxmox respalda completas las cuatro VMs y el contenedor de monitoreo (vzdump, modo snapshot, sin apagar nada, conservando las tres últimas). Los volcados se conservan 30 días y luego una tarea de crm-nas los borra sola."),
+  h3("6.9.3 Decisiones y alternativas"),
+];
+s69.push(makeTable([1900, 4200, 3600], ["Decisión", "Alternativas consideradas", "Elegida y por qué"], [
+  ["Dónde vive el almacenamiento", "A. Formatear el disco y pasarlo por USB a Proxmox. B. Copiar solo desde el PC con un script. C. Disco virtual (.vmdk) dentro del disco externo.", "C. No toca el contenido del disco, es más estable que el paso de USB a una VM anidada y deja la NAS dentro de la infraestructura (ADR-12)."],
+  ["Protocolo de la NAS", "A. NFS. B. SMB (Samba). C. SSH con un receptor de solo escritura.", "C. Un NFS de kernel no funciona en un contenedor sin privilegios y uno privilegiado ampliaría la superficie de ataque del host; Samba exigiría instalar paquetes en un contenedor sin Internet. El sshd de la plantilla basta y permite limitar la llave a «subir» (ADR-13)."],
+  ["Protección de los datos personales", "A. Cifrar el disco con LUKS. B. Cifrado simétrico con una clave guardada en los núcleos. C. Cifrado asimétrico (GnuPG): clave pública en los núcleos, privada solo en el PC.", "C. LUKS pediría una clave manual en cada reinicio y rompería el arranque automático; con clave simétrica, un núcleo comprometido podría descifrar todo. Con la asimétrica, un núcleo solo puede cifrar."],
+  ["Quién respalda", "A. El PC, ejecutando un script a mano. B. Los núcleos, con un temporizador de systemd.", "B. No depende de que alguien se acuerde; dos núcleos a horas distintas dan redundancia al propio respaldo."],
+  ["Cómo saber que corrió", "A. Correo o cron con aviso. B. Monitor «push» en Kuma.", "B. Los núcleos no tienen salida a Internet para enviar correo; el monitor alarma por ausencia de aviso, que es justamente la falla que se quiere detectar."],
+]));
+s69.push(h3("6.9.4 Implementación"));
+s69.push(bullet("Terraform (nas.tf): crea el contenedor 105 con su disco raíz de 100 GB en «nas-respaldos» y arranque automático en orden 2, después del monitoreo."));
+s69.push(bullet("Ansible (rol respaldo, etiqueta respaldo): genera una llave SSH propia para cada núcleo; en crm-nas crea el usuario «respaldos» y autoriza esas llaves con un comando forzado (solo puede ejecutar el script receptor); registra la huella de crm-nas en los núcleos leída por el propio Ansible; instala el script y los temporizadores de respaldo y de limpieza."));
+s69.push(bullet("Receptor de solo escritura: el script acepta únicamente la orden «subir <nombre>», exige un nombre con formato db-<máquina>-<fecha>.sql.gpg, no permite sobrescribir un archivo existente y publica el archivo solo cuando llegó completo. Ni un núcleo comprometido puede leer, listar ni destruir los respaldos."));
+s69.push(bullet("Clave de cifrado: el par de claves GnuPG se generó en el equipo del administrador; solo la clave pública viaja a los núcleos y al repositorio. El aviso de cada respaldo a Kuma usa una URL con token que se guarda fuera de Git, en crm-edge."));
+s69.push(bullet("Proxmox: un trabajo programado («respaldo-semanal-crm») respalda las VMs 100 a 104 los domingos a las 02:00 hacia «nas-respaldos». Los monitores 11 y 12 del NOC vigilan el enlace a crm-nas y la llegada del último respaldo (sección 6.5)."));
+s69.push(h3("6.9.5 Pruebas y resultados"));
+s69.push(p(`Antes de programar el trabajo semanal se probó el respaldo de máquinas completas, de a una y vigilando el servicio: el CRM respondió HTTP 200 durante todas las copias y Patroni no se alteró. Los núcleos se respaldaron después de una conmutación planificada, cuando ya eran réplica (sección 9.8). La captura del contenedor en Proxmox está en la figura ${F.nas1}.`));
+s69.push(makeTable([2600, 1700, 1700, 3700], ["Respaldo de prueba", "Tamaño", "Duración", "Observación"], [
+  ["crm-edge-b (VM 102) y crm-mon (contenedor 104)", "1,79 GB y 0,44 GB", "4 min 25 s (juntos)", "Primer respaldo; sin efecto sobre el CRM"],
+  ["crm-edge (VM 103)", "2,03 GB", "2 min 21 s", "Borde que posee la IP virtual; sin corte"],
+  ["crm-core-b (VM 100)", "2,08 GB", "4 min 31 s", "Réplica en ese momento; Patroni sin alteración"],
+  ["crm-core (VM 101)", "2,04 GB", "5 min 15 s", "Réplica tras la conmutación planificada"],
+  ["Total", "≈ 8,8 GB", "≈ 17 min", "Espacio libre restante: 190 GB de 195 GB"],
+]));
+s69.push(new Paragraph({ children: [] }));
+s69.push(p("Pruebas del respaldo de la base de datos y de su seguridad:"));
+s69.push(bullet("Respaldo real: un volcado de crm-core (9 177 bytes ya cifrados) llegó a crm-nas y el registro del receptor lo confirmó; otro de crm-core-b llegó minutos después. El aviso a Kuma marcó el monitor «último respaldo» en verde a las 23:49:28 UTC, justo al terminar."));
+s69.push(bullet("Descifrado: el archivo se descargó al PC y se descifró con la clave privada local; contenía las seis bases de datos (auth, calendario, chat, empleados, inventario y reservas) y el marcador de fin del volcado. Las copias temporales en claro se borraron."));
+s69.push(bullet("Solo escritura: con la llave de un núcleo se probaron seis órdenes —listar carpetas, leer /etc/shadow, sobrescribir un respaldo existente, subir con una ruta relativa, con una extensión ajena y sin nombre—; el receptor las rechazó todas («orden no permitida», «ya existe» o «nombre inválido») y la NAS conservó su único archivo."));
+s69.push(p("Una limitación honesta: se comprobó que el respaldo llega, se descifra y contiene los datos, pero no se ensayó todavía una restauración completa sobre los datos reales de producción. El procedimiento (detener la aplicación, borrar las seis bases y cargar el volcado) está documentado en el instructivo de respaldo y se ensayará en la fase de validación."));
+s69.push(h3("6.9.6 Incidente: la desconexión del disco"));
+s69.push(p(`Al crear el contenedor, el disco externo se desconectó del PC. Como Proxmox estaba usando el archivo virtual alojado en él, VMware pausó la VM anfitriona y mostró un aviso de error en el archivo del disco (figura ${F.nas2}); dentro de Proxmox, el sistema registró bloqueos de CPU y errores de lectura EXT4 sobre el disco nuevo (figura ${F.nas3}). Todo el CRM quedó inaccesible mientras la VM estuvo pausada. Al reconectar el disco y elegir «Retry», Proxmox se reinició, las cuatro VMs y el contenedor de monitoreo arrancaron solos y el clúster volvió íntegro (etcd con sus tres miembros, Patroni con lag 0, los cinco respaldos existentes intactos). El contenedor crm-nas no se había creado, y se creó al repetir la operación. Es el incidente 26 de la bitácora y el riesgo R19.`));
+s69.push(p("Lecciones: la NAS agrega una dependencia real (Proxmox no arranca sin el disco conectado); ante ese aviso hay que elegir «Retry» y no «Continue» (que reenvía el error al sistema de archivos) ni «Cancel» (que apaga la VM); y conviene desactivar el ahorro de energía USB y conectar el disco directamente al PC. Estos pasos quedaron en el instructivo de apagado y encendido."));
+s69.push(h3("6.9.7 Límites declarados"));
+s69.push(bullet("Misma ubicación física: la NAS está en el mismo PC que la infraestructura. Protege de errores y de la pérdida de una VM, no de la pérdida o robo del equipo; para eso falta la copia en otra ubicación (nube o disco guardado aparte), fase F4 del cronograma."));
+s69.push(bullet("Clave privada: si se pierde, los respaldos cifrados son ilegibles para siempre; debe guardarse en un lugar seguro y protegida con contraseña (riesgo R20)."));
+s69.push(bullet("Dependencia del disco: sin el disco conectado la VM de Proxmox no arranca; para trasladarlo hay que apagar todo y quitar el disco de la VM, procedimiento documentado."));
+const s69a = [
+  ...figura(DIA, "12-respaldo-nas.png", "Respaldo y recuperación: qué se copia, hacia dónde y cómo se protege",
+    "Qué se observa: en el PC, un disco virtual alojado en el disco externo se convierte en el almacenamiento «nas-respaldos» de Proxmox; sobre él viven el contenedor crm-nas (volcados cifrados de la base de datos, recibidos por SSH de solo escritura) y las copias de las máquinas completas. La clave privada de descifrado existe solo en el equipo del administrador, y Kuma vigila el enlace y la llegada del último respaldo.", 1000, 540),
+  pageBreak(),
+  ...figura(CAP, "nas-01-crm-nas-en-proxmox.png", "El contenedor crm-nas en Proxmox",
+    "Qué se observa: el contenedor 105 (crm-nas) en ejecución, sin privilegios, con la IP 10.10.10.30, 256 MB de memoria y un disco raíz de casi 98 GB alojado en el almacenamiento «nas-respaldos», que aparece en el árbol junto a los demás.", 900, 480),
+  pageBreak(),
+  ...figura(CAP, "nas-02-vmware-aviso-disco.png", "Incidente 26: aviso de VMware por la desconexión del disco",
+    "Qué se observa: VMware informa que falló la operación sobre el archivo del disco virtual de la NAS y ofrece Retry, Continue o Cancel. Se eligió Retry al reconectar el disco.", 420, 400),
+  pageBreak(),
+  ...figura(CAP, "nas-03-proxmox-errores-ext4.png", "Incidente 26: errores del sistema de Proxmox mientras el disco no estaba",
+    "Qué se observa: la consola de Proxmox registra bloqueos de CPU («soft lockup») de casi 90 segundos y errores de lectura EXT4 sobre el disco de respaldos (sdb1), consecuencia de la desconexión del disco.", 1000, 260),
+];
+
 
 const s20 = [
   h1("7. Control de Versiones (GitHub)"),
@@ -794,7 +871,7 @@ const s20a = [
 // ---- 8 Bitacora (portrait) ----
 const s21 = [
   h1("8. Bitácora de Incidentes Reales (fase de simulación)"),
-  p("Veinticinco incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
+  p("Veintiocho incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
 ];
 const incidents = [
   ["1", "Caché de DNS del gateway Nginx", "Nginx seguía resolviendo IPs viejas tras reconstruir contenedores.", "`resolver 127.0.0.11 valid=10s;` + variables dinámicas en proxy_pass."],
@@ -821,7 +898,10 @@ const incidents = [
   ["22", "Monitoreo externo que no se vigila a sí mismo", "Al apagar crm-mon, el panel principal desaparecía sin alarma.", "Centinela secundario de dos monitores en crm-edge (tema oscuro) que marca en rojo la caída del principal (ADR-10)."],
   ["23", "Advertencia de huella SSH cambiada", "El cloud-init regeneró las llaves de host de los bordes tras un apply de Terraform; el cliente rechazó la conexión.", "Verificada la huella contra el archivo de llave de la VM y eliminada la entrada antigua de known_hosts; conexión aceptada con la huella comprobada."],
   ["24", "Monitor de la base de datos con un solo núcleo como destino", "El monitor de acceso a la base apuntaba al HAProxy de crm-core y se ponía en rojo cuando ese núcleo caía, aunque la base siguiera sirviendo por crm-core-b: el nombre sugería una falla que no era del servicio.", "Un monitor por núcleo (cada aplicación usa su HAProxy local), con el nodo en el nombre; el panel pasó de nueve a diez monitores."],
-  ["25", "Otro equipo de la red del celular no podía abrir el CRM", "La dirección 192.168.80.10 pertenece a la red privada de VMware y solo existe dentro del PC anfitrión; un segundo notebook conectado al celular no tenía ruta hacia ella.", "Reenvío de puertos 80 y 443 en el PC anfitrión y certificado reemitido con la dirección del PC en la red del celular; validado con dos equipos a la vez (ADR-11, sección 6.4.1)."]
+  ["25", "Otro equipo de la red del celular no podía abrir el CRM", "La dirección 192.168.80.10 pertenece a la red privada de VMware y solo existe dentro del PC anfitrión; un segundo notebook conectado al celular no tenía ruta hacia ella.", "Reenvío de puertos 80 y 443 en el PC anfitrión y certificado reemitido con la dirección del PC en la red del celular; validado con dos equipos a la vez (ADR-11, sección 6.4.1)."],
+  ["26", "Desconexión del disco externo: la VM de Proxmox quedó pausada", `El disco externo (K:) que aloja el disco virtual de la NAS se desconectó con Proxmox encendido. VMware pausó la VM anfitriona y mostró un aviso de error (figura ${F.nas2}); el sistema invitado registró bloqueos de CPU y errores EXT4 en el disco nuevo (figura ${F.nas3}). El CRM quedó inaccesible y un terraform apply en curso no llegó a crear el contenedor.`, "Con el disco de vuelta se eligió «Retry» en el aviso (no «Continue», que reenvía el error al sistema, ni «Cancel», que apaga la VM). Proxmox se reinició, las cuatro VMs y el contenedor arrancaron solos y el clúster volvió íntegro (etcd 3/3, Patroni con lag 0, respaldos intactos). Se repitió el apply, se documentó el procedimiento y se recomendó desactivar el ahorro de energía USB."],
+  ["27", "Opción inexistente en el comando de conmutación planificada", "El instructivo indicaba patronictl switchover --leader, pero la versión instalada de Patroni usa --master; el comando falló sin cambiar nada.", "Opción corregida en el instructivo y conmutación real probada (sección 9.8)."],
+  ["28", "La ruta del disco fue traducida a una ruta de Windows al llamar a la API", "Al formatear el disco nuevo desde Git Bash, /dev/sdb se convirtió en una ruta de Windows y Proxmox rechazó la operación; no se cambió nada.", "Traducción de rutas desactivada para esa llamada; el almacenamiento se creó correctamente. Lección: leer y confirmar el disco destino antes de formatear."],
 ];
 s21.push(makeTable([500, 2500, 3500, 3200], ["#", "Incidente", "Causa raíz", "Resolución"], incidents));
 
@@ -845,6 +925,7 @@ s21.push(makeTable([1500, 2900, 2500, 2600], ["Prueba", "Qué se apaga", "Qué d
   ["P1 — Núcleo", "crm-core (VM 101), líder de la base de datos", "Patroni promueve a crm-core-b; el CRM sigue respondiendo", "Base con escrituras 26,4 s después del apagado; sin pérdida de datos"],
   ["P2 — Borde", "crm-edge (VM 103), con crm-core aún apagada", "Keepalived pasa la IP virtual a crm-edge-b", "Nueva IP virtual en ≈ 3 s; sin corte visible para el usuario"],
   ["P3 — Extrema", "crm-mon (contenedor) y crm-edge-b (VM 102) a la vez", "El CRM sigue funcionando y el centinela detecta la caída del monitor principal", "CRM operativo; centinela en rojo para el principal; el principal vuelve 28 s tras encenderlo"],
+  ["P4 — Conmutación planificada", "Se pasa el liderazgo de crm-core a crm-core-b con patronictl switchover", "Cambio de líder controlado, sin cortar el servicio", "≈ 5 s de orden a orden; el CRM respondió HTTP 200 en los 6 sondeos; sin pérdida de datos"],
   ["Recuperación", "Se reencienden las VMs y el contenedor", "Todo vuelve solo a su estado previo, sin intervención manual", "etcd 3/3, réplica sincrónica con lag 0, IP virtual de vuelta en crm-edge en ≈ 4 s"],
 ]));
 
@@ -908,7 +989,7 @@ s21.push(h2("9.6 Límites del diseño, declarados"));
 s21.push(bullet("Se tolera la caída de UNA VM a la vez. Con dos VMs del clúster etcd caídas simultáneamente (por ejemplo crm-edge-b y crm-core-b), etcd pierde la mayoría y Patroni no promueve: el servicio de base de datos se detiene por seguridad, sin riesgo de split-brain, y se recupera solo al volver la mayoría (incidente 20)."));
 s21.push(bullet("Todo reside en un único servidor físico: ni el panel de monitoreo ni el centinela protegen ante la caída del equipo completo. Eso requiere el segundo servidor cotizado (sección 5.7)."));
 s21.push(bullet("El apagado de la prueba es abrupto pero de máquina virtual; no se simularon fallas de disco, corrupción de datos ni de red física, que quedan fuera del alcance de la simulación."));
-
+s21.push(bullet("Los respaldos automáticos viven en el mismo PC: el disco externo va enchufado a él. Protegen contra un borrado por error, la corrupción de datos o la pérdida de una VM, pero no contra la pérdida o el robo del equipo; la copia en otra ubicación física (nube o disco guardado aparte) es una fase pendiente (sección 6.9.7)."));
 s21.push(h2("9.7 Verificaciones complementarias"));
 s21.push(bullet(`Acceso desde un equipo externo: un segundo notebook, conectado a la red del celular, abre el CRM por https://172.20.10.2 con el candado cerrado y comparte el chat con el PC anfitrión en tiempo real (figuras ${F.otro1} y ${F.otro2}).`));
 s21.push(bullet(`HTTPS con CA privada: confirmado con openssl s_client y curl --cacert (validación real de la cadena de confianza, código 0) y en el navegador, con candado y sin advertencias (figura ${F.login}); el SAN incluye 192.168.80.10.`));
@@ -916,6 +997,24 @@ s21.push(bullet(`Aislamiento del núcleo: el ping desde el PC hacia 10.10.10.10 
 s21.push(bullet(`Cifrado en reposo: una consulta directa a PostgreSQL devuelve texto cifrado (gAAAA…) en las columnas de salud (figura ${F.cifrado}).`));
 s21.push(bullet(`Control de acceso: el menú y los datos de salud dependen del rol y de los permisos (figura ${F.usuarios}, figura ${F.sinpermiso} y, en el Anexo B, figuras ${F.permrrhh} a ${F.permadm}).`));
 s21.push(bullet(`Failover de Keepalived en la red NAT: al detener Keepalived en crm-edge, la IP virtual pasó a crm-edge-b en menos de 5 s y el CRM siguió respondiendo (figuras ${F.crmfailover} y ${F.ciclo}).`));
+s21.push(bullet(`Respaldo cifrado de punta a punta: un volcado entregado a crm-nas se descargó al PC, se descifró con la clave privada local y contenía las seis bases de datos (sección 6.9.5).`));
+s21.push(bullet(`Receptor de solo escritura: desde un núcleo, las seis órdenes de prueba (listar, leer un archivo del sistema, sobrescribir un respaldo, nombres con rutas relativas o de extensión ajena y una orden vacía) fueron rechazadas y la NAS conservó su único archivo (sección 6.9.5).`));
+
+s21.push(h2("9.8 P4 — Conmutación planificada del núcleo y respaldo de las máquinas"));
+s21.push(p(
+  "A diferencia de P1 a P3, esta prueba no apaga nada: se pide a Patroni un cambio de líder ordenado (patronictl switchover) para poder " +
+  "respaldar el núcleo sobre su réplica sin exponer al líder a la carga del respaldo. Se midió sondeando la IP virtual cada 2 s. " +
+  "Las horas son UTC, tomadas del reloj de crm-edge."
+));
+s21.push(makeTable([2600, 2400, 4700], ["Momento", "Hora / valor", "Observación"], [
+  ["Orden de conmutación", "22:48:10,78", "patronictl switchover --master crm-core --candidate crm-core-b --force"],
+  ["Orden terminada", "22:48:15,53", "≈ 4,7 s desde la orden; crm-core-b es el líder y crm-core reinicia como réplica"],
+  ["Sondeos del CRM durante el cambio", "6 de 6 con HTTP 200", "Sin corte visible: los ocho contenedores atienden en ambos núcleos y HAProxy dirige a la base al nuevo líder"],
+  ["Reincorporación de crm-core", "≈ 1 min después", "Réplica sincrónica con lag 0; línea de tiempo de Patroni de 10 a 11"],
+  ["Respaldo de crm-core (VM 101)", "5 min 15 s", "Con el núcleo ya como réplica; CRM en HTTP 200 y Patroni sin alteración durante todo el respaldo"],
+]));
+s21.push(new Paragraph({ children: [] }));
+s21.push(p("El diseño permite entonces respaldar los núcleos sin riesgo para el servicio: un núcleo se respalda siempre desde su papel de réplica, y el líder no participa. Así, el mantenimiento de un núcleo no genera una interrupción visible para el usuario."));
 
 const s21a = [
   ...figura(DIA, "09-conmutacion-linea-de-tiempo.png", "Línea de tiempo de la conmutación del núcleo (P1)",
@@ -992,11 +1091,11 @@ const s23 = [
     "una red NAT independiente de la red externa, segmentación con aislamiento del núcleo verificado, " +
     "Proxmox operando como router con publicación de servicios por DNAT, redundancia del borde con " +
     "VRRP probada mediante fallas reales, infraestructura como código, HTTPS confiable con una " +
-    "autoridad certificadora propia y monitoreo activo."
+    "autoridad certificadora propia, monitoreo activo y respaldos cifrados automáticos hacia una NAS simulada en el disco externo."
   ),
   p(
     "El valor del trabajo no reside solo en el resultado —la infraestructura funcionando en " +
-    "simulación—, sino en el proceso documentado de veinticinco incidentes reales resueltos con su " +
+    "simulación—, sino en el proceso documentado de veintiocho incidentes reales resueltos con su " +
     "causa raíz identificada (varios de ellos de red: choque de IP, direcciones MAC descartadas por " +
     "el hotspot, reglas de NAT persistentes), y en la experiencia adquirida que habilita, con " +
     "conocimiento real y no teórico, la migración responsable a producción sobre el servidor físico de CHIC."
@@ -1137,6 +1236,8 @@ const doc = new Document({
     landscapeSection(s17a),
     portraitSection(s67),
     landscapeSection(s67a),
+    portraitSection(s69),
+    landscapeSection(s69a),
     portraitSection(s20),
     landscapeSection(s20a),
     portraitSection(s21),
