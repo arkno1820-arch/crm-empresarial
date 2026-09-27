@@ -1,0 +1,22 @@
+#!/bin/sh
+# Salida a Internet de crm-nas (10.10.10.30), SOLO para la copia offsite en Cloud Storage.
+# Instalar en Proxmox como /etc/network/if-up.d/crm-nas-salida (root, modo 755). Es idempotente.
+# Politica: crm-nas puede salir unicamente a HTTPS (443/tcp) y a DNS publico (8.8.8.8 y 1.1.1.1, 53/udp).
+# Los nucleos, crm-mon y el resto siguen SIN salida. Para retirarla: borrar este archivo y las reglas
+# (iptables -t nat -D POSTROUTING ... / iptables -D FORWARD ...) o reiniciar Proxmox.
+NAS=10.10.10.30
+SALIDA=$(ip route get 8.8.8.8 2>/dev/null | sed -n 's/.* dev \([^ ]*\).*/\1/p' | head -1)
+[ -n "$SALIDA" ] || exit 0
+add() { iptables "$@" 2>/dev/null; }
+regla() { # $1 = tabla, resto = regla (sin -A/-C)
+  T=$1; shift
+  iptables -t "$T" -C "$@" 2>/dev/null || iptables -t "$T" -A "$@"
+}
+regla nat POSTROUTING -s "$NAS" -o "$SALIDA" -p tcp --dport 443 -j MASQUERADE
+for DNS in 8.8.8.8 1.1.1.1; do
+  regla nat POSTROUTING -s "$NAS" -d "$DNS" -o "$SALIDA" -p udp --dport 53 -j MASQUERADE
+  regla filter FORWARD -s "$NAS" -d "$DNS" -p udp --dport 53 -j ACCEPT
+done
+regla filter FORWARD -s "$NAS" -p tcp --dport 443 -j ACCEPT
+regla filter FORWARD -d "$NAS" -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+exit 0

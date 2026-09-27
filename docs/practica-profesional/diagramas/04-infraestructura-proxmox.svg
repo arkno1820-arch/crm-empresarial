@@ -100,7 +100,7 @@
   <!-- Monitoreo y arbitro -->
   <rect x="70" y="832" width="480" height="98" rx="10" fill="#f8f1e0" stroke="#8a5a1c" stroke-width="2"/>
   <text x="310" y="856" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">crm-mon (contenedor LXC 104) — 10.10.10.20</text>
-  <text x="310" y="877" text-anchor="middle" font-size="14" fill="#333">Uptime Kuma PRINCIPAL — 12 monitores, fuera de las VMs</text>
+  <text x="310" y="877" text-anchor="middle" font-size="14" fill="#333">Uptime Kuma PRINCIPAL — 13 monitores, fuera de las VMs</text>
   <text x="310" y="897" text-anchor="middle" font-size="13" fill="#666">arranque automático (orden 1) · 768 MB · sin Internet</text>
   <text x="310" y="916" text-anchor="middle" font-size="13" fill="#666">vigilado a su vez por el centinela de crm-edge</text>
 
@@ -116,14 +116,14 @@
   <rect x="70" y="946" width="480" height="98" rx="10" fill="#e8f1ef" stroke="#1f6f68" stroke-width="2"/>
   <text x="310" y="970" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">crm-nas (contenedor LXC 105) — 10.10.10.30</text>
   <text x="310" y="991" text-anchor="middle" font-size="14" fill="#333">NAS de respaldos sobre el disco externo del PC (K:)</text>
-  <text x="310" y="1011" text-anchor="middle" font-size="13" fill="#666">recibe por SSH (solo escritura) los volcados cifrados de la BD</text>
+  <text x="310" y="1011" text-anchor="middle" font-size="13" fill="#666">recibe por SSH (solo escritura) los volcados cifrados y los envía a la nube</text>
   <text x="310" y="1030" text-anchor="middle" font-size="13" fill="#666">almacenamiento «nas-respaldos» · arranque automático (orden 2)</text>
 
   <rect x="750" y="946" width="480" height="98" rx="10" fill="#eceee8" stroke="#8a8f8a" stroke-width="1.5"/>
   <text x="990" y="970" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">Respaldos automáticos</text>
   <text x="990" y="991" text-anchor="middle" font-size="14" fill="#333">BD cifrada: cada noche (03:00 y 03:30), 30 días</text>
   <text x="990" y="1011" text-anchor="middle" font-size="13" fill="#666">VMs y crm-mon completos (vzdump): domingos 02:00, últimas 3</text>
-  <text x="990" y="1030" text-anchor="middle" font-size="13" fill="#666">Kuma vigila el enlace y avisa si pasan 26 h sin respaldo</text>
+  <text x="990" y="1030" text-anchor="middle" font-size="13" fill="#666">Copia en Google Cloud Storage cada noche (04:30) · Kuma vigila el envío</text>
 
   <text x="60" y="1096" font-size="14" fill="#535e5c">Protege contra la falla de UNA VM o servicio a la vez (borde, núcleo o monitoreo). No protege contra la falla del servidor físico completo: eso requiere el segundo servidor (cotizado).</text>
   <text x="60" y="1120" font-size="13" fill="#8a8f8a">Actualizado 2026-09-26 — núcleo con Patroni + etcd + HAProxy, monitoreo externo en LXC con centinela, NAS de respaldos en disco externo, red NAT (VMnet8).</text>

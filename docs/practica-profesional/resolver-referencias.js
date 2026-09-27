@@ -14,7 +14,7 @@ const MAPA = {
   vms: "pve-12-vms-en-ejecucion.png", tfplan: "tf-01-plan-residual.png",
   certdet: "2026-09-23-08-detalle-certificado-ca.png", candado: "2026-09-23-09-candado-conexion-segura.png",
   pvemon: "pve-13-vms-y-contenedor-crm-mon.png", noc1: "noc-01-app-core-primario.png", noc9: "noc-09-infra-nodo-proxmox.png", otro1: "otro-equipo-01-dos-equipos-lado-a-lado.png", otro2: "otro-equipo-02-candado-en-172-20-10-2.png", noc10: "noc-10-bd-acceso-crm-core-b.png", noc11: "noc-11-lista-diez-monitores.png", noc12: "noc-12-lista-doce-monitores.png",
-  nasdiag: "12-respaldo-nas.png", nas1: "nas-01-crm-nas-en-proxmox.png", nas2: "nas-02-vmware-aviso-disco.png", nas3: "nas-03-proxmox-errores-ext4.png",
+  nasdiag: "12-respaldo-nas.png", offsite1: "offsite-01-bucket-con-respaldos.png", offsite2: "offsite-02-permisos-solo-crear.png", offsite3: "offsite-03-iam-proyecto-sin-roles-auxiliares.png", noc13: "noc-13-lista-trece-monitores.png", cloud1: "cloud-01-cuenta-de-servicio.png", cloud2: "cloud-02-politica-bloquea-claves.png", cloud3a: "cloud-03a-configuracion-bucket-general.png", cloud3b: "cloud-03b-configuracion-bucket-proteccion.png", cloud4: "cloud-04-observabilidad-solicitudes.png", cloud5: "cloud-05-observabilidad-trafico-1dia.png", nas1: "nas-01-crm-nas-en-proxmox.png", nas2: "nas-02-vmware-aviso-disco.png", nas3: "nas-03-proxmox-errores-ext4.png",
   kumarojo: "kuma-00-monitores-tras-cambio-de-ip.png", kuma1: "kuma-01-core-activo.png", kuma6: "kuma-06-postgres.png",
   kumab: "kuma-07-instancia-crm-edge-b.png", kumaprueba: "kuma-08-prueba-estres-instancia-b.png",
   login: "crm-22-login-fallido-https.png", usuarios: "crm-09-usuarios-lista.png", sinpermiso: "crm-18-sin-permiso-salud.png",

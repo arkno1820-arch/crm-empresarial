@@ -174,8 +174,9 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
   pregunta nada). Dura unos segundos, sin perdida de datos. Probado el
   25-09-2026: el CRM siguio respondiendo durante todo el cambio. En esta
   version de Patroni la opcion se llama --master (no --leader).
-- Los nucleos y crm-mon NO tienen salida a Internet a proposito. Solo los
-  bordes salen. Si un paquete "no descarga", es por diseno.
+- Los nucleos y crm-mon NO tienen salida a Internet a proposito. Salen los
+  bordes y, con una regla acotada a HTTPS y DNS, crm-nas (solo para enviar los
+  respaldos cifrados a la nube). Si un paquete "no descarga", es por diseno.
 - Un monitor rojo de "crm-core" o "crm-core-b" justo tras encender: espera
   unos minutos antes de preocuparte.
 - Sale HTTPS con advertencia solo en equipos que no tienen instalada la
@@ -234,7 +235,9 @@ celular, TODO sigue igual desde el PC.
                          .10/.11, monitor .20)
 Las reglas de reenvio/NAT viven en /etc/network/if-up.d/crm-nat dentro
 de Proxmox y se aplican solas al arrancar. Solo los bordes (.2 y .3)
-tienen salida a Internet (MASQUERADE); los demas no.
+tienen salida a Internet (MASQUERADE), y crm-nas (.30) solo por HTTPS y DNS
+(regla en /etc/network/if-up.d/crm-nas-salida, copia en infra/proxmox-host/);
+los demas no.
 
 ACCESO DESDE OTROS EQUIPOS (segundo notebook, celular en la misma red):
 Un reenvio de puertos en tu PC (Windows) publica el CRM. Se accede por

@@ -114,9 +114,82 @@ cifrados quedan ilegibles para siempre. Guarda una copia en un lugar seguro
 (y ponle contrasena: gpg --edit-key "CRM Respaldos" y luego "passwd").
 
 IMPORTANTE: la NAS esta en el mismo PC y en el disco externo enchufado a
-el. Sigue siendo la misma ubicacion fisica: de vez en cuando desenchufa
-el disco (apagando todo, ver INSTRUCCIONES_APAGADO_ENCENDIDO.txt) y
-guardalo en otro lugar.
+el. Por eso, ademas, cada noche se envia una copia de la base de datos a
+Google Cloud Storage (seccion 3c). Si quieres, de vez en cuando desenchufa el
+disco (apagando todo, ver INSTRUCCIONES_APAGADO_ENCENDIDO.txt) y guardalo en
+otro lugar.
+
+
+--------------------------------------------------------------------
+3c. COPIA FUERA DEL PC: GOOGLE CLOUD STORAGE (desde 26-09-2026)
+--------------------------------------------------------------------
+QUE HACE (sin que hagas nada): cada madrugada (04:30 hora UTC), crm-nas sube
+a Google Cloud Storage los respaldos de la base de datos que aun no estan
+alla. Ya van CIFRADOS, asi que Google solo guarda texto ilegible. Cada archivo
+se confirma comparando su huella MD5 con la que Google devuelve; solo si
+coincide se da por respaldado y se avisa al monitor 13 de Kuma
+("RESPALDO . Copia en la nube . ultimo envio", plazo de 26 horas: si pasa ese
+tiempo sin aviso, se pone en rojo).
+
+DONDE ESTA: bucket privado "crm-chic-respaldos", region us-east1 (Carolina del
+Sur), carpeta db/. Se ve en la consola de Google Cloud > Cloud Storage.
+
+QUE CREDENCIAL USA: una clave HMAC de la cuenta de Google dedicada
+"cuentarespaldochic". Esa cuenta SOLO puede CREAR objetos en el bucket: no puede
+leer, listar, borrar ni sobrescribir (un nombre que ya existe da error 403 a
+proposito: es la proteccion). La clave vive en crm-nas (/etc/rclone-crm/
+rclone.conf, solo root). Nunca se pega en un chat ni se guarda en Git.
+
+ANTES DE NADA (requisito): en esa cuenta, Cloud Storage > Configuracion >
+Interoperabilidad debe tener configurado el proyecto predeterminado
+(project-2128f424-28c8-40ca-993). Sin eso, Google acepta y rechaza
+peticiones al azar.
+
+COMO CARGAR O CAMBIAR LA CREDENCIAL (PowerShell, en tu PC):
+
+    powershell -ExecutionPolicy Bypass -File "C:\Users\HP\Desktop\crm-empresarial\scripts\cargar-credencial-offsite.ps1"
+
+Te pide el ID de clave (empieza con GOOG...) y el secreto (se escribe oculto;
+pegalo con clic derecho). Los guarda directo en crm-nas.
+Para ROTAR la clave: crea una nueva en la cuenta, cargala con ese script y
+borra la anterior.
+
+COMO COMPROBAR QUE LLEGA:
+  - En la consola de Google: Cloud Storage > crm-chic-respaldos > db/ (deben
+    verse los archivos .sql.gpg de cada noche).
+  - En Kuma: monitor 13 en verde.
+  - Por SSH (PowerShell):
+
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh root@10.10.10.30 'journalctl -u subir-offsite.service -n 20 --no-pager'"
+
+COMO FORZAR UN ENVIO AHORA:
+
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh root@10.10.10.30 'systemctl start subir-offsite.service'"
+
+Debe decir "subido y verificado (MD5 ...)" o "0 subidos" si ya esta todo.
+
+COMO RESTAURAR DESDE LA NUBE: la cuenta de la NAS no puede leer. Descarga el
+archivo desde la consola de Google con tu cuenta principal (Cloud Storage >
+el archivo > descargar) y abrelo con tu clave GPG (ver mas abajo).
+
+LA CLAVE GPG (la que abre los respaldos):
+  - La subclave de descifrado tiene CONTRASENA. Al abrir un respaldo, GPG la
+    pide:   gpg -d -o volcado.sql archivo.sql.gpg
+  - Hay una COPIA de restauracion de esa subclave guardada FUERA del PC (pendrive
+    o almacenamiento personal), protegida por la misma contrasena. Se ensayo:
+    importada en un llavero vacio, descifro un mensaje de prueba.
+  - Si pierdes la contrasena o la copia Y el PC, los respaldos (locales y en la
+    nube) quedan ilegibles para siempre.
+  - Nota: la clave PRINCIPAL conserva una contrasena distinta a la de la
+    subclave; no interviene al descifrar, asi que no afecta la restauracion.
+
+VENCIMIENTO: la prueba gratuita de Google Cloud vence el 26-12-2026. Antes de esa
+fecha hay que pasar a una cuenta de pago (con alerta de presupuesto; con estos
+volumenes el costo es despreciable) o trasladar el mismo diseno a otro proveedor
+(Oracle). Los respaldos locales de la NAS no dependen de la nube.
+
+Solo se sube la BASE DE DATOS. Las maquinas completas siguen en el mismo PC
+(se reconstruyen con Terraform y Ansible desde GitHub).
 
 
 --------------------------------------------------------------------
@@ -152,8 +225,8 @@ mes) copia la carpeta completa:
 zip tiene contrasenas: NUNCA lo subas a un repositorio publico ni lo
 compartas con quien no sea de confianza.
 (Los respaldos automaticos de la seccion 3b viven en el disco externo, que
-tambien esta enchufado a este PC. Pendiente del proyecto: copia fuera de
-esta ubicacion, en la nube.)
+tambien esta enchufado a este PC; la base de datos ademas se copia cada noche
+a Google Cloud Storage, fuera de este PC: seccion 3c.)
 
 
 --------------------------------------------------------------------

@@ -42,3 +42,10 @@ respaldo_gpg_fpr: "6E275B7776ED1111AF96F18D87A64D5027036EB4"
 # URL "push" del monitor de Kuma "ultimo respaldo" (vacia = sin aviso). Se entrega con -e desde
 # ~/.crm-secrets/kuma_push_respaldo en crm-edge: el token no se guarda en Git.
 respaldo_kuma_push_url: ""
+
+# Copia offsite en Cloud Storage (rol respaldo_offsite)
+offsite_bucket: "crm-chic-respaldos"
+offsite_hora: "04:30"
+# URL "push" del monitor de Kuma "copia en la nube - ultimo envio" (vacia = sin aviso). Se entrega con -e desde
+# ~/.crm-secrets/kuma_push_offsite en crm-edge: el token no se guarda en Git.
+offsite_kuma_push_url: ""

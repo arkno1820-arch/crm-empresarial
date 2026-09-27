@@ -1,0 +1,66 @@
+---
+# Copia fuera del PC: crm-nas envia a Cloud Storage (Google) los volcados que ya recibio, cifrados.
+# - Solo crm-nas sale a la nube; los nucleos siguen sin salida a Internet.
+# - La credencial es una clave HMAC de una cuenta de Google dedicada (cuentarespaldochic), sin otro uso:
+#   una politica de la organizacion impide crear claves de cuentas de servicio. Esa cuenta solo tiene sobre el
+#   bucket el rol "Creador de objetos": puede subir, pero no leer, listar, borrar ni sobrescribir.
+# - Como no puede leer, la verificacion compara el MD5 que Google devuelve al aceptar la subida con el local.
+# - Se usa un script Python (libreria estandar) en vez de rclone: rclone hace lecturas posteriores a la subida
+#   que Google rechaza para una credencial de solo crear, y las reporta como fallo.
+- name: Retirar rclone (ya no se usa)
+  ansible.builtin.file:
+    path: /usr/local/bin/rclone
+    state: absent
+
+- name: Carpeta de la credencial (solo root)
+  ansible.builtin.file:
+    path: /etc/rclone-crm
+    state: directory
+    mode: "0700"
+
+- name: Comprobar que la credencial de Google ya fue cargada (se carga a mano, fuera de Git)
+  ansible.builtin.stat:
+    path: /etc/rclone-crm/rclone.conf
+  register: conf_credencial
+
+- name: Aviso si falta la credencial
+  ansible.builtin.debug:
+    msg: "Falta /etc/rclone-crm/rclone.conf: el envio offsite no funcionara hasta cargarla (ver INSTRUCCIONES_RESPALDO.txt)."
+  when: not conf_credencial.stat.exists
+
+- name: URL "push" de Kuma para el monitor de la copia en la nube (el token vive en crm-edge, fuera de Git)
+  ansible.builtin.copy:
+    content: "{{ offsite_kuma_push_url }}"
+    dest: /etc/subir-offsite-push-url
+    mode: "0600"
+  when: offsite_kuma_push_url | length > 0
+  no_log: true
+
+- name: Script de envio offsite (Python)
+  ansible.builtin.template:
+    src: subir-offsite.py.j2
+    dest: /usr/local/bin/subir-offsite
+    mode: "0750"
+
+- name: Servicio de envio offsite
+  ansible.builtin.copy:
+    src: subir-offsite.service
+    dest: /etc/systemd/system/subir-offsite.service
+    mode: "0644"
+  notify: recargar systemd
+
+- name: Temporizador de envio offsite (despues de que ambos nucleos entregaron)
+  ansible.builtin.template:
+    src: subir-offsite.timer.j2
+    dest: /etc/systemd/system/subir-offsite.timer
+    mode: "0644"
+  notify: recargar systemd
+
+- name: Aplicar cambios de systemd antes de activar el temporizador
+  ansible.builtin.meta: flush_handlers
+
+- name: Activar el envio offsite
+  ansible.builtin.systemd:
+    name: subir-offsite.timer
+    enabled: true
+    state: started

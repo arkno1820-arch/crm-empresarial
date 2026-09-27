@@ -1,0 +1,9 @@
+[Unit]
+Description=Envio diario de respaldos a Cloud Storage ({{ offsite_hora }})
+
+[Timer]
+OnCalendar=*-*-* {{ offsite_hora }}:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

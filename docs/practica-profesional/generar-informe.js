@@ -65,7 +65,7 @@ const s1 = [
   new Paragraph({ alignment: AlignmentType.CENTER,
     children: [new TextRun({ text: "Periodo de la práctica: 28 de septiembre al 27 de noviembre de 2026 (360 horas)", size: 18, color: "535E5C" })] }),
   new Paragraph({ alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "Documento base, versión 5.0 — 25 de septiembre de 2026 (previo al inicio formal de la práctica)", size: 18, color: "535E5C" })] }),
+    children: [new TextRun({ text: "Documento base, versión 6.0 — 26 de septiembre de 2026 (previo al inicio formal de la práctica)", size: 18, color: "535E5C" })] }),
 ];
 
 // ============================================================
@@ -105,8 +105,8 @@ const s3 = [
     "operativa necesaria, antes de migrar a producción sobre el servidor físico de CHIC en modo nativo. " +
     "Este informe cubre el diseño, la implementación y la validación en simulación, con evidencia real: " +
     "una red NAT independiente de la red externa, aislamiento del núcleo verificado, failover de la " +
-    "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo, respaldos cifrados automáticos hacia una NAS simulada en un disco externo y una " +
-    "bitácora de veintiocho incidentes resueltos. La migración a producción bare metal y el respaldo " +
+    "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo, respaldos cifrados automáticos hacia una NAS simulada en un disco externo y hacia Google Cloud Storage (copia fuera del PC), y una " +
+    "bitácora de treinta y dos incidentes resueltos. La migración a producción bare metal y el respaldo " +
     "offsite en la nube se abordan como las siguientes fases formales de la práctica, con su " +
     "cronograma y su cotización de hardware ya definidos en este documento."
   ),
@@ -150,7 +150,7 @@ const s3 = [
   ),
   p(
     "Además, el alcance incluye activamente dos frentes que se ejecutan durante el periodo formal de la " +
-    "práctica: (1) el respaldo offsite en la nube (Oracle Cloud, nivel gratuito), y (2) la cotización " +
+    "práctica: (1) el respaldo offsite en la nube (ya operativo en Google Cloud Storage; falta ensayar la restauración completa), y (2) la cotización " +
     "formal y gestión de adquisición de un segundo servidor físico, paso previo necesario para la " +
     "migración a producción bare metal y para la migración en vivo real entre servidores. Ambos están " +
     "planificados dentro del cronograma de 360 horas (sección 5.3) y la cotización de hardware se " +
@@ -200,9 +200,9 @@ const s4 = [
 const acadRows = [
   ["Redes Virtuales\n(CR404CICRE)", "Fuerte", "VMs/hipervisor/SDN, Docker, API REST, NAT de VMware (VMnet8) y NAT/DNAT con iptables en el host Proxmox, bridges virtuales aislados. Git/GitHub y Ansible resueltos como evidencia (repositorio real con historial preservado; roles crm_edge/crm_core corriendo desde crm-edge como nodo de control)."],
   ["Virtualización\n(CR401ICRE)", "Fuerte", "Dos tecnologías de virtualización en la misma pila (VMware anida a Proxmox/KVM), segmentación de redes virtuales (vmbr1), asignación de recursos por VM. La migración en vivo real entre servidores queda como la fase siguiente de la práctica, ligada a la cotización de hardware (sección 5.7)."],
-  ["Arquitectura Cloud\n(IF304CIINF)", "Fuerte", "Automatización de la topología completa con Terraform (IaC) contra la API de Proxmox, incluyendo modificaciones en caliente sobre una infraestructura ya desplegada (migración de la red de las VMs). El respaldo offsite hacia Oracle Cloud (Fase F4) y la evaluación de arquitectura híbrida on-premise/nube completan la evidencia de esta asignatura sobre el propio proyecto."],
+  ["Arquitectura Cloud\n(IF304CIINF)", "Fuerte", "Automatización de la topología completa con Terraform (IaC) contra la API de Proxmox, incluyendo modificaciones en caliente sobre una infraestructura ya desplegada (migración de la red de las VMs). El respaldo offsite hacia Google Cloud Storage (Fase F4, ya operativo) y la evaluación de arquitectura híbrida on-premise/nube completan la evidencia de esta asignatura sobre el propio proyecto."],
   ["Gestión de Proyectos\n(IF405IINF)", "Cubierto en este informe", "Acta de Constitución, EDT, cronograma real de 360 horas, matriz RACI, registro de riesgos y línea base de Valor Planificado, todos construidos para el periodo real de la práctica (sección 5)."],
-  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 25 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
+  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 32 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
   ["Gestión de la Información con TICs\n(AS300PCOM)", "Parcial", "Calza en comparación de plataformas cloud y en seguridad/protección de datos según marco legal (Ley 21.719): roles y permisos, cifrado de datos de salud, consentimiento, auditoría y anonimización, verificados en la sección 6.6. El resto del programa (IA, IoT, redes sociales) no aplica a un proyecto de infraestructura —no se fuerza."],
   ["Diseño y Arquitectura de Redes\n(CR301ICRE)", "Uno de los más fuertes", "El estándar FCAPS mapea con los 5 pilares cubiertos: Fault (bitácora), Configuration (Git/Terraform/Ansible), Accounting (RBAC), Security (HTTPS/CA privada/cifrado/aislamiento verificado) y Performance (Uptime Kuma). Diagrama topológico incluido en este informe."],
 ];
@@ -213,6 +213,24 @@ s4.push(p(
   "—no solo una relación temática, sino un aporte verificable en el código y la infraestructura " +
   "desplegada."
 ));
+
+s4.push(h2("2.1 Propuesta integral transversal: cierre de brechas por asignatura"));
+s4.push(p("Con la copia cifrada de la base de datos ya fuera del PC, las brechas que quedan dejan de ser urgentes y pasan a ser mejoras. Esta propuesta las ordena por asignatura y las agrupa en principios transversales, para que el resto de la práctica cierre cada una con evidencia. La tabla distingue lo que ya existe de lo que se propone, y a qué fase del cronograma (sección 5.3) corresponde."));
+s4.push(makeTable([1500, 2400, 3900, 1900], ["Asignatura", "Brecha que queda", "Propuesta de cierre", "Estado y fase"], [
+  ["Redes Virtuales", "Una sola red interna plana y un solo host: el tráfico de administración, de datos y de respaldo comparte segmento.", "Segmentar en redes separadas (administración, aplicación, base de datos y respaldo) y activar el cortafuegos de Proxmox por VM y por red; usar un túnel WireGuard hacia la nube para la administración remota, en lugar de puertos de SSH publicados.", "Propuesto · F5. Parcial: la salida de crm-nas ya está acotada a HTTPS y DNS (ADR-14)."],
+  ["Virtualización", "Un solo nodo: sin migración en vivo ni alta disponibilidad a nivel de hipervisor; las copias de las VMs son completas y voluminosas.", "Formar un clúster Proxmox de dos nodos con el segundo servidor cotizado y un dispositivo de quórum; migración en vivo real; Proxmox Backup Server para copias incrementales y deduplicadas, con verificación de integridad y ensayo de restauración de una VM.", "Propuesto · F5. Las copias con vzdump ya operan (sección 6.9)."],
+  ["Arquitectura Cloud", "La nube guarda solo copias, y el bucket y sus permisos se crearon a mano, no como código.", "Definir el bucket, la cuenta y las políticas con Terraform para que sean reproducibles; política de retención con bloqueo y ciclo de vida; rotación periódica de la clave HMAC; réplica asíncrona de Patroni y un voto de etcd en la nube, por VPN, como continuidad ante la pérdida del equipo.", "Parcial: copia cifrada y verificada (ADR-14). Resto propuesto · F4 y F5."],
+  ["Gestión de Proyectos", "Los riesgos abiertos (R14, R16, R20 y R21) dependen de acciones cuya fecha aún no está comprometida.", "Revisión semanal del registro de riesgos con responsable y fecha por mitigación; actualizar la curva de valor planificado con las horas reales; hitos de aceptación por fase con criterios medibles.", "Propuesto · F1 a F8. El registro R1 a R21 ya está vigente."],
+  ["Gestión de Servicios TI (ITIL)", "Faltan objetivos de servicio y un proceso de cambios formal; el almacenamiento de las VMs supera el 85 % de uso (capacidad).", "Catálogo de servicios con objetivos medidos en las pruebas: RPO 0 ante la falla de un nodo (réplica sincrónica) y hasta 24 horas ante la pérdida del sitio (respaldo nocturno); RTO de 3 a 26 segundos en las conmutaciones. Solicitud de cambio asociada a cada commit, análisis posterior a cada incidente y plan de capacidad (depurar o ampliar el disco de las VMs antes de operar en producción).", "Parcial: bitácora de 32 incidentes y monitoreo NOC. Resto propuesto · F3 a F6."],
+  ["Gestión de la Información con TICs", "Los documentos legales son borradores, y los respaldos conservan durante 30 días datos que ya se anonimizaron en la aplicación.", "Revisión de un abogado del registro de actividades y del procedimiento ante brechas; documentar el plazo de conservación de los respaldos frente al derecho de supresión; acuerdo de tratamiento con el proveedor de nube (los datos salen cifrados y la clave queda solo en poder de CHIC); simulacro de notificación de una brecha.", "Parcial: cifrado, consentimiento y auditoría. Resto propuesto · F3 a F7."],
+  ["Diseño y Arquitectura de Redes (FCAPS)", "Rendimiento y contabilidad sin línea base; falta reforzar el acceso y gestionar parches.", "Línea base de rendimiento (latencia, CPU, memoria y disco) con alertas por umbral; registros centralizados; endurecimiento de SSH y actualizaciones programadas de las VMs; detección de deriva de configuración ejecutando Ansible en modo de comprobación.", "Parcial: fallas, configuración y seguridad cubiertas; rendimiento con Kuma. Resto propuesto · F3 a F6."],
+]));
+s4.push(p("Cuatro principios atraviesan todas las propuestas y sirven de criterio para priorizarlas:"));
+s4.push(bullet("Mínimo privilegio en todas las capas: ya aplicado a la NAS y a la nube (solo escritura); falta extenderlo a las cuentas de administración, con verificación en dos pasos y llaves con vencimiento."));
+s4.push(bullet("Regla 3-2-1 con verificación: hoy hay tres copias de la base de datos, en dos medios y una fuera del PC; falta ensayar la restauración y, después, tener una copia inmutable."));
+s4.push(bullet("Todo como código: incluir en Terraform y Ansible la nube y las reglas de red del host, que hoy se aplican a mano."));
+s4.push(bullet("Medir para declarar: cada objetivo se acompaña de una prueba con tiempos, como las pruebas P1 a P4 de la sección 9."));
+
 
 // ============================================================
 // SECCION 5 (landscape): Figura 1 - justificacion cruzada
@@ -261,7 +279,7 @@ const adrs = [
   ["ADR-00", "Metodología: simulación antes de producción", "Instrucción explícita de la jefatura del proyecto: diseñar y validar primero en un entorno de simulación (Proxmox anidado sobre VMware) para adquirir experiencia operativa, antes de migrar a producción sobre el servidor físico de CHIC en modo nativo (bare metal). Este informe documenta la fase de simulación, ya validada; la migración a producción es la fase siguiente formal de la práctica."],
   ["ADR-01", "Redundancia activa-pasiva (no clúster de alta disponibilidad)", "Con un solo servidor físico disponible hoy, un clúster Proxmox multi-nodo o la migración en vivo real no son alcanzables todavía. Se optó por redundancia a nivel de VM (Keepalived + réplica de Postgres) dentro del entorno de simulación, documentando honestamente su techo: protege contra fallas de software, no contra la falla del servidor físico completo."],
   ["ADR-02", "Promoción de base de datos manual, no automática (SUPERADA por ADR-09)", "Decisión original: automatizar de forma segura la promoción exige resolver split-brain, un problema no trivial. Se documentó un runbook manual. Una prueba de estrés mostró que ese diseño no cumplía el objetivo de redundancia (sección 6.7); se reemplazó por Patroni con etcd como árbitro (ADR-09)."],
-  ["ADR-03", "Salida a Internet solo para los bordes (NAT selectivo)", "El diseño original planteaba “sin salida a Internet” para crm-core, pero Ansible necesita instalar Docker y clonar el repositorio. Se distinguió aislamiento de entrada de aislamiento de salida. Una vez desplegado, el NAT de salida se restringió a crm-edge y crm-edge-b: el núcleo quedó sin entrada directa ni salida a Internet, y la regla amplia que lo permitía se eliminó y verificó (sección 6.1)."],
+  ["ADR-03", "Salida a Internet solo para los bordes (NAT selectivo)", "El diseño original planteaba “sin salida a Internet” para crm-core, pero Ansible necesita instalar Docker y clonar el repositorio. Se distinguió aislamiento de entrada de aislamiento de salida. Una vez desplegado, el NAT de salida se restringió a crm-edge y crm-edge-b: el núcleo quedó sin entrada directa ni salida a Internet, y la regla amplia que lo permitía se eliminó y verificó (sección 6.1). Una excepción posterior y acotada: crm-nas sale solo por HTTPS hacia la nube de respaldo (ADR-14)."],
   ["ADR-04", "CA privada en vez de certificados autofirmados sueltos", "Un certificado autofirmado por VM seguía mostrando advertencia de “no seguro” en cualquier dispositivo. Se construyó una autoridad certificadora propia, cuya llave privada nunca sale del equipo del responsable, permitiendo instalarla una sola vez por dispositivo y confiar automáticamente en cualquier certificado futuro que ella firme."],
   ["ADR-05", "Monitoreo nativo (Node.js) en vez de contenedorizado", "Uptime Kuma se instala sin Docker, manteniendo el principio de diseño de los bordes (bastión liviano, sin Docker). Su ubicación inicial en un solo borde resultó ser un punto único de falla del monitoreo; ver ADR-08 y ADR-10."],
   ["ADR-06", "Red NAT de VMware en lugar de red puenteada (bridged)", "En modo bridged sobre Wi-Fi/hotspot, la red externa descartaba las direcciones MAC de las VMs anidadas (solo veía el PC), Proxmox llegó a compartir IP con el equipo host y tumbó su conexión, y cada cambio de red obligaba a reconfigurar todas las IPs. Con la red NAT VMnet8 (192.168.80.0/24) la infraestructura queda detrás del PC y su direccionamiento es independiente de la red externa."],
@@ -271,7 +289,8 @@ const adrs = [
   ["ADR-10", "Monitoreo externo en contenedor LXC con un centinela secundario", "El monitoreo debe sobrevivir a la caída de cualquier VM. Se movió Uptime Kuma a un contenedor LXC del propio nodo Proxmox (crm-mon, 10.10.10.20, arranque automático con orden 1, 768 MB), fuera de las cuatro VMs. Como el monitor no se vigila a sí mismo, el Kuma del borde se redujo a un centinela con solo dos monitores (el principal y el servicio extremo a extremo), en tema oscuro para distinguirlo. Se prefirió detectar y avisar antes que reiniciar automáticamente, para no ocultar la falla. Límite declarado: ambos comparten servidor físico."],,
   ["ADR-11", "Acceso desde otros equipos mediante reenvío de puertos en el PC anfitrión", "La red NAT aísla la infraestructura, pero un equipo externo no podía abrir el CRM. En lugar de volver a una red puenteada (que causó los incidentes 13 y 14), se reenvían los puertos 80 y 443 del PC hacia la infraestructura y se reemitió el certificado con la dirección del PC en la red del celular. Se conserva el aislamiento y se gana acceso; límite declarado: la dirección la asigna el celular y puede cambiar (sección 6.4.1)."],
   ["ADR-12", "NAS de respaldos simulada sobre el disco externo (disco virtual + contenedor)", "El respaldo del PC (backup.ps1) dependía de Docker Desktop, ya retirado, y la redundancia de Patroni no protege contra un borrado por error, porque el borrado se replica. Se creó una NAS simulada: un contenedor LXC (crm-nas) cuyo disco raíz vive en un almacenamiento de Proxmox respaldado por un disco virtual (.vmdk de 200 GB, dinámico) alojado en el disco externo del PC. Se descartó formatear el disco (contiene datos del usuario) y pasarlo por USB a una VM anidada (menos estable). No se cifra el disco con LUKS: exigiría una clave manual en cada reinicio y rompería el arranque automático; el cifrado se aplica a cada respaldo (ADR-13). Ver sección 6.9."],
-  ["ADR-13", "Respaldos cifrados con clave asimétrica y entregados a un receptor SSH de solo escritura", "Los núcleos solo tienen la clave pública de cifrado y una llave SSH que únicamente permite subir archivos nuevos a crm-nas; la clave privada existe solo en el equipo del administrador. Un núcleo comprometido no puede leer, sobrescribir ni borrar los respaldos. Se eligió SSH y no NFS porque un servidor NFS de kernel no funciona en un contenedor sin privilegios y uno privilegiado ampliaría la superficie de ataque del host. Ver sección 6.9."],
+  ["ADR-13", "Respaldos cifrados con clave asimétrica y entregados a un receptor SSH de solo escritura", "Los núcleos solo tienen la clave pública de cifrado y una llave SSH que únicamente permite subir archivos nuevos a crm-nas; la clave privada existe solo en poder del administrador, con contraseña y una copia de restauración verificada fuera del equipo (sección 6.9.9). Un núcleo comprometido no puede leer, sobrescribir ni borrar los respaldos. Se eligió SSH y no NFS porque un servidor NFS de kernel no funciona en un contenedor sin privilegios y uno privilegiado ampliaría la superficie de ataque del host. Ver sección 6.9."],
+  ["ADR-14", "Copia fuera del PC en Google Cloud Storage con credencial de solo creación y verificación por MD5", "Para cerrar el límite de tener todo en el mismo PC se evaluaron Oracle Cloud (capa gratuita real, sin riesgo de cobro) y Google Cloud (prueba de 90 días con crédito, ya disponible durante la práctica, y 5 GB gratuitos en regiones de EE. UU.). Se eligió Google por disponibilidad inmediata, con el bucket en us-east1 (región gratuita) y sin datos legibles: los volcados salen ya cifrados con GPG. Una política de la organización impidió crear claves de cuentas de servicio, por lo que la credencial es una clave HMAC de una cuenta de Google dedicada, con solo el rol Creador de objetos: puede subir, pero no leer, listar, borrar ni sobrescribir. Como no puede leer, la verificación compara el MD5 que Google devuelve al aceptar la subida con el MD5 local. Solo crm-nas sale a la nube, por HTTPS y DNS; los núcleos siguen sin salida. Al vencer la prueba (26-12-2026) habrá que pasar a una cuenta de pago (costo despreciable con estos volúmenes) o migrar el mismo diseño a Oracle. Ver sección 6.9.8."],
 ];
 s8.push(makeTable([1200, 3100, 5400], ["ID", "Decisión", "Justificación"], adrs));
 
@@ -326,7 +345,7 @@ const edt = [
   "    1.4.2 Pruebas de resiliencia (failover borde y núcleo)",
   "    1.4.3 Corrección de incidentes de despliegue (25 documentados)",
   "  1.5 Migración a producción (fase siguiente)",
-  "    1.5.1 Respaldo offsite en Oracle Cloud",
+  "    1.5.1 Respaldo offsite en la nube (Google Cloud Storage)",
   "    1.5.2 Cotización formal del segundo servidor físico",
   "    1.5.3 Planificación de migración bare metal",
   "  1.6 Documentación y gestión",
@@ -379,7 +398,7 @@ s11.push(p(
 ));
 
 s11.push(h2("5.5 Registro de Riesgos"));
-s11.push(p("Los riesgos R1 a R13 y R19 ya se materializaron durante la fase de simulación (ver bitácora de incidentes, sección 8) y se documentan con su probabilidad e impacto originales. Los demás (R14 a R18 y R20) son riesgos abiertos y activos en la fase de práctica actual."));
+s11.push(p("Los riesgos R1 a R13 y R19 ya se materializaron durante la fase de simulación (ver bitácora de incidentes, sección 8) y se documentan con su probabilidad e impacto originales. Los demás (R14 a R18, R20 y R21) son riesgos abiertos y activos en la fase de práctica actual."));
 const riskRows = [
   ["R1", "Hardware insuficiente para el diseño de virtualización planeado", "Alta", "Alto", "Materializado", "Pivote de arquitectura (laptop→LXC→PC de escritorio con VMs reales)"],
   ["R2", "Conflicto de virtualización VT-x entre Docker Desktop y Proxmox", "Media", "Alto", "Materializado", "Retiro de Docker Desktop del host físico; Hyper-V desactivado"],
@@ -396,11 +415,12 @@ const riskRows = [
   ["R13", "Núcleo sin redundancia real: la caída de crm-core tumbaba la base de datos", "Alta", "Crítico", "Materializado", "Patroni + etcd + HAProxy con conmutación automática (ADR-09, sección 6.7)"],
   ["R14", "Pérdida de mayoría de etcd por dos fallas simultáneas", "Baja", "Alto", "Abierto — límite declarado", "El diseño tolera UNA falla a la vez; con dos VMs de etcd caídas el sistema se detiene por seguridad (sin split-brain) y se recupera solo al volver la mayoría"],
   ["R15", "Punto único de falla del servidor físico durante la simulación", "Media", "Crítico", "Abierto — en gestión activa", "Cotización formal del segundo servidor en curso (sección 5.7), fase F5 del cronograma"],
-  ["R16", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Abierto — mitigado parcialmente", "Respaldo local automático y cifrado en la NAS del disco externo (ADR-12, sección 6.9); falta la copia en otra ubicación física (fase F4, Oracle Cloud)"],
+  ["R16", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Abierto — mitigado", "Copia local cifrada en la NAS del disco externo (ADR-12) y copia fuera del PC en Google Cloud Storage (ADR-14, sección 6.9.8); falta ensayar una restauración completa desde la nube"],
   ["R17", "Compromiso de la llave privada de la CA interna", "Baja", "Crítico", "Abierto — mitigado por diseño", "La llave nunca sale del equipo del responsable; nunca se copia a ninguna VM"],
   ["R18", "Documentos legales en borrador sin revisión jurídica", "Media", "Alto", "Abierto — pendiente", "Solicitar revisión de un abogado especializado antes de considerarlos oficiales (sección 6.6)"],
   ["R19", "Desconexión del disco externo con Proxmox encendido (pausa de la VM anfitriona)", "Media", "Alto", "Materializado", "Desactivar el ahorro de energía USB, conexión directa al PC y procedimiento «Retry» documentado (incidente 26, sección 6.9.6)"],
-  ["R20", "Pérdida de la clave privada que descifra los respaldos", "Baja", "Crítico", "Abierto — mitigado por procedimiento", "Copia de la clave en un lugar seguro y protegida con contraseña; solo existe en el equipo del administrador (ADR-13)"],
+  ["R21", "Vencimiento de la prueba gratuita de Google Cloud (26-12-2026) o cambio de sus condiciones", "Media", "Medio", "Abierto — con plan", "Pasar a una cuenta de pago con alerta de presupuesto (costo despreciable con estos volúmenes) o migrar el mismo diseño a otro proveedor; los respaldos locales no dependen de la nube"],
+  ["R20", "Pérdida de la clave privada que descifra los respaldos", "Baja", "Crítico", "Mitigado — con un custodio", "Subclave de descifrado protegida con contraseña y copia de restauración verificada (importada en un llavero vacío y descifrando un mensaje de prueba) guardada fuera del PC (sección 6.9.9); queda un solo custodio, que se cubriría con un segundo en producción"],
 ];
 s11.push(makeTable([700, 2700, 1100, 1000, 1600, 2600],
   ["ID", "Riesgo", "Prob.", "Impacto", "Estado", "Mitigación"], riskRows));
@@ -557,7 +577,7 @@ const s14n = [
     "Un hallazgo relevante: la verificación de reglas reveló una regla MASQUERADE amplia, heredada del " +
     "aprovisionamiento y guardada en el archivo persistente de iptables, que habría dado salida a Internet " +
     "a todo el núcleo tras un reinicio. Se eliminó de la configuración en ejecución y del archivo " +
-    "persistente, y la figura " + F.iptables + " muestra el resultado final: solo los dos bordes tienen salida (incidente 15)."
+    "persistente, y la figura " + F.iptables + " muestra el resultado final de ese momento: solo los dos bordes tienen salida (incidente 15; la excepción posterior de crm-nas está en el ADR-14)."
   ),
 ];
 
@@ -578,7 +598,7 @@ const s14a = [
     "Qué se observa: el contenido de /etc/network/if-up.d/crm-nat. Activa el reenvío de paquetes, hace MASQUERADE solo para 10.10.10.2 y 10.10.10.3 y publica los puertos 80/443 hacia la VIP 10.10.10.5 y 2211/2212 hacia el SSH de cada borde. Es idempotente y se ejecuta en cada arranque.", 620, 520),
   pageBreak(),
   ...figura(CAP, "pve-11-iptables-final.png", "Reglas NAT activas tras la corrección",
-    "Qué se observa: solo dos reglas POSTROUTING (MASQUERADE de los bordes .2 y .3). La regla amplia de 10.10.10.0/24 ya no existe: el núcleo no tiene salida a Internet.", 620, 480),
+    "Qué se observa: solo dos reglas POSTROUTING (MASQUERADE de los bordes .2 y .3). La regla amplia de 10.10.10.0/24 ya no existe: el núcleo no tiene salida a Internet (estado al 25-09-2026; la única excepción posterior es la de crm-nas, ADR-14).", 620, 480),
   pageBreak(),
   ...figura(CAP, "red-01-ping-aislamiento.png", "Prueba de aislamiento del núcleo",
     "Qué se observa: un ping desde el PC hacia crm-core (10.10.10.10) termina con 100% de paquetes perdidos. El núcleo no es alcanzable directamente; solo se llega a él saltando por el bastión crm-edge.", 640, 380),
@@ -627,7 +647,7 @@ const s16 = [
   h2("6.5 Monitoreo: centro de operaciones (NOC) con Uptime Kuma"),
   p("El monitoreo es los “ojos” del sistema y por eso su diseño sigue una regla: no puede caer junto con lo que vigila. Su despliegue pasó por tres etapas, cada una motivada por una prueba real (secciones 6.5.1 y 9): una instancia única en crm-edge, una instancia por borde, y finalmente la arquitectura vigente, con un panel principal fuera de las máquinas virtuales y un centinela secundario."),
   h3("6.5.1 Arquitectura vigente"),
-  bullet("Panel principal (crm-mon): Uptime Kuma nativo (Node.js) en un contenedor LXC del propio nodo Proxmox (VM id 104, 10.10.10.20, 768 MB, arranque automático con orden 1). Está fuera de las cuatro VMs, así que sobrevive a la caída de cualquiera de ellas. Se publica en http://192.168.80.10:3001 mediante DNAT y vigila doce elementos (intervalo de 5 segundos; 30 s el enlace a la NAS)."),
+  bullet("Panel principal (crm-mon): Uptime Kuma nativo (Node.js) en un contenedor LXC del propio nodo Proxmox (VM id 104, 10.10.10.20, 768 MB, arranque automático con orden 1). Está fuera de las cuatro VMs, así que sobrevive a la caída de cualquiera de ellas. Se publica en http://192.168.80.10:3001 mediante DNAT y vigila trece elementos (intervalo de 5 segundos; 30 s el enlace a la NAS; 26 horas los dos monitores de aviso de respaldo)."),
   bullet("Centinela secundario (en crm-edge): un Kuma reducido a dos monitores, en tema oscuro para distinguirlo del principal —el principal (crm-mon) y el servicio extremo a extremo por la IP virtual—, con intervalo de 5 segundos. Si el principal cae, el centinela lo marca en rojo y evita quedar sin visibilidad mientras se verifica qué ocurrió."),
   bullet("Convención de nombres de NOC: “CAPA · elemento · función”, para que el panel se lea como un diagrama de red y el operador vea qué enlace o servicio cayó, no qué herramienta lo mide."),
   p("Se prefirió detectar y avisar antes que reiniciar automáticamente el contenedor caído: un reinicio silencioso ocultaría la falla, y en un NOC se separa observar de actuar. El límite declarado es que ambos paneles residen en el mismo servidor físico; la caída del equipo completo se resuelve con el segundo servidor (sección 5.7)."),
@@ -646,10 +666,11 @@ const nocRows = [
   ["BD · Gestor de la base (Patroni) · CORE-b", "HTTP a 10.10.10.11:8008/health", "Base de datos", "Lo mismo en crm-core-b."],
   ["RESPALDO · Almacén NAS (crm-nas) · enlace", "TCP a 10.10.10.30:22, cada 30 s", "Respaldo", "Que la NAS de respaldos está viva y alcanzable desde la red interna; si cae, los núcleos no pueden entregar sus volcados."],
   ["RESPALDO · Base de datos cifrada · último respaldo", "Monitor «push»: cada núcleo avisa a Kuma al terminar un respaldo; alarma si pasan 26 horas sin aviso", "Respaldo", "Que el respaldo nocturno sigue corriendo. Detecta lo que ningún monitor de enlace ve: un respaldo que dejó de ejecutarse sin que nadie lo note. Basta con que uno de los dos núcleos avise."],
+  ["RESPALDO · Copia en la nube · último envío", "Monitor «push»: crm-nas avisa a Kuma cuando el envío a Google Cloud Storage terminó con todos los archivos verificados por su MD5; alarma si pasan 26 horas sin aviso", "Respaldo", "Que la copia fuera del PC sigue actualizándose. Si el envío falla, o el MD5 de algún archivo no coincide, crm-nas no avisa y Kuma se pone en rojo pasado el plazo."],
 ];
 s16.push(makeTable([2600, 2100, 1300, 3600], ["Monitor (nombre de NOC)", "Qué consulta", "Capa", "Qué evidencia si falla"], nocRows));
 s16.push(new Paragraph({ children: [] }));
-s16.push(p(`Las capturas de los diez monitores (figuras ${F.noc1} a ${F.noc10}; la lista de esos diez está en la figura ${F.noc11} y la de los doce, con los dos monitores de respaldo, en la figura ${F.noc12}) muestran su estado “Funcional”, el tiempo de respuesta y la disponibilidad acumulada; en ellas, los tramos rojos de los gráficos corresponden a las pruebas de resiliencia de la sección 9. El contenedor que aloja el panel se ve en Proxmox junto a las cuatro VMs (figura ${F.pvemon}).`, { size: 21 }));
+s16.push(p(`Las capturas de los diez monitores (figuras ${F.noc1} a ${F.noc10}; la lista de esos diez está en la figura ${F.noc11} la de los doce, con los dos primeros monitores de respaldo, en la figura ${F.noc12} y la de los trece, con el de la copia en la nube, en la figura ${F.noc13}) muestran su estado “Funcional”, el tiempo de respuesta y la disponibilidad acumulada; en ellas, los tramos rojos de los gráficos corresponden a las pruebas de resiliencia de la sección 9. El contenedor que aloja el panel se ve en Proxmox junto a las cuatro VMs (figura ${F.pvemon}).`, { size: 21 }));
 s16.push(h3("6.5.3 Tabla del centinela"));
 s16.push(makeTable([3300, 2600, 3700], ["Monitor del centinela", "Qué consulta", "Pregunta que responde"], [
   ["MONITOREO · Kuma principal · crm-mon", "HTTP a http://10.10.10.20:3001", "¿Está vivo el vigilante principal?"],
@@ -702,6 +723,9 @@ const s16a = [
   ...figura(CAP, "noc-12-lista-doce-monitores.png", "Panel principal con los doce monitores",
     "Qué se observa: la lista del panel principal con los dos monitores nuevos de la capa RESPALDO al final —el enlace a crm-nas y el aviso «último respaldo»—, ambos en 100 % de disponibilidad. Sus barras son cortas porque se crearon después de los otros diez.", 640, 480),
   pageBreak(),
+  ...figura(CAP, "noc-13-lista-trece-monitores.png", "Panel principal con los trece monitores",
+    "Qué se observa: la lista con los tres monitores de la capa RESPALDO al final —el enlace a crm-nas, el aviso «último respaldo» de la base de datos y el aviso «último envío» de la copia en la nube—, todos en 100 % de disponibilidad. Las barras de los dos monitores de aviso son cortas porque se crearon después y solo registran un latido por respaldo.", 640, 480),
+  pageBreak(),
   ...figura(CAP, "kuma-00-monitores-tras-cambio-de-ip.png", "Monitores tras el cambio de direccionamiento",
     "Qué se observa: los monitores EDGE activo, EDGE stand-by e IP Virtual VRRP en rojo (apuntaban a las IPs antiguas) mientras CORE activo, CORE stand-by y POSTGRES siguen en verde.", 520, 480),
   pageBreak(),
@@ -753,7 +777,7 @@ const s17a = [
 
 const s67 = [
   h2("6.7 Núcleo redundante: Patroni, etcd y HAProxy"),
-  p("El núcleo aloja la aplicación y su base de datos. Su primera versión tenía redundancia solo aparente: crm-core-b recibía un volcado de la base cada 15 minutos y la promoción era manual. Una prueba de estrés lo puso en evidencia: al apagar crm-core cayeron la base de datos y el servicio, porque el borde solo conocía a crm-core y la réplica no estaba en línea. El diseño se reemplazó por una arquitectura de alta disponibilidad real (ADR-09), cuya ubicación de cada pieza se muestra en la figura ${F.patronipiezas}."),
+  p(`El núcleo aloja la aplicación y su base de datos. Su primera versión tenía redundancia solo aparente: crm-core-b recibía un volcado de la base cada 15 minutos y la promoción era manual. Una prueba de estrés lo puso en evidencia: al apagar crm-core cayeron la base de datos y el servicio, porque el borde solo conocía a crm-core y la réplica no estaba en línea. El diseño se reemplazó por una arquitectura de alta disponibilidad real (ADR-09), cuya ubicación de cada pieza se muestra en la figura ${F.patronipiezas}.`),
   bullet("Base de datos: PostgreSQL 14 nativo en crm-core y crm-core-b, gestionado por Patroni, con replicación en vivo (streaming) en modo sincrónico: una transacción solo se confirma cuando la réplica la recibió, por lo que no se pierden datos."),
   bullet("Árbitro: un clúster etcd de tres miembros repartido en crm-edge, crm-edge-b y crm-core-b. Guarda quién es el líder mediante una clave con vencimiento (TTL de 30 s). Con tres miembros basta una mayoría de dos, por lo que la caída de cualquier VM no detiene el clúster, y un nodo aislado nunca se promueve solo (sin split-brain), sin necesitar un tercer servidor."),
   bullet("Punto de entrada: HAProxy en cada núcleo escucha en el puerto 5000 y comprueba GET /primary en el agente de Patroni de cada nodo, de modo que la aplicación siempre llega al primario vigente sin reconfigurarse."),
@@ -778,14 +802,15 @@ const toolRows = [
   ["Patroni", "Gestiona PostgreSQL en cada núcleo: replicación sincrónica y conmutación automática del primario.", "Un agente por núcleo (no hay uno “principal”)", "Un agente caído provoca la elección de otro líder."],
   ["etcd", "Árbitro de Patroni: guarda quién es el líder (clave con TTL de 30 s); tres miembros, mayoría de dos.", "crm-edge, crm-edge-b y crm-core-b", "Tolera una caída; con dos caídas se detiene por seguridad (sin split-brain)."],
   ["HAProxy", "Punto de entrada único a la base (puerto 5000): comprueba /primary y dirige al líder vigente.", "crm-core y crm-core-b", "Cada núcleo tiene el suyo."],
-  ["Uptime Kuma", "Monitoreo tipo NOC: doce monitores en el panel principal (dos de ellos vigilan los respaldos) y dos en el centinela; alertas por cambio de estado.", "Contenedor crm-mon; centinela en crm-edge", "El centinela vigila al principal."],
+  ["Uptime Kuma", "Monitoreo tipo NOC: trece monitores en el panel principal (tres de ellos vigilan los respaldos) y dos en el centinela; alertas por cambio de estado.", "Contenedor crm-mon; centinela en crm-edge", "El centinela vigila al principal."],
   ["Autoridad certificadora privada (openssl)", "Emite el certificado HTTPS de los bordes; su llave nunca sale del equipo del responsable.", "Equipo del operador", "Si caduca, hay que renovarlo (vigencia de 2 años)."],
   ["Git y GitHub", "Versionan el código, la infraestructura y el informe; cada cambio queda con su commit.", "Repositorio en GitHub", "No afecta al servicio."],
   ["vzdump (Proxmox)", "Respalda máquinas virtuales y contenedores completos, en caliente (modo snapshot) y comprimidos con zstd; trabajo semanal.", "Nodo Proxmox, hacia el almacenamiento nas-respaldos", "Si falla, se pierde solo la copia de máquinas completas; los datos siguen respaldados cada noche por separado."],
   ["crm-nas (LXC + OpenSSH con comando forzado)", "NAS de respaldos: recibe los volcados cifrados por SSH; la llave de cada núcleo solo permite subir archivos nuevos (no leer, listar, sobrescribir ni borrar).", "Contenedor 105, sobre el disco externo", "Sin él los núcleos no pueden entregar respaldos; el monitor de enlace lo detecta."],
-  ["GnuPG", "Cifra cada volcado con clave asimétrica antes de salir del núcleo; la clave privada solo existe en el equipo del administrador.", "Clave pública en los núcleos; privada en el PC", "Sin la clave privada los respaldos no se pueden abrir."],
+  ["GnuPG", "Cifra cada volcado con clave asimétrica antes de salir del núcleo; la clave privada de descifrado está protegida con contraseña y tiene una copia de restauración verificada fuera del PC.", "Clave pública en los núcleos; privada con el administrador", "Sin la clave privada y su contraseña los respaldos no se pueden abrir."],
   ["systemd timers", "Programan el respaldo nocturno de la base de datos (03:00 y 03:30) y la limpieza a los 30 días; recuperan una ejecución perdida si la máquina estaba apagada.", "crm-core, crm-core-b y crm-nas", "Un temporizador que deja de correr lo detecta el monitor «último respaldo»."],
-  ["iptables (NAT/DNAT)", "Publica el CRM y el acceso de administración en Proxmox y limita la salida a Internet solo a los bordes.", "Nodo Proxmox", "Persistente por script idempotente."],
+  ["Google Cloud Storage (API compatible con S3, claves HMAC)", "Almacén de objetos fuera del PC para la copia cifrada de la base de datos; la credencial solo permite crear objetos y la subida se verifica por MD5.", "Bucket privado en us-east1", "Si falla, queda la copia local en la NAS y el envío se reintenta al día siguiente."],
+  ["iptables (NAT/DNAT)", "Publica el CRM y el acceso de administración en Proxmox y limita la salida a Internet a los bordes y, con una regla acotada a HTTPS y DNS, a crm-nas para la copia offsite (ADR-14).", "Nodo Proxmox", "Persistente por script idempotente."],
 ];
 s67.push(makeTable([2200, 3600, 1700, 2100], ["Herramienta", "Función en el sistema", "Dónde vive", "Si falla"], toolRows));
 const s67a = [
@@ -805,8 +830,9 @@ const s69 = [
   p("La redundancia de la sección 6.7 protege el servicio cuando falla una máquina, pero no protege los datos de un error humano: si alguien borra registros, el borrado se replica al otro núcleo en segundos. Solo un respaldo permite volver atrás. La revisión del estado real mostró además que el único respaldo existente (un script en el PC, pensado para el esquema anterior de Docker Desktop) ya no correspondía a la infraestructura: dependía de contenedores y volúmenes que dejaron de existir."),
   p("El objetivo fue construir una unidad de respaldo que simule una NAS, usando el disco externo del PC (700 GB disponibles, con datos del usuario que no podían borrarse), con cuatro propiedades: automática (sin depender de que alguien la ejecute), cifrada (los datos incluyen información de salud de los trabajadores), resistente a un núcleo comprometido y vigilada por el propio NOC."),
   h3("6.9.2 Diseño"),
-  p(`La figura ${F.nasdiag} resume el diseño. Tres capas se apilan: (1) en el disco externo (K:, NTFS, sin formatear) se crea un disco virtual de 200 GB, dinámico, que VMware presenta a Proxmox como un segundo disco; (2) Proxmox lo formatea en ext4 y lo registra como el almacenamiento «nas-respaldos» (195 GB útiles); (3) sobre ese almacenamiento vive el contenedor crm-nas (ID 105, 10.10.10.30, 256 MB de memoria, sin salida a Internet), definido en Terraform (nas.tf) como el resto de la infraestructura. El diagrama de infraestructura de la figura ${F.infra} incluye ahora el contenedor y los respaldos.`),
+  p(`La figura ${F.nasdiag} resume el diseño. Tres capas se apilan: (1) en el disco externo (K:, NTFS, sin formatear) se crea un disco virtual de 200 GB, dinámico, que VMware presenta a Proxmox como un segundo disco; (2) Proxmox lo formatea en ext4 y lo registra como el almacenamiento «nas-respaldos» (195 GB útiles); (3) sobre ese almacenamiento vive el contenedor crm-nas (ID 105, 10.10.10.30, 256 MB de memoria; sin salida a Internet salvo HTTPS hacia la nube de respaldo, sección 6.9.8), definido en Terraform (nas.tf) como el resto de la infraestructura. El diagrama de infraestructura de la figura ${F.infra} incluye ahora el contenedor y los respaldos.`),
   p("Dos flujos alimentan la NAS. Cada noche, cada núcleo hace un volcado completo de su PostgreSQL local (pg_dumpall, que funciona igual en el líder y en la réplica), verifica que el volcado esté completo, lo cifra con GnuPG y lo entrega por SSH: crm-core a las 03:00 y crm-core-b a las 03:30, de modo que si uno está caído lo hace el otro. Cada domingo a las 02:00, Proxmox respalda completas las cuatro VMs y el contenedor de monitoreo (vzdump, modo snapshot, sin apagar nada, conservando las tres últimas). Los volcados se conservan 30 días y luego una tarea de crm-nas los borra sola."),
+  p("Un tercer flujo saca una copia cifrada fuera del PC: cada madrugada crm-nas envía a Google Cloud Storage los volcados que ya recibió y confirma cada uno comparando su MD5 (sección 6.9.8). Con él se cumple la regla 3-2-1: tres copias de la base de datos (los núcleos, la NAS y la nube), en dos medios distintos y una fuera del lugar."),
   h3("6.9.3 Decisiones y alternativas"),
 ];
 s69.push(makeTable([1900, 4200, 3600], ["Decisión", "Alternativas consideradas", "Elegida y por qué"], [
@@ -841,9 +867,35 @@ s69.push(h3("6.9.6 Incidente: la desconexión del disco"));
 s69.push(p(`Al crear el contenedor, el disco externo se desconectó del PC. Como Proxmox estaba usando el archivo virtual alojado en él, VMware pausó la VM anfitriona y mostró un aviso de error en el archivo del disco (figura ${F.nas2}); dentro de Proxmox, el sistema registró bloqueos de CPU y errores de lectura EXT4 sobre el disco nuevo (figura ${F.nas3}). Todo el CRM quedó inaccesible mientras la VM estuvo pausada. Al reconectar el disco y elegir «Retry», Proxmox se reinició, las cuatro VMs y el contenedor de monitoreo arrancaron solos y el clúster volvió íntegro (etcd con sus tres miembros, Patroni con lag 0, los cinco respaldos existentes intactos). El contenedor crm-nas no se había creado, y se creó al repetir la operación. Es el incidente 26 de la bitácora y el riesgo R19.`));
 s69.push(p("Lecciones: la NAS agrega una dependencia real (Proxmox no arranca sin el disco conectado); ante ese aviso hay que elegir «Retry» y no «Continue» (que reenvía el error al sistema de archivos) ni «Cancel» (que apaga la VM); y conviene desactivar el ahorro de energía USB y conectar el disco directamente al PC. Estos pasos quedaron en el instructivo de apagado y encendido."));
 s69.push(h3("6.9.7 Límites declarados"));
-s69.push(bullet("Misma ubicación física: la NAS está en el mismo PC que la infraestructura. Protege de errores y de la pérdida de una VM, no de la pérdida o robo del equipo; para eso falta la copia en otra ubicación (nube o disco guardado aparte), fase F4 del cronograma."));
+s69.push(bullet("Alcance de la copia en la nube: contiene solo los volcados cifrados de la base de datos. Las máquinas completas siguen en el mismo PC y se reconstruyen desde el código (Terraform y Ansible en GitHub). Falta ensayar una restauración completa desde la nube (sección 6.9.8)."));
 s69.push(bullet("Clave privada: si se pierde, los respaldos cifrados son ilegibles para siempre; debe guardarse en un lugar seguro y protegida con contraseña (riesgo R20)."));
 s69.push(bullet("Dependencia del disco: sin el disco conectado la VM de Proxmox no arranca; para trasladarlo hay que apagar todo y quitar el disco de la VM, procedimiento documentado."));
+s69.push(h3("6.9.8 Copia fuera del PC: Google Cloud Storage"));
+s69.push(p("El límite principal de la NAS era que seguía en el mismo PC que la infraestructura: protegía de errores y de la pérdida de una VM, pero no de la pérdida o el robo del equipo. Para cerrarlo se evaluaron cuatro opciones, y se eligió una copia en la nube de la base de datos, que es lo único irremplazable (las máquinas se reconstruyen desde el código)."));
+s69.push(makeTable([2400, 3900, 3400], ["Alternativa", "Ventajas", "Evaluación"], [
+  ["Oracle Cloud (Object Storage)", "Capa gratuita real, sin riesgo de cobro; región en Santiago; permite credenciales acotadas.", "Alternativa vigente: el mismo diseño se traslada sin cambios si la prueba de Google vence."],
+  ["Google Cloud Storage (elegida)", "Disponible de inmediato con crédito de prueba; 5 GB gratuitos en regiones de EE. UU.; rol nativo de solo creación de objetos.", "Elegida (ADR-14): los datos salen cifrados, así que su ubicación importa poco."],
+  ["Disco guardado aparte", "Sin costo ni dependencia de un proveedor.", "Complementaria: depende de que alguien lo desenchufe y lo guarde; no es automática."],
+  ["Segundo sitio por VPN con réplica de la base", "Continuidad real ante la caída del equipo completo.", "Postergada: es la fase del segundo servidor, no un respaldo."],
+]));
+s69.push(p("Implementación:"));
+s69.push(bullet("Bucket privado «crm-chic-respaldos» en la región us-east1 (Carolina del Sur), clase Standard, con acceso uniforme, prevención de acceso público y borrado no definitivo de 7 días."));
+s69.push(bullet(`Credencial de solo creación: una política de la organización impide crear claves de cuentas de servicio, por lo que se usó una cuenta de Google dedicada con el único rol «Creador de objetos de Storage» sobre el bucket y su propia clave HMAC (compatible con S3). La cuenta puede subir, pero no leer, listar, borrar ni sobrescribir. Sobre el bucket, la cuenta conserva únicamente ese rol (figura ${F.offsite2}); la cuenta de servicio creada al principio, que quedó sin uso porque su clave nunca pudo emitirse, y los roles auxiliares que hicieron falta a nivel del proyecto solo para crear la clave se retiraron (figura ${F.offsite3}), y se comprobó después que el envío seguía funcionando.`));
+s69.push(bullet("Carga sin exponer secretos: un script del equipo del administrador pide el ID y el secreto (este último oculto) y los guarda directamente en crm-nas, con permiso solo para root; nunca pasan por el chat, Git ni el historial."));
+s69.push(bullet("Red: solo crm-nas sale a la nube, con una regla de Proxmox acotada a HTTPS (443/tcp) y DNS público (53/udp); los núcleos y el monitoreo siguen sin salida. La regla vive en un archivo aparte, versionado, que no toca el script de NAT existente."));
+s69.push(bullet("Automatización: el rol Ansible respaldo_offsite instala un script Python (solo biblioteca estándar) y un temporizador que se ejecuta a las 04:30, después de que ambos núcleos entregaron sus volcados. Sube solo lo nuevo y anota lo subido."));
+s69.push(bullet("Verificación sin lectura: como la credencial no puede leer, el script compara el MD5 que Google devuelve al aceptar la subida con el MD5 local; solo si coinciden da el archivo por respaldado."));
+s69.push(bullet("Vigilancia: al terminar un envío completamente verificado, crm-nas avisa a Kuma (monitor 13 «RESPALDO · Copia en la nube · último envío», plazo de 26 horas). Si el envío falla, no avisa y Kuma alarma por ausencia. El aviso se comprobó (latido recibido junto con la ejecución del envío); la puesta en rojo por falta de aviso no se probó de forma deliberada y se apoya en el comportamiento estándar de los monitores «push» de Kuma."));
+s69.push(p(`Pruebas y resultados. Tres subidas nuevas dieron respuesta correcta con el MD5 de la nube igual al local; un intento de sobrescribir un archivo existente fue rechazado (403), lo que confirma que un núcleo o la NAS comprometidos no pueden pisar respaldos; y un ciclo completo funcionó sin intervención: un núcleo entregó un respaldo nuevo a crm-nas, que lo subió y lo verificó en unos dos segundos. La evidencia de la configuración en la nube está en las figuras ${F.cloud1} a ${F.cloud5}, y el contenido del bucket se ve en la figura ${F.offsite1}: los volcados aparecen como archivos cifrados (tipo pgp-encrypted) de 9,2 KB cada uno.`));
+s69.push(p("Hallazgos durante la puesta en marcha (incidentes 29 a 31): la política de la organización que bloquea las claves de cuentas de servicio; el proyecto predeterminado de la clave HMAC, sin el cual Google aceptaba y rechazaba peticiones de forma aparentemente aleatoria; y un defecto propio, un primer script que daba por verificado un envío sin serlo. El último llevó a la regla actual: el envío solo se considera bueno si el MD5 coincide."));
+s69.push(p("Límites: la copia contiene solo los volcados de la base de datos; falta ensayar una restauración completa desde la nube (requiere una credencial de lectura, creada solo para esa prueba); y la prueba gratuita vence el 26 de diciembre de 2026, tras lo cual hay que pasar a una cuenta de pago (costo despreciable con estos volúmenes) o trasladar el mismo diseño a Oracle."));
+s69.push(h3("6.9.9 Seguridad de la clave de descifrado"));
+s69.push(p("Toda la protección de los respaldos descansa en una sola pieza: la clave privada que los descifra. Los núcleos y las nubes solo guardan texto cifrado, por lo que quien controle esa clave controla los datos. Al cerrar la copia fuera del PC quedaban dos debilidades reales, que constituían el riesgo R20: la clave no tenía contraseña, de modo que quien copiara su archivo podía abrir todos los respaldos; y existía en un solo lugar, de modo que la pérdida del equipo dejaba ilegibles a la vez la copia local y la de la nube."));
+s69.push(bullet("Contraseña: la subclave de descifrado se protegió con una contraseña propia, distinta de las demás credenciales del proyecto y guardada por el administrador fuera del equipo. Se comprobó vaciando la memoria del agente de GnuPG: al descifrar un mensaje de prueba, el sistema pidió la contraseña."));
+s69.push(bullet("Copia de restauración: se exportó la subclave de descifrado (el único componente necesario para restaurar; la clave principal solo certifica) a un archivo, protegido por la misma contraseña, que se guardó fuera del PC. El archivo temporal del escritorio se eliminó después de guardarlo."));
+s69.push(bullet("Verificación: la copia se importó en un llavero vacío y aislado y descifró correctamente un mensaje de prueba, lo que demuestra que la restauración no depende de nada más del equipo."));
+s69.push(p("La puesta en marcha tuvo un tropiezo documentado (incidente 32): varios intentos de cambiar la contraseña se cruzaron y la clave principal quedó con una contraseña distinta a la de la subclave, y la primera exportación salió incompleta (439 bytes) con un aviso de «clave omitida». Se detectó por comprobar el tamaño del archivo, y llevó a la regla que se aplicó desde entonces: una copia de seguridad no se da por lista hasta ensayar su restauración."));
+s69.push(p("Límites declarados: la clave principal no se alineó con la contraseña de la subclave, por no intervenir en la restauración; sigue habiendo un solo custodio de la clave y de su contraseña, que en producción debería cubrirse con un segundo custodio; y no se midió cuánto tarda una restauración completa."));
 const s69a = [
   ...figura(DIA, "12-respaldo-nas.png", "Respaldo y recuperación: qué se copia, hacia dónde y cómo se protege",
     "Qué se observa: en el PC, un disco virtual alojado en el disco externo se convierte en el almacenamiento «nas-respaldos» de Proxmox; sobre él viven el contenedor crm-nas (volcados cifrados de la base de datos, recibidos por SSH de solo escritura) y las copias de las máquinas completas. La clave privada de descifrado existe solo en el equipo del administrador, y Kuma vigila el enlace y la llegada del último respaldo.", 1000, 540),
@@ -856,6 +908,30 @@ const s69a = [
   pageBreak(),
   ...figura(CAP, "nas-03-proxmox-errores-ext4.png", "Incidente 26: errores del sistema de Proxmox mientras el disco no estaba",
     "Qué se observa: la consola de Proxmox registra bloqueos de CPU («soft lockup») de casi 90 segundos y errores de lectura EXT4 sobre el disco de respaldos (sdb1), consecuencia de la desconexión del disco.", 1000, 260),
+  pageBreak(),
+  ...figura(CAP, "offsite-01-bucket-con-respaldos.png", "La copia fuera del PC: el bucket de Google Cloud Storage con los respaldos",
+    "Qué se observa: el bucket privado «crm-chic-respaldos» (región us-east1, clase Standard, acceso no público) con la carpeta db/ y tres volcados cifrados de 9,2 KB: los dos primeros se subieron el 26-09-2026 a las 19:15 (hora local) y el tercero a las 19:59, tras un respaldo nuevo de un núcleo. El tipo «pgp-encrypted» confirma que Google guarda solo texto cifrado.", 1000, 300),
+  pageBreak(),
+  ...figura(CAP, "offsite-02-permisos-solo-crear.png", "Permisos del bucket: la cuenta de la NAS solo puede crear objetos",
+    "Qué se observa: en la pestaña Permisos del bucket, la cuenta dedicada tiene únicamente el rol «Creador de objetos de Storage»: puede subir, pero no leer, listar, borrar ni sobrescribir. El aviso inferior confirma el retiro de la cuenta de servicio inicial, sin uso. Las demás filas son roles heredados del propio proyecto (propietarios, editores y visualizadores), que pertenecen al administrador y no a la NAS.", 900, 420),
+  pageBreak(),
+  ...figura(CAP, "offsite-03-iam-proyecto-sin-roles-auxiliares.png", "IAM del proyecto sin los roles auxiliares",
+    "Qué se observa: la lista de permisos del proyecto ya no incluye a la cuenta dedicada ni sus roles auxiliares (administrador de claves HMAC y navegador), que solo hicieron falta para crear la clave; queda únicamente el propietario (correo y nombre difuminados). Google confirma «Se actualizó la política».", 950, 400),
+  pageBreak(),
+  ...figura(CAP, "cloud-01-cuenta-de-servicio.png", "La cuenta de servicio creada para la NAS, sin claves",
+    "Qué se observa: la cuenta de servicio crm-nas-subida, habilitada, con «No hay claves»: la política de la organización impidió emitirle una. Se creó siguiendo el principio de una identidad dedicada por función y se retiró después por no usarse.", 1000, 200),
+  pageBreak(),
+  ...figura(CAP, "cloud-02-politica-bloquea-claves.png", "La política de la organización que bloquea las claves de cuentas de servicio",
+    "Qué se observa: el aviso de Google al intentar crear la clave, con el identificador de la política aplicada (iam.disableServiceAccountKeyCreation). Es una medida de seguridad por defecto; se respetó y se resolvió con una cuenta dedicada de permisos mínimos en vez de desactivarla (incidente 29).", 760, 500),
+  pageBreak(),
+  figurasPar(CAP,
+    { file: "cloud-03a-configuracion-bucket-general.png", titulo: "Configuración del bucket (1/2)", texto: "Qué se observa: región us-east1, tipo Región, clase Standard, control de acceso uniforme y prevención de acceso público habilitada (estado «No público»)." },
+    { file: "cloud-03b-configuracion-bucket-proteccion.png", titulo: "Configuración del bucket (2/2)", texto: "Qué se observa: eliminación no definitiva de 7 días, sin control de versiones, retención ni reglas de ciclo de vida (mejoras propuestas, sección 2.1) y cifrado administrado por Google." }, 480, 420),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "cloud-04-observabilidad-solicitudes.png", titulo: "Actividad del bucket: solicitudes", texto: "Qué se observa: solicitudes de escritura (WriteObject), de las subidas del envío, y de listado (ListObjects), de los intentos de diagnóstico; el volumen es mínimo." },
+    { file: "cloud-05-observabilidad-trafico-1dia.png", titulo: "Actividad del bucket: tráfico en un día", texto: "Qué se observa: entrada de unos 500 B/s como máximo y salida de unos 100 B/s, concentradas en la tarde del 26-09-2026: el volumen es ínfimo frente a los 5 GB gratuitos." },
+  ], 620, 250),
 ];
 
 
@@ -871,7 +947,7 @@ const s20a = [
 // ---- 8 Bitacora (portrait) ----
 const s21 = [
   h1("8. Bitácora de Incidentes Reales (fase de simulación)"),
-  p("Veintiocho incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
+  p("Treinta y dos incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
 ];
 const incidents = [
   ["1", "Caché de DNS del gateway Nginx", "Nginx seguía resolviendo IPs viejas tras reconstruir contenedores.", "`resolver 127.0.0.11 valid=10s;` + variables dinámicas en proxy_pass."],
@@ -902,6 +978,10 @@ const incidents = [
   ["26", "Desconexión del disco externo: la VM de Proxmox quedó pausada", `El disco externo (K:) que aloja el disco virtual de la NAS se desconectó con Proxmox encendido. VMware pausó la VM anfitriona y mostró un aviso de error (figura ${F.nas2}); el sistema invitado registró bloqueos de CPU y errores EXT4 en el disco nuevo (figura ${F.nas3}). El CRM quedó inaccesible y un terraform apply en curso no llegó a crear el contenedor.`, "Con el disco de vuelta se eligió «Retry» en el aviso (no «Continue», que reenvía el error al sistema, ni «Cancel», que apaga la VM). Proxmox se reinició, las cuatro VMs y el contenedor arrancaron solos y el clúster volvió íntegro (etcd 3/3, Patroni con lag 0, respaldos intactos). Se repitió el apply, se documentó el procedimiento y se recomendó desactivar el ahorro de energía USB."],
   ["27", "Opción inexistente en el comando de conmutación planificada", "El instructivo indicaba patronictl switchover --leader, pero la versión instalada de Patroni usa --master; el comando falló sin cambiar nada.", "Opción corregida en el instructivo y conmutación real probada (sección 9.8)."],
   ["28", "La ruta del disco fue traducida a una ruta de Windows al llamar a la API", "Al formatear el disco nuevo desde Git Bash, /dev/sdb se convirtió en una ruta de Windows y Proxmox rechazó la operación; no se cambió nada.", "Traducción de rutas desactivada para esa llamada; el almacenamiento se creó correctamente. Lección: leer y confirmar el disco destino antes de formatear."],
+  ["29", "Las claves de cuentas de servicio están bloqueadas por política de la organización", "Al crear la credencial de la cuenta de servicio destinada a la NAS, Google informó que la política de la organización (iam.disableServiceAccountKeyCreation) impide crear claves de cuentas de servicio; la opción equivalente para HMAC también estaba desactivada.", "En vez de levantar una política de seguridad, se creó una cuenta de Google dedicada, con solo el rol «Creador de objetos» sobre el bucket, y su propia clave HMAC. Se descartó usar una clave de la cuenta del administrador, que habría heredado todos sus permisos y anulado la propiedad de solo escritura; la clave que se creó por error quedó expuesta en una captura y se eliminó de inmediato."],
+  ["30", "Subidas a la nube rechazadas de forma intermitente (403)", "Con la credencial ya cargada, Google aceptaba y rechazaba peticiones de forma aparentemente aleatoria (SignatureDoesNotMatch, Forbidden). Se descartaron primero el reloj de la NAS, la región de la firma, el formato de la credencial, la cabecera de ACL y la propagación de permisos.", "La clave HMAC de una cuenta de usuario necesita un proyecto predeterminado para el acceso interoperable, y no estaba configurado. Al configurarlo, las subidas se aceptaron de forma consistente."],
+  ["31", "Verificación del respaldo que daba éxito sin serlo (defecto propio)", "Un primer script de envío ocultaba los errores de rclone con «|| true» y filtros de texto, y declaró «verificado» un envío que en realidad no podía leer el bucket. Además, rclone reportaba como fallo subidas que sí se habían aceptado, por las lecturas posteriores que Google rechaza para una credencial de solo crear.", "Se reemplazó rclone por un script Python de solo creación que verifica cada archivo comparando el MD5 que Google devuelve con el local, y solo da el envío por bueno (y avisa a Kuma) si todos coinciden. Lección: un respaldo dado por bueno sin serlo es peor que uno que avisa del fallo."],
+  ["32", "Cambio de contraseña de la clave de descifrado con resultado parcial y una copia incompleta", "Al proteger con contraseña la clave privada que abre los respaldos, varios intentos se cruzaron (ventanas de contraseña cerradas o completadas en el orden equivocado): la subclave de descifrado quedó protegida, pero la clave principal quedó con una contraseña distinta. La primera exportación de respaldo salió con solo 439 bytes y con un aviso de «clave omitida».", "Se detectó por comprobar el tamaño del archivo exportado. Se exportó solo la subclave de descifrado, que es la única necesaria para restaurar, y se verificó importándola en un llavero vacío y aislado y descifrando un mensaje de prueba. La clave principal (solo certifica) no se alineó, por no intervenir en la restauración; queda declarada. Lección: una copia de seguridad no está lista hasta que se ensaya su restauración."],
 ];
 s21.push(makeTable([500, 2500, 3500, 3200], ["#", "Incidente", "Causa raíz", "Resolución"], incidents));
 
@@ -983,13 +1063,13 @@ s21.push(p(
 s21.push(bullet("Keepalived: crm-edge arrancó en BACKUP a las 18:14:50 y entró a MASTER a las 18:14:54, recuperando la IP virtual por su prioridad mayor (150 frente a 100), en unos 4 s; crm-edge-b volvió a BACKUP."));
 s21.push(bullet("Patroni: crm-core se reincorporó como réplica sincrónica con lag 0, pero crm-core-b siguió siendo el líder. Es el comportamiento correcto: no existe un líder “original”, y devolver el liderazgo sería una segunda interrupción sin beneficio (sección 6.7)."));
 s21.push(bullet("etcd: los tres miembros volvieron a estar sanos y el clúster recuperó la mayoría completa."));
-s21.push(bullet("Aislamiento: verificado al final, los núcleos y el contenedor de monitoreo siguen sin salida a Internet; solo los bordes la tienen."));
+s21.push(bullet("Aislamiento: verificado al final, los núcleos y el contenedor de monitoreo siguen sin salida a Internet; solo los bordes la tienen (prueba del 25-09; desde el 26-09 crm-nas tiene además una salida acotada a HTTPS hacia la nube de respaldo, ADR-14)."));
 
 s21.push(h2("9.6 Límites del diseño, declarados"));
 s21.push(bullet("Se tolera la caída de UNA VM a la vez. Con dos VMs del clúster etcd caídas simultáneamente (por ejemplo crm-edge-b y crm-core-b), etcd pierde la mayoría y Patroni no promueve: el servicio de base de datos se detiene por seguridad, sin riesgo de split-brain, y se recupera solo al volver la mayoría (incidente 20)."));
 s21.push(bullet("Todo reside en un único servidor físico: ni el panel de monitoreo ni el centinela protegen ante la caída del equipo completo. Eso requiere el segundo servidor cotizado (sección 5.7)."));
 s21.push(bullet("El apagado de la prueba es abrupto pero de máquina virtual; no se simularon fallas de disco, corrupción de datos ni de red física, que quedan fuera del alcance de la simulación."));
-s21.push(bullet("Los respaldos automáticos viven en el mismo PC: el disco externo va enchufado a él. Protegen contra un borrado por error, la corrupción de datos o la pérdida de una VM, pero no contra la pérdida o el robo del equipo; la copia en otra ubicación física (nube o disco guardado aparte) es una fase pendiente (sección 6.9.7)."));
+s21.push(bullet("La copia en la nube contiene solo los volcados de la base de datos; las máquinas completas (vzdump) siguen en el mismo PC, porque pueden reconstruirse con Terraform y Ansible desde GitHub. Todavía no se ensayó una restauración completa, ni desde la nube ni desde las copias de las máquinas (sección 6.9.8)."));
 s21.push(h2("9.7 Verificaciones complementarias"));
 s21.push(bullet(`Acceso desde un equipo externo: un segundo notebook, conectado a la red del celular, abre el CRM por https://172.20.10.2 con el candado cerrado y comparte el chat con el PC anfitrión en tiempo real (figuras ${F.otro1} y ${F.otro2}).`));
 s21.push(bullet(`HTTPS con CA privada: confirmado con openssl s_client y curl --cacert (validación real de la cadena de confianza, código 0) y en el navegador, con candado y sin advertencias (figura ${F.login}); el SAN incluye 192.168.80.10.`));
@@ -999,6 +1079,10 @@ s21.push(bullet(`Control de acceso: el menú y los datos de salud dependen del r
 s21.push(bullet(`Failover de Keepalived en la red NAT: al detener Keepalived en crm-edge, la IP virtual pasó a crm-edge-b en menos de 5 s y el CRM siguió respondiendo (figuras ${F.crmfailover} y ${F.ciclo}).`));
 s21.push(bullet(`Respaldo cifrado de punta a punta: un volcado entregado a crm-nas se descargó al PC, se descifró con la clave privada local y contenía las seis bases de datos (sección 6.9.5).`));
 s21.push(bullet(`Receptor de solo escritura: desde un núcleo, las seis órdenes de prueba (listar, leer un archivo del sistema, sobrescribir un respaldo, nombres con rutas relativas o de extensión ajena y una orden vacía) fueron rechazadas y la NAS conservó su único archivo (sección 6.9.5).`));
+
+s21.push(bullet(`Copia fuera del PC: tres subidas nuevas a Google Cloud Storage con el MD5 de la nube igual al local, un intento de sobrescribir un archivo existente rechazado (403) y un ciclo completo —un núcleo entrega a crm-nas, que sube y verifica solo— (sección 6.9.8, figura ${F.offsite1}).`));
+
+s21.push(bullet("Restauración de la clave de descifrado: la copia de la subclave, importada en un llavero vacío y aislado, descifró un mensaje de prueba tras pedir la contraseña (sección 6.9.9)."));
 
 s21.push(h2("9.8 P4 — Conmutación planificada del núcleo y respaldo de las máquinas"));
 s21.push(p(
@@ -1095,7 +1179,7 @@ const s23 = [
   ),
   p(
     "El valor del trabajo no reside solo en el resultado —la infraestructura funcionando en " +
-    "simulación—, sino en el proceso documentado de veintiocho incidentes reales resueltos con su " +
+    "simulación—, sino en el proceso documentado de treinta y dos incidentes reales resueltos con su " +
     "causa raíz identificada (varios de ellos de red: choque de IP, direcciones MAC descartadas por " +
     "el hotspot, reglas de NAT persistentes), y en la experiencia adquirida que habilita, con " +
     "conocimiento real y no teórico, la migración responsable a producción sobre el servidor físico de CHIC."
@@ -1104,7 +1188,7 @@ const s23 = [
     "El sistema CRM, desarrollado a partir de una necesidad real y perfeccionado durante el proyecto, es " +
     "la carga de trabajo que da sentido a esa infraestructura y una habilidad de software adicional " +
     "adquirida en el camino; su detalle funcional se conserva en el Anexo B. Las fases pendientes —" +
-    "respaldo offsite en Oracle Cloud, cotización y adquisición del segundo servidor, y la migración " +
+    "ensayo de restauración completa desde la copia en la nube, cotización y adquisición del segundo servidor, y la migración " +
     "a producción bare metal— están planificadas dentro del cronograma oficial de 360 horas de la " +
     "práctica (sección 5.3) y se reportarán con evidencia real en los sucesivos informes de avance. Los " +
     "documentos legales de respaldo permanecen como borradores a la espera de su revisión jurídica."

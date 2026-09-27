@@ -69,3 +69,10 @@
     - ansible.builtin.include_role:
         name: respaldo
         tasks_from: nucleo.yml
+
+- name: "Copia offsite: crm-nas envia a Cloud Storage los respaldos cifrados"
+  hosts: nas
+  become: true
+  tags: [respaldo_offsite]
+  roles:
+    - respaldo_offsite

@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+"""Envia a Cloud Storage (Google) los volcados cifrados de /srv/respaldos/db. Gestionado por Ansible.
+
+Diseno:
+  * La credencial HMAC solo necesita poder CREAR objetos: este script NUNCA lee ni lista el bucket.
+  * La verificacion no requiere lectura: Google devuelve, al aceptar la subida, el MD5 del objeto
+    guardado (cabecera ETag). Se compara con el MD5 local: si coincide, el archivo esta integro en la nube.
+  * Cada archivo se sube una vez; lo subido se anota en el registro. Un nombre ya existente no se puede
+    sobrescribir (Google responde 403): es la proteccion contra borrado/pisado, y se informa como aviso.
+  * Sale con codigo distinto de 0 si algun archivo NO quedo verificado, para que Kuma no reciba el aviso.
+Solo libreria estandar de Python.
+"""
+import configparser
+import datetime
+import hashlib
+import hmac
+import http.client
+import os
+import sys
+import urllib.parse
+
+CONF = "/etc/rclone-crm/rclone.conf"
+ORIGEN = "/srv/respaldos/db"
+ESTADO = "/var/lib/respaldo-offsite/subidos"
+BUCKET = "{{ offsite_bucket }}"
+PREFIJO = "db"
+HOST = BUCKET + ".storage.googleapis.com"
+REGION = "auto"
+PUSH = "/etc/subir-offsite-push-url"
+
+
+def _hmac(clave, msg):
+    return hmac.new(clave, msg.encode(), hashlib.sha256).digest()
+
+
+def subir(nombre, datos, acceso, secreto):
+    """PUT firmado con AWS SigV4 (compatibilidad S3 de Cloud Storage). Devuelve (estado_http, etag_md5)."""
+    ahora = datetime.datetime.now(datetime.timezone.utc)
+    amz_fecha = ahora.strftime("%Y%m%dT%H%M%SZ")
+    dia = ahora.strftime("%Y%m%d")
+    ruta = "/" + urllib.parse.quote(PREFIJO + "/" + nombre, safe="/-_.~")
+    hash_cuerpo = hashlib.sha256(datos).hexdigest()
+    cabeceras = {"host": HOST, "x-amz-content-sha256": hash_cuerpo, "x-amz-date": amz_fecha}
+    firmadas = ";".join(sorted(cabeceras))
+    canonicas = "".join("%s:%s\n" % (k, cabeceras[k]) for k in sorted(cabeceras))
+    peticion = "\n".join(["PUT", ruta, "", canonicas, firmadas, hash_cuerpo])
+    alcance = "%s/%s/s3/aws4_request" % (dia, REGION)
+    a_firmar = "\n".join(["AWS4-HMAC-SHA256", amz_fecha, alcance, hashlib.sha256(peticion.encode()).hexdigest()])
+    k = _hmac(("AWS4" + secreto).encode(), dia)
+    for parte in (REGION, "s3", "aws4_request"):
+        k = _hmac(k, parte)
+    firma = hmac.new(k, a_firmar.encode(), hashlib.sha256).hexdigest()
+    autorizacion = "AWS4-HMAC-SHA256 Credential=%s/%s, SignedHeaders=%s, Signature=%s" % (acceso, alcance, firmadas, firma)
+    con = http.client.HTTPSConnection(HOST, timeout=60)
+    try:
+        con.request("PUT", ruta, body=datos, headers={
+            "x-amz-content-sha256": hash_cuerpo, "x-amz-date": amz_fecha, "Authorization": autorizacion,
+            "Content-Length": str(len(datos)), "Content-Type": "application/octet-stream"})
+        r = con.getresponse()
+        r.read()
+        return r.status, (r.getheader("ETag") or "").strip('"')
+    finally:
+        con.close()
+
+
+def main():
+    cfg = configparser.ConfigParser()
+    if not cfg.read(CONF) or "gcs" not in cfg:
+        print("ERROR: falta la credencial en %s" % CONF, file=sys.stderr)
+        return 1
+    acceso = cfg["gcs"]["access_key_id"].strip()
+    secreto = cfg["gcs"]["secret_access_key"].strip()
+
+    os.makedirs(os.path.dirname(ESTADO), exist_ok=True)
+    hechos = set(open(ESTADO).read().split()) if os.path.exists(ESTADO) else set()
+    fallos = avisos = subidos = 0
+    for nombre in sorted(os.listdir(ORIGEN)):
+        if not (nombre.startswith("db-") and nombre.endswith(".sql.gpg")) or nombre in hechos:
+            continue
+        with open(os.path.join(ORIGEN, nombre), "rb") as f:
+            datos = f.read()
+        md5_local = hashlib.md5(datos).hexdigest()
+        estado, etag = subir(nombre, datos, acceso, secreto)
+        if estado == 200 and etag == md5_local:
+            with open(ESTADO, "a") as f:
+                f.write(nombre + "\n")
+            subidos += 1
+            print("subido y verificado (MD5 %s): %s" % (md5_local, nombre))
+        elif estado == 200:
+            print("FALLO: %s se subio pero el MD5 no coincide (local %s, nube %s)" % (nombre, md5_local, etag), file=sys.stderr)
+            fallos += 1
+        elif estado == 403:
+            print("AVISO: %s no se pudo crear (403). Si ya existe en la nube, es la proteccion contra sobrescritura; "
+                  "confirmarlo en la consola y anotarlo en %s." % (nombre, ESTADO), file=sys.stderr)
+            avisos += 1
+        else:
+            print("FALLO: %s respuesta HTTP %s" % (nombre, estado), file=sys.stderr)
+            fallos += 1
+    print("resumen: %d subidos y verificados, %d avisos, %d fallos" % (subidos, avisos, fallos))
+    if fallos or avisos:
+        return 1
+    if os.path.exists(PUSH) and os.path.getsize(PUSH) > 0:
+        try:
+            u = urllib.parse.urlsplit(open(PUSH).read().strip())
+            con = http.client.HTTPConnection(u.hostname, u.port or 80, timeout=10)
+            con.request("GET", u.path + ("?" + u.query if u.query else ""))
+            con.getresponse().read()
+            con.close()
+        except Exception as e:  # el aviso a Kuma no debe romper un envio ya verificado
+            print("aviso: no se pudo avisar a Kuma: %s" % e, file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

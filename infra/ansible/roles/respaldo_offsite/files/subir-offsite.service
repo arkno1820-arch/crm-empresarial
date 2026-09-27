@@ -1,0 +1,7 @@
+[Unit]
+Description=Envio de respaldos cifrados a Cloud Storage (copia fuera del PC)
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/subir-offsite
