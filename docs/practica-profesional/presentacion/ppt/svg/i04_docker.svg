@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="30" y="250" width="250" height="120" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="155" y="300" font-size="30" fill="#e8f1f2" font-weight="700" text-anchor="middle">Navegador</text>
+<text x="155" y="338" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="middle">del usuario</text>
+<line x1="280" y1="310" x2="340" y2="310" stroke="#8ee6b8" stroke-width="4" marker-end="url(#aM)"/>
+<rect x="340" y="190" width="250" height="240" rx="18" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="465" y="245" font-size="28" fill="#8ee6b8" font-weight="700" text-anchor="middle">Frontend</text>
+<text x="465" y="280" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">páginas web</text>
+<text x="465" y="350" font-size="28" fill="#8ee6b8" font-weight="700" text-anchor="middle">Gateway</text>
+<text x="465" y="385" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">Nginx: puerta única</text>
+<rect x="740" y="80" width="240" height="78" rx="14" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="860" y="128" font-size="25" fill="#e8f1f2" font-weight="500" text-anchor="middle">auth-service</text>
+<line x1="590" y1="310" x2="740" y2="119" stroke="#5fd3c8" stroke-width="2.5" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<line x1="980" y1="119" x2="1110" y2="119" stroke="#8ee6b8" stroke-width="2.5" marker-end="url(#aM)"/>
+<rect x="740" y="180" width="240" height="78" rx="14" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="860" y="228" font-size="25" fill="#e8f1f2" font-weight="500" text-anchor="middle">empleados-service</text>
+<line x1="590" y1="310" x2="740" y2="219" stroke="#5fd3c8" stroke-width="2.5" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<line x1="980" y1="219" x2="1110" y2="219" stroke="#8ee6b8" stroke-width="2.5" marker-end="url(#aM)"/>
+<rect x="740" y="280" width="240" height="78" rx="14" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="860" y="328" font-size="25" fill="#e8f1f2" font-weight="500" text-anchor="middle">calendario-service</text>
+<line x1="590" y1="310" x2="740" y2="319" stroke="#5fd3c8" stroke-width="2.5" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<line x1="980" y1="319" x2="1110" y2="319" stroke="#8ee6b8" stroke-width="2.5" marker-end="url(#aM)"/>
+<rect x="740" y="380" width="240" height="78" rx="14" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="860" y="428" font-size="25" fill="#e8f1f2" font-weight="500" text-anchor="middle">inventario-service</text>
+<line x1="590" y1="310" x2="740" y2="419" stroke="#5fd3c8" stroke-width="2.5" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<line x1="980" y1="419" x2="1110" y2="419" stroke="#8ee6b8" stroke-width="2.5" marker-end="url(#aM)"/>
+<rect x="740" y="480" width="240" height="78" rx="14" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="860" y="528" font-size="25" fill="#e8f1f2" font-weight="500" text-anchor="middle">reservas-service</text>
+<line x1="590" y1="310" x2="740" y2="519" stroke="#5fd3c8" stroke-width="2.5" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<line x1="980" y1="519" x2="1110" y2="519" stroke="#8ee6b8" stroke-width="2.5" marker-end="url(#aM)"/>
+<rect x="740" y="580" width="240" height="78" rx="14" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="860" y="628" font-size="25" fill="#e8f1f2" font-weight="500" text-anchor="middle">chat-service</text>
+<line x1="590" y1="310" x2="740" y2="619" stroke="#5fd3c8" stroke-width="2.5" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<line x1="980" y1="619" x2="1110" y2="619" stroke="#8ee6b8" stroke-width="2.5" marker-end="url(#aM)"/>
+<rect x="1110" y="60" width="340" height="640" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<g transform="translate(1235,76) scale(0.9)" fill="none" stroke="#a99cf0" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="50" cy="20" rx="34" ry="12"/><path d="M16 20 V76 C16 90 84 90 84 76 V20"/><path d="M16 48 C16 62 84 62 84 48"/></g>
+<text x="1280" y="190" font-size="28" fill="#a99cf0" font-weight="700" text-anchor="middle">PostgreSQL</text>
+<text x="1280" y="250" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="middle">auth_db</text>
+<text x="1280" y="320" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="middle">empleados_db</text>
+<text x="1280" y="390" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="middle">calendario_db</text>
+<text x="1280" y="460" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="middle">inventario_db</text>
+<text x="1280" y="530" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="middle">reservas_db</text>
+<text x="1280" y="600" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="middle">chat_db</text>
+<rect x="1500" y="60" width="340" height="640" rx="20" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(1610,78) scale(0.8)" fill="none" stroke="#f2b35a" stroke-width="3.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="15"/><circle cx="50" cy="50" r="32"/><path d="M50 8 V18 M50 82 V92 M8 50 H18 M82 50 H92 M20 20 L27 27 M73 73 L80 80 M80 20 L73 27 M27 73 L20 80"/></g>
+<text x="1670" y="200" font-size="28" fill="#f2b35a" font-weight="700" text-anchor="middle">Orquestación</text>
+<text x="1670" y="245" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">docker compose</text>
+<text x="1670" y="279" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">levanta las 9 piezas</text>
+<text x="1670" y="313" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">con un solo comando</text>
+<text x="1670" y="347" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle"></text>
+<text x="1670" y="381" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">Cada servicio es</text>
+<text x="1670" y="415" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">dueño exclusivo de</text>
+<text x="1670" y="449" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">su base de datos</text>
+<text x="1670" y="483" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle"></text>
+<text x="1670" y="517" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">Todo pasa por</text>
+<text x="1670" y="551" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">el gateway</text>
+</svg>

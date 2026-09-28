@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="25" y="60" width="400" height="500" rx="22" fill="#20343f" stroke="#5fd3c8" stroke-width="3" filter="url(#glow)"/>
+<circle cx="225" cy="160" r="62" fill="none" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(183,118) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><rect x="22" y="10" width="56" height="82" rx="3"/><path d="M34 26 H44 M56 26 H66 M34 44 H44 M56 44 H66 M34 62 H44 M56 62 H66"/><rect x="42" y="74" width="16" height="18"/></g>
+<text x="225" y="265" font-size="34" fill="#5fd3c8" font-weight="700" text-anchor="middle">Terraform</text>
+<text x="225" y="305" font-size="24" fill="#f2b35a" font-weight="600" text-anchor="middle">«Los planos»</text>
+<text x="225" y="360" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Define en un archivo las</text>
+<text x="225" y="396" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">máquinas, la red y los</text>
+<text x="225" y="432" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">contenedores; los crea</text>
+<text x="225" y="468" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">hablando con Proxmox</text>
+<line x1="430" y1="310" x2="470" y2="310" stroke="#5fd3c8" stroke-width="4" marker-end="url(#aC)"/>
+<rect x="475" y="60" width="400" height="500" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<circle cx="675" cy="160" r="62" fill="none" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(633,118) scale(0.84)" fill="none" stroke="#8ee6b8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="50" r="18"/><circle cx="30" cy="50" r="5"/><path d="M48 50 H92 M76 50 V64 M64 50 V60"/></g>
+<text x="675" y="265" font-size="34" fill="#8ee6b8" font-weight="700" text-anchor="middle">cloud-init</text>
+<text x="675" y="305" font-size="24" fill="#f2b35a" font-weight="600" text-anchor="middle">«Las llaves»</text>
+<text x="675" y="360" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Al primer arranque da a</text>
+<text x="675" y="396" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">cada máquina su usuario,</text>
+<text x="675" y="432" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">su llave SSH, su red</text>
+<text x="675" y="468" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">y su DNS</text>
+<line x1="880" y1="310" x2="920" y2="310" stroke="#8ee6b8" stroke-width="4" marker-end="url(#aM)"/>
+<rect x="925" y="60" width="400" height="500" rx="22" fill="#20343f" stroke="#f2b35a" stroke-width="3" filter="url(#glow)"/>
+<circle cx="1125" cy="160" r="62" fill="none" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(1083,118) scale(0.84)" fill="none" stroke="#f2b35a" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="15"/><circle cx="50" cy="50" r="32"/><path d="M50 8 V18 M50 82 V92 M8 50 H18 M82 50 H92 M20 20 L27 27 M73 73 L80 80 M80 20 L73 27 M27 73 L20 80"/></g>
+<text x="1125" y="265" font-size="34" fill="#f2b35a" font-weight="700" text-anchor="middle">Ansible</text>
+<text x="1125" y="305" font-size="24" fill="#f2b35a" font-weight="600" text-anchor="middle">«Los obreros»</text>
+<text x="1125" y="360" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Instala y configura todo:</text>
+<text x="1125" y="396" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Nginx, Keepalived, etcd,</text>
+<text x="1125" y="432" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Patroni, HAProxy, Docker,</text>
+<text x="1125" y="468" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Kuma y los respaldos</text>
+<line x1="1330" y1="310" x2="1370" y2="310" stroke="#f2b35a" stroke-width="4" marker-end="url(#aA)"/>
+<rect x="1375" y="60" width="400" height="500" rx="22" fill="#20343f" stroke="#a99cf0" stroke-width="3" filter="url(#glow)"/>
+<circle cx="1575" cy="160" r="62" fill="none" stroke="#a99cf0" stroke-width="3"/>
+<g transform="translate(1533,118) scale(0.84)" fill="none" stroke="#a99cf0" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><path d="M10 24 H38 L46 34 H90 V84 H10 Z"/></g>
+<text x="1575" y="265" font-size="34" fill="#a99cf0" font-weight="700" text-anchor="middle">Git y GitHub</text>
+<text x="1575" y="305" font-size="24" fill="#f2b35a" font-weight="600" text-anchor="middle">«El cuaderno de obra»</text>
+<text x="1575" y="360" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Cada cambio queda con su</text>
+<text x="1575" y="396" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">commit: se puede volver</text>
+<text x="1575" y="432" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">atrás y explicar qué se</text>
+<text x="1575" y="468" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">hizo y cuándo</text>
+<rect x="120" y="610" width="1620" height="150" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="2.5" stroke-dasharray="10 8"/>
+<text x="930" y="665" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="middle">Infraestructura como código: la infraestructura se describe en archivos, se versiona y se puede reconstruir igual cuantas veces haga falta.</text>
+<text x="930" y="705" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="middle">Analogía: en vez de armar la casa de memoria, se entrega el plano y una cuadrilla lo construye siempre igual.</text>
+</svg>

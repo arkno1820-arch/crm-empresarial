@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="60" y="60" width="900" height="150" rx="18" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="100" y="108" font-size="28" fill="#8ee6b8" font-weight="700" text-anchor="start">Departamentos</text>
+<text x="100" y="152" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="start">4 VMs (edge, edge-b, core, core-b)</text>
+<text x="100" y="188" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="start">2 contenedores (crm-mon, crm-nas)</text>
+<rect x="60" y="232" width="900" height="150" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3" filter="url(#glow)"/>
+<text x="100" y="280" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="start">Piso y estructura</text>
+<text x="100" y="324" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="start">Proxmox VE 9.2: el hipervisor</text>
+<text x="100" y="360" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="start">reparte CPU, memoria y disco</text>
+<rect x="60" y="404" width="900" height="150" rx="18" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<text x="100" y="452" font-size="28" fill="#a99cf0" font-weight="700" text-anchor="start">Edificio anfitrión</text>
+<text x="100" y="496" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="start">VMware Workstation</text>
+<text x="100" y="532" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="start">aloja a Proxmox en una VM</text>
+<rect x="60" y="576" width="900" height="150" rx="18" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="100" y="624" font-size="28" fill="#f2b35a" font-weight="700" text-anchor="start">Terreno</text>
+<text x="100" y="668" font-size="24" fill="#e8f1f2" font-weight="500" text-anchor="start">PC físico Windows (Ryzen 7)</text>
+<text x="100" y="704" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="start">el único hardware real</text>
+<text x="1400" y="60" font-size="32" fill="#5fd3c8" font-weight="700" text-anchor="middle">¿VM o contenedor?</text>
+<rect x="1010" y="90" width="400" height="470" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(1160,110) scale(0.9)" fill="none" stroke="#5fd3c8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="12" width="72" height="24" rx="4"/><rect x="14" y="40" width="72" height="24" rx="4"/><rect x="14" y="68" width="72" height="24" rx="4"/><circle cx="28" cy="24" r="3"/><circle cx="28" cy="52" r="3"/><circle cx="28" cy="80" r="3"/><path d="M50 24 H74 M50 52 H74 M50 80 H74"/></g>
+<text x="1210" y="240" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="middle">Máquina virtual (KVM)</text>
+<text x="1210" y="285" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Su propio sistema operativo</text>
+<text x="1210" y="319" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">y su propio núcleo.</text>
+<text x="1210" y="353" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Aísla más, pesa más.</text>
+<text x="1210" y="387" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle"></text>
+<text x="1210" y="421" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Aquí: 4 VMs con Ubuntu</text>
+<rect x="1440" y="90" width="400" height="470" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(1590,110) scale(0.9)" fill="none" stroke="#8ee6b8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="30" width="84" height="46" rx="4"/><path d="M22 30 V76 M36 30 V76 M50 30 V76 M64 30 V76 M78 30 V76"/><path d="M8 30 L18 18 H82 L92 30"/></g>
+<text x="1640" y="240" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="middle">Contenedor (LXC)</text>
+<text x="1640" y="285" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Comparte el núcleo del</text>
+<text x="1640" y="319" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">anfitrión: arranca en</text>
+<text x="1640" y="353" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">segundos y usa poca</text>
+<text x="1640" y="387" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">memoria.</text>
+<text x="1640" y="421" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle"></text>
+<text x="1640" y="455" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Aquí: monitoreo y NAS</text>
+<rect x="1010" y="600" width="830" height="130" rx="18" fill="#20343f" stroke="#f2b35a" stroke-width="2.5" stroke-dasharray="10 8"/>
+<text x="1425" y="650" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="middle">Proxmox anidado no es bare metal, y se declara así:</text>
+<text x="1425" y="686" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="middle">es una simulación para aprender antes de ir al servidor real.</text>
+</svg>

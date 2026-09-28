@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="50" y="60" width="560" height="420" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="110" cy="115" r="32" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="110" y="124" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="middle">D1</text>
+<g transform="translate(286,125) scale(0.9)" fill="none" stroke="#8ee6b8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="330" y="300" font-size="25" fill="#8ee6b8" font-weight="700" text-anchor="middle">Disco casi lleno en la</text>
+<text x="330" y="332" font-size="25" fill="#8ee6b8" font-weight="700" text-anchor="middle">réplica</text>
+<text x="330" y="390" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">72 de 72 escrituras aceptadas</text>
+<text x="330" y="418" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">por el líder, sin fallos</text>
+<rect x="650" y="60" width="560" height="420" rx="22" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="710" cy="115" r="32" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="710" y="124" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="middle">D2</text>
+<g transform="translate(886,125) scale(0.9)" fill="none" stroke="#5fd3c8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="930" y="300" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="middle">Disco casi lleno en el</text>
+<text x="930" y="332" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="middle">líder</text>
+<text x="930" y="390" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">76 de 76 escrituras aceptadas,</text>
+<text x="930" y="418" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">sin conmutación</text>
+<rect x="1250" y="60" width="560" height="420" rx="22" fill="#20343f" stroke="#f2b35a" stroke-width="3" stroke-dasharray="10 8"/>
+<circle cx="1310" cy="115" r="32" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1310" y="124" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">D2b</text>
+<g transform="translate(1486,125) scale(0.9)" fill="none" stroke="#f2b35a" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><path d="M50 10 L92 86 H8 Z"/><path d="M50 38 V60"/><circle cx="50" cy="73" r="2"/></g>
+<text x="1530" y="300" font-size="25" fill="#f2b35a" font-weight="700" text-anchor="middle">Disco agotado del todo en</text>
+<text x="1530" y="332" font-size="25" fill="#f2b35a" font-weight="700" text-anchor="middle">el líder</text>
+<text x="1530" y="390" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">Reveló un límite real del</text>
+<text x="1530" y="418" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">almacenamiento compartido del</text>
+<text x="1530" y="446" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">servidor</text>
+<rect x="30" y="520" width="1800" height="250" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(65,560) scale(0.9)" fill="none" stroke="#8ee6b8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="190" y="590" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">D1 y D2 no mostraron ningún fallo: el margen de disco alcanzó para sostener la escritura real.</text>
+<text x="190" y="626" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">D2b llevó el sistema a su límite real y encontró una mejora de fondo en el almacenamiento compartido.</text>
+<text x="190" y="690" font-size="22" fill="#f2b35a" font-weight="400" text-anchor="start">Resultado final: cero pérdida de datos en los tres casos, y el servidor quedó con más margen del que tenía antes.</text>
+</svg>

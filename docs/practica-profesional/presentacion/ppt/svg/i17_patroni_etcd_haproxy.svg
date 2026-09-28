@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="30" y="30" width="1800" height="210" rx="18" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<text x="60" y="85" font-size="28" fill="#a99cf0" font-weight="700" text-anchor="start">El árbitro (etcd) — 5 miembros</text>
+<text x="60" y="130" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">Analogía: una junta que vota</text>
+<text x="60" y="160" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">quién es el jefe. Ampliada de</text>
+<text x="60" y="190" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">tres a cinco miembros.</text>
+<circle cx="760" cy="120" r="46" fill="#20343f" stroke="#a99cf0" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(734,92) scale(0.52)" fill="none" stroke="#a99cf0" stroke-width="5.77" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="760" y="200" font-size="18" fill="#e8f1f2" font-weight="500" text-anchor="middle">crm-edge</text>
+<circle cx="965" cy="120" r="46" fill="#20343f" stroke="#a99cf0" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(939,92) scale(0.52)" fill="none" stroke="#a99cf0" stroke-width="5.77" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="965" y="200" font-size="18" fill="#e8f1f2" font-weight="500" text-anchor="middle">crm-edge-b</text>
+<circle cx="1170" cy="120" r="46" fill="#20343f" stroke="#a99cf0" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(1144,92) scale(0.52)" fill="none" stroke="#a99cf0" stroke-width="5.77" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="1170" y="200" font-size="18" fill="#e8f1f2" font-weight="500" text-anchor="middle">crm-core</text>
+<circle cx="1375" cy="120" r="46" fill="#20343f" stroke="#a99cf0" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(1349,92) scale(0.52)" fill="none" stroke="#a99cf0" stroke-width="5.77" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="1375" y="200" font-size="18" fill="#e8f1f2" font-weight="500" text-anchor="middle">crm-core-b</text>
+<circle cx="1580" cy="120" r="46" fill="#20343f" stroke="#a99cf0" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(1554,92) scale(0.52)" fill="none" stroke="#a99cf0" stroke-width="5.77" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="1580" y="200" font-size="18" fill="#e8f1f2" font-weight="500" text-anchor="middle">crm-mon</text>
+<text x="1790" y="120" font-size="22" fill="#f2b35a" font-weight="700" text-anchor="end">mayoría</text>
+<text x="1790" y="150" font-size="22" fill="#f2b35a" font-weight="700" text-anchor="end">= 3 de 5</text>
+<rect x="30" y="275" width="1800" height="200" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="60" y="330" font-size="30" fill="#5fd3c8" font-weight="700" text-anchor="start">El guía (HAProxy)</text>
+<text x="60" y="375" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">Analogía: el pasillo inteligente.</text>
+<text x="60" y="407" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">La aplicación no sabe quién es el</text>
+<text x="60" y="439" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">líder: pregunta y HAProxy la lleva.</text>
+<g transform="translate(1010,335) scale(0.9)" fill="none" stroke="#5fd3c8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="38" width="22" height="24" rx="3"/><rect x="68" y="38" width="22" height="24" rx="3"/><path d="M32 50 H68"/></g>
+<text x="1200" y="385" font-size="24" fill="#93a9b1" font-weight="400" text-anchor="start">puerto 5000 en cada núcleo</text>
+<text x="1200" y="420" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="start">comprueba «¿eres el líder?» cada instante</text>
+<rect x="30" y="510" width="1800" height="260" rx="18" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="60" y="565" font-size="30" fill="#8ee6b8" font-weight="700" text-anchor="start">Las bases (Patroni + PostgreSQL)</text>
+<text x="60" y="610" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">Un agente por núcleo gestiona</text>
+<text x="60" y="642" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">su PostgreSQL. Ninguno es «el</text>
+<text x="60" y="674" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">principal»: el líder cambia.</text>
+<rect x="760" y="555" width="400" height="180" rx="16" fill="#182a34" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(775,578) scale(0.62)" fill="none" stroke="#8ee6b8" stroke-width="4.84" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="50" cy="20" rx="34" ry="12"/><path d="M16 20 V76 C16 90 84 90 84 76 V20"/><path d="M16 48 C16 62 84 62 84 48"/></g>
+<text x="985" y="615" font-size="30" fill="#8ee6b8" font-weight="700" text-anchor="middle">Líder</text>
+<text x="985" y="650" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">crm-core-b · escribe</text>
+<text x="985" y="690" font-size="20" fill="#93a9b1" font-weight="400" text-anchor="middle">(hoy)</text>
+<rect x="1360" y="555" width="400" height="180" rx="16" fill="#182a34" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(1375,578) scale(0.62)" fill="none" stroke="#5fd3c8" stroke-width="4.84" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="50" cy="20" rx="34" ry="12"/><path d="M16 20 V76 C16 90 84 90 84 76 V20"/><path d="M16 48 C16 62 84 62 84 48"/></g>
+<text x="1585" y="615" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">Réplica sincrónica</text>
+<text x="1585" y="650" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">crm-core · lag 0</text>
+<line x1="1165" y1="645" x2="1355" y2="645" stroke="#8ee6b8" stroke-width="4" marker-end="url(#aM)"/>
+<line x1="1355" y1="675" x2="1165" y2="675" stroke="#8ee6b8" stroke-width="4" marker-end="url(#aM)"/>
+<line x1="985" y1="240" x2="985" y2="280" stroke="#a99cf0" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<line x1="985" y1="475" x2="985" y2="550" stroke="#5fd3c8" stroke-width="5" marker-end="url(#aC)"/>
+</svg>

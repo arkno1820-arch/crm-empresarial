@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="30" y="30" width="600" height="330" rx="22" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="330" y="80" font-size="30" fill="#f2b35a" font-weight="700" text-anchor="middle">Redundancia ≠ respaldo</text>
+<text x="170" y="150" font-size="24" fill="#5fd3c8" font-weight="700" text-anchor="middle">Clon en vivo</text>
+<text x="170" y="185" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">= redundancia</text>
+<text x="490" y="150" font-size="24" fill="#8ee6b8" font-weight="700" text-anchor="middle">Foto en el tiempo</text>
+<text x="490" y="185" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">= respaldo</text>
+<text x="330" y="175" font-size="56" fill="#f2b35a" font-weight="700" text-anchor="middle">≠</text>
+<text x="330" y="250" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">La rueda de repuesto te deja seguir</text>
+<text x="330" y="280" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">el viaje; el seguro te cubre si el auto</text>
+<text x="330" y="310" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">se destruye. Si alguien borra datos por</text>
+<text x="330" y="340" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">error, el clon los borra también.</text>
+<rect x="794" y="60" width="192" height="300" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="890" cy="60" r="22" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="890" y="69" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="middle">1</text>
+<g transform="translate(852,100) scale(0.72)" fill="none" stroke="#5fd3c8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="50" cy="20" rx="34" ry="12"/><path d="M16 20 V76 C16 90 84 90 84 76 V20"/><path d="M16 48 C16 62 84 62 84 48"/></g>
+<text x="890" y="236" font-size="24" fill="#5fd3c8" font-weight="700" text-anchor="middle">Volcado</text>
+<text x="890" y="276" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">cada núcleo copia su</text>
+<text x="890" y="300" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">base completa (pg_dumpall)</text>
+<line x1="988" y1="210" x2="1006" y2="210" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="996" y="60" width="192" height="300" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="1092" cy="60" r="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="1092" y="69" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="middle">2</text>
+<g transform="translate(1054,100) scale(0.72)" fill="none" stroke="#8ee6b8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1092" y="236" font-size="24" fill="#8ee6b8" font-weight="700" text-anchor="middle">Verifica</text>
+<text x="1092" y="276" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">comprueba que el volcado</text>
+<text x="1092" y="300" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">esté completo</text>
+<line x1="1190" y1="210" x2="1208" y2="210" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="1198" y="60" width="192" height="300" rx="20" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<circle cx="1294" cy="60" r="22" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1294" y="69" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">3</text>
+<g transform="translate(1256,100) scale(0.72)" fill="none" stroke="#f2b35a" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="42" width="60" height="46" rx="6"/><path d="M32 42 V30 C32 8 68 8 68 30 V42"/><circle cx="50" cy="63" r="6"/><path d="M50 69 V78"/></g>
+<text x="1294" y="236" font-size="24" fill="#f2b35a" font-weight="700" text-anchor="middle">Cifra</text>
+<text x="1294" y="276" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">con la clave pública</text>
+<text x="1294" y="300" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">(GnuPG)</text>
+<line x1="1392" y1="210" x2="1410" y2="210" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="1400" y="60" width="192" height="300" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<circle cx="1496" cy="60" r="22" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<text x="1496" y="69" font-size="26" fill="#a99cf0" font-weight="700" text-anchor="middle">4</text>
+<g transform="translate(1458,100) scale(0.72)" fill="none" stroke="#a99cf0" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="24" width="80" height="54" rx="5"/><path d="M10 28 L50 56 L90 28"/></g>
+<text x="1496" y="236" font-size="24" fill="#a99cf0" font-weight="700" text-anchor="middle">Entrega</text>
+<text x="1496" y="276" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">por SSH a la NAS</text>
+<text x="1496" y="300" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">solo escritura</text>
+<line x1="1594" y1="210" x2="1612" y2="210" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="1602" y="60" width="192" height="300" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<circle cx="1698" cy="60" r="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="1698" y="69" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="middle">5</text>
+<g transform="translate(1660,100) scale(0.72)" fill="none" stroke="#8ee6b8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><path d="M28 72 C10 72 8 46 28 44 C28 22 62 16 70 40 C92 40 92 72 72 72 Z"/></g>
+<text x="1698" y="236" font-size="24" fill="#8ee6b8" font-weight="700" text-anchor="middle">Nube</text>
+<text x="1698" y="276" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">copia redundante en</text>
+<text x="1698" y="300" font-size="16" fill="#e8f1f2" font-weight="400" text-anchor="middle">Google Cloud Storage</text>
+<rect x="30" y="400" width="1800" height="170" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(60,430) scale(0.9)" fill="none" stroke="#5fd3c8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="24" width="76" height="52" rx="8"/><circle cx="34" cy="50" r="12"/><circle cx="34" cy="50" r="3"/><path d="M58 40 H80 M58 50 H80 M58 60 H72"/></g>
+<text x="170" y="460" font-size="27" fill="#5fd3c8" font-weight="700" text-anchor="start">NAS simulada (crm-nas) + copia redundante en la nube</text>
+<text x="170" y="505" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">Contenedor con 200 GB de almacenamiento dedicado, separado de las máquinas del CRM.</text>
+<text x="170" y="539" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">Cada noche, además, crm-nas envía la copia ya cifrada a un bucket privado de Google Cloud Storage.</text>
+<rect x="30" y="610" width="420" height="140" rx="16" fill="#20343f" stroke="#5fd3c8" stroke-width="2.5"/>
+<text x="240" y="665" font-size="24" fill="#5fd3c8" font-weight="700" text-anchor="middle">Base de datos</text>
+<text x="240" y="710" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">cada noche</text>
+<rect x="480" y="610" width="420" height="140" rx="16" fill="#20343f" stroke="#8ee6b8" stroke-width="2.5"/>
+<text x="690" y="665" font-size="24" fill="#8ee6b8" font-weight="700" text-anchor="middle">Máquinas completas</text>
+<text x="690" y="710" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">cada domingo</text>
+<rect x="930" y="610" width="420" height="140" rx="16" fill="#20343f" stroke="#8ee6b8" stroke-width="2.5" filter="url(#glow)"/>
+<text x="1140" y="665" font-size="24" fill="#8ee6b8" font-weight="700" text-anchor="middle">Copia en la nube</text>
+<text x="1140" y="710" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">cada noche, offsite</text>
+<rect x="1380" y="610" width="420" height="140" rx="16" fill="#20343f" stroke="#f2b35a" stroke-width="2.5"/>
+<text x="1590" y="665" font-size="24" fill="#f2b35a" font-weight="700" text-anchor="middle">Clave privada</text>
+<text x="1590" y="710" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">solo en el PC</text>
+</svg>

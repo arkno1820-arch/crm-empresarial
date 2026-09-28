@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<text x="930" y="55" font-size="32" fill="#e8f1f2" font-weight="700" text-anchor="middle">P1 · Apagado del núcleo activo (horas UTC)</text>
+<line x1="250" y1="330" x2="1600" y2="330" stroke="#3d5c69" stroke-width="6"/>
+<circle cx="250" cy="330" r="20" fill="#ef6b6b" stroke="#ef6b6b" stroke-width="3"/>
+<rect x="80" y="130" width="340" height="150" rx="16" fill="#20343f" stroke="#ef6b6b" stroke-width="3"/>
+<g transform="translate(220,138) scale(0.44)" fill="none" stroke="#ef6b6b" stroke-width="6.82" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M34 34 L66 66 M66 34 L34 66"/></g>
+<text x="250" y="215" font-size="25" fill="#ef6b6b" font-weight="700" text-anchor="middle">17:25:57</text>
+<text x="250" y="245" font-size="20" fill="#e8f1f2" font-weight="500" text-anchor="middle">Se apaga crm-core</text>
+<text x="250" y="268" font-size="18" fill="#93a9b1" font-weight="400" text-anchor="middle">el líder de la base</text>
+<circle cx="700" cy="330" r="20" fill="#f2b35a" stroke="#f2b35a" stroke-width="3"/>
+<rect x="530" y="130" width="340" height="150" rx="16" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(670,138) scale(0.44)" fill="none" stroke="#f2b35a" stroke-width="6.82" stroke-linecap="round" stroke-linejoin="round"><path d="M50 10 L92 86 H8 Z"/><path d="M50 38 V60"/><circle cx="50" cy="73" r="2"/></g>
+<text x="700" y="215" font-size="25" fill="#f2b35a" font-weight="700" text-anchor="middle">17:26:24,131</text>
+<text x="700" y="245" font-size="20" fill="#e8f1f2" font-weight="500" text-anchor="middle">Patroni detecta la falla</text>
+<text x="700" y="268" font-size="18" fill="#93a9b1" font-weight="400" text-anchor="middle">venció la clave del líder</text>
+<circle cx="1150" cy="330" r="20" fill="#5fd3c8" stroke="#5fd3c8" stroke-width="3"/>
+<rect x="980" y="130" width="340" height="150" rx="16" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(1120,138) scale(0.44)" fill="none" stroke="#5fd3c8" stroke-width="6.82" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="50" r="18"/><circle cx="30" cy="50" r="5"/><path d="M48 50 H92 M76 50 V64 M64 50 V60"/></g>
+<text x="1150" y="215" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="middle">+ 48 ms</text>
+<text x="1150" y="245" font-size="20" fill="#e8f1f2" font-weight="500" text-anchor="middle">toma el bloqueo</text>
+<text x="1150" y="268" font-size="18" fill="#93a9b1" font-weight="400" text-anchor="middle">de sesión en etcd</text>
+<circle cx="1600" cy="330" r="20" fill="#8ee6b8" stroke="#8ee6b8" stroke-width="3"/>
+<rect x="1430" y="130" width="340" height="150" rx="16" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(1570,138) scale(0.44)" fill="none" stroke="#8ee6b8" stroke-width="6.82" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1600" y="215" font-size="25" fill="#8ee6b8" font-weight="700" text-anchor="middle">17:26:24,427</text>
+<text x="1600" y="245" font-size="20" fill="#e8f1f2" font-weight="500" text-anchor="middle">Escrituras habilitadas</text>
+<text x="1600" y="268" font-size="18" fill="#93a9b1" font-weight="400" text-anchor="middle">crm-core-b es el líder</text>
+<path d="M250 370 Q475 470 700 370" fill="none" stroke="#f2b35a" stroke-width="4" stroke-dasharray="10 8"/>
+<text x="475" y="462" font-size="22" fill="#f2b35a" font-weight="600" text-anchor="middle">26,1 s esperando el vencimiento del TTL (30 s)</text>
+<path d="M700 370 Q1150 500 1600 370" fill="none" stroke="#8ee6b8" stroke-width="4"/>
+<text x="1150" y="492" font-size="24" fill="#8ee6b8" font-weight="600" text-anchor="middle">0,296 s de promoción</text>
+<rect x="60" y="540" width="1740" height="220" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="2.5"/>
+<text x="100" y="595" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="start">• El CRM siguió respondiendo: los microservicios corren activos en ambos núcleos y Nginx omite el núcleo caído.</text>
+<text x="100" y="639" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="start">• La réplica era sincrónica: la última transacción confirmada fue a las 17:25:24, antes de la falla; no se perdió ninguna.</text>
+<text x="100" y="683" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="start">• Solo la primera solicitud pagó una espera breve, después ajustada a 1 segundo (incidente 21).</text>
+</svg>

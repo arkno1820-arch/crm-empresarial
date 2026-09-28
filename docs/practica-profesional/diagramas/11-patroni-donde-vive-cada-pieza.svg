@@ -10,23 +10,31 @@
 
   <!-- ETCD: arbitro -->
   <rect x="60" y="92" width="1180" height="150" rx="14" fill="#ffffff" stroke="#535e5c" stroke-width="2"/>
-  <text x="80" y="120" font-size="19" font-weight="700" fill="#161b1a">ETCD — el árbitro: guarda quién es el líder (clave con TTL de 30 s). 3 miembros en 3 VMs distintas; mayoría = 2</text>
-  <rect x="100" y="140" width="320" height="82" rx="10" fill="#eceee8" stroke="#8a8f8a"/>
-  <text x="260" y="168" text-anchor="middle" font-size="18" font-weight="700" fill="#161b1a">crm-edge</text>
-  <text x="260" y="190" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.2 : 2379</text>
-  <text x="260" y="210" text-anchor="middle" font-size="14" fill="#535e5c">miembro etcd (borde primario)</text>
-  <rect x="490" y="140" width="320" height="82" rx="10" fill="#eceee8" stroke="#8a8f8a"/>
-  <text x="650" y="168" text-anchor="middle" font-size="18" font-weight="700" fill="#161b1a">crm-edge-b</text>
-  <text x="650" y="190" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.3 : 2379</text>
-  <text x="650" y="210" text-anchor="middle" font-size="14" fill="#535e5c">miembro etcd (borde respaldo)</text>
-  <rect x="880" y="140" width="320" height="82" rx="10" fill="#fdf4e9" stroke="#8a5a1c" stroke-width="2"/>
-  <text x="1040" y="168" text-anchor="middle" font-size="18" font-weight="700" fill="#161b1a">crm-core-b</text>
-  <text x="1040" y="190" text-anchor="middle" font-size="14" fill="#535e5c">10.10.10.11 : 2379</text>
-  <text x="1040" y="210" text-anchor="middle" font-size="14" fill="#8a5a1c" font-weight="600">miembro etcd + nodo de datos (ver nota)</text>
+  <text x="80" y="120" font-size="18" font-weight="700" fill="#161b1a">ETCD — el árbitro: guarda quién es el líder (TTL de 30 s). 5 miembros; mayoría = 3 (ampliado el 27-09, antes 3 miembros/mayoría 2)</text>
+  <rect x="80" y="140" width="205" height="82" rx="10" fill="#eceee8" stroke="#8a8f8a"/>
+  <text x="182" y="164" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">crm-edge</text>
+  <text x="182" y="184" text-anchor="middle" font-size="12.5" fill="#535e5c">10.10.10.2:2379</text>
+  <text x="182" y="202" text-anchor="middle" font-size="12" fill="#535e5c">borde primario</text>
+  <rect x="300" y="140" width="205" height="82" rx="10" fill="#eceee8" stroke="#8a8f8a"/>
+  <text x="402" y="164" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">crm-edge-b</text>
+  <text x="402" y="184" text-anchor="middle" font-size="12.5" fill="#535e5c">10.10.10.3:2379</text>
+  <text x="402" y="202" text-anchor="middle" font-size="12" fill="#535e5c">borde respaldo</text>
+  <rect x="520" y="140" width="205" height="82" rx="10" fill="#fdf4e9" stroke="#8a5a1c" stroke-width="2"/>
+  <text x="622" y="164" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">crm-core</text>
+  <text x="622" y="184" text-anchor="middle" font-size="12.5" fill="#535e5c">10.10.10.10:2379</text>
+  <text x="622" y="202" text-anchor="middle" font-size="12" fill="#8a5a1c" font-weight="600">+ nodo de datos</text>
+  <rect x="740" y="140" width="205" height="82" rx="10" fill="#fdf4e9" stroke="#8a5a1c" stroke-width="2"/>
+  <text x="842" y="164" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">crm-core-b</text>
+  <text x="842" y="184" text-anchor="middle" font-size="12.5" fill="#535e5c">10.10.10.11:2379</text>
+  <text x="842" y="202" text-anchor="middle" font-size="12" fill="#8a5a1c" font-weight="600">+ nodo de datos</text>
+  <rect x="960" y="140" width="205" height="82" rx="10" fill="#e2efec" stroke="#1f6f68" stroke-width="2"/>
+  <text x="1062" y="164" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">crm-mon</text>
+  <text x="1062" y="184" text-anchor="middle" font-size="12.5" fill="#535e5c">10.10.10.20:2379</text>
+  <text x="1062" y="202" text-anchor="middle" font-size="12" fill="#0f403c" font-weight="600">solo vota (LXC, sin datos)</text>
 
   <!-- flechas de consulta al arbitro -->
-  <path d="M 400 290 L 300 224" stroke="#8a8f8a" stroke-width="2" fill="none" stroke-dasharray="5,4" marker-end="url(#o)"/>
-  <path d="M 900 290 L 1000 224" stroke="#8a8f8a" stroke-width="2" fill="none" stroke-dasharray="5,4" marker-end="url(#o)"/>
+  <path d="M 400 290 L 520 224" stroke="#8a8f8a" stroke-width="2" fill="none" stroke-dasharray="5,4" marker-end="url(#o)"/>
+  <path d="M 900 290 L 800 224" stroke="#8a8f8a" stroke-width="2" fill="none" stroke-dasharray="5,4" marker-end="url(#o)"/>
   <text x="640" y="272" text-anchor="middle" font-size="14" fill="#535e5c">cada Patroni renueva / disputa la clave del líder en etcd (loop 10 s)</text>
 
   <!-- NODO 1 -->
@@ -74,6 +82,6 @@
 
   <rect x="60" y="640" width="1180" height="56" rx="10" fill="#eceee8" stroke="#d9dbd3"/>
   <text x="80" y="663" font-size="15" font-weight="700" fill="#161b1a">Nota de diseño:</text>
-  <text x="200" y="663" font-size="15" fill="#333">crm-core-b aloja dos piezas a la vez (un nodo de datos y un voto de etcd): perderla quita un nodo y un voto, y otra falla más dejaría sin mayoría.</text>
-  <text x="80" y="685" font-size="14" fill="#535e5c">El diseño tolera UNA falla a la vez. Secretos y configuración: generados por Ansible (roles etcd, patroni y haproxy_pg), fuera de git.</text>
+  <text x="200" y="663" font-size="14.5" fill="#333">crm-core y crm-core-b alojan dos piezas a la vez (un nodo de datos y un voto de etcd); crm-mon aporta un quinto voto sin datos.</text>
+  <text x="80" y="685" font-size="14" fill="#535e5c">El diseño tolera DOS fallas simultáneas (ampliado el 27-09-2026 de 3 a 5 miembros). Secretos y configuración: Ansible (roles etcd, patroni, haproxy_pg), fuera de git.</text>
 </svg>

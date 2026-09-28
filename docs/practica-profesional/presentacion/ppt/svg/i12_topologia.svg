@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="60" y="40" width="1200" height="90" rx="16" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(80,50) scale(0.7)" fill="none" stroke="#5fd3c8" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><ellipse cx="50" cy="50" rx="16" ry="38"/><path d="M12 50 H88 M18 30 H82 M18 70 H82"/></g>
+<text x="660" y="100" font-size="26" fill="#e8f1f2" font-weight="600" text-anchor="middle">Proxmox · router y anfitrión · 192.168.80.10  →  vmbr1 10.10.10.0/24</text>
+<text x="530" y="190" font-size="23" fill="#5fd3c8" font-weight="700" text-anchor="middle">Bordes: recepcionistas (Nginx)</text>
+<rect x="190" y="215" width="260" height="190" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(268,228) scale(0.9)" fill="none" stroke="#5fd3c8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><circle cx="42" cy="26" r="13"/><path d="M20 62 C20 46 64 46 64 62"/><rect x="10" y="62" width="80" height="26" rx="3"/><rect x="62" y="34" width="26" height="18" rx="2"/><path d="M75 52 V62"/></g>
+<text x="320" y="345" font-size="26" fill="#e8f1f2" font-weight="700" text-anchor="middle">crm-edge</text>
+<text x="320" y="378" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">10.10.10.2</text>
+<rect x="610" y="215" width="260" height="190" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(688,228) scale(0.9)" fill="none" stroke="#5fd3c8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><circle cx="42" cy="26" r="13"/><path d="M20 62 C20 46 64 46 64 62"/><rect x="10" y="62" width="80" height="26" rx="3"/><rect x="62" y="34" width="26" height="18" rx="2"/><path d="M75 52 V62"/></g>
+<text x="740" y="345" font-size="26" fill="#e8f1f2" font-weight="700" text-anchor="middle">crm-edge-b</text>
+<text x="740" y="378" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">10.10.10.3</text>
+<line x1="455" y1="300" x2="605" y2="300" stroke="#8ee6b8" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aM)"/>
+<text x="530" y="275" font-size="20" fill="#8ee6b8" font-weight="600" text-anchor="middle">IP virtual</text>
+<text x="530" y="335" font-size="20" fill="#8ee6b8" font-weight="600" text-anchor="middle">10.10.10.5</text>
+<text x="530" y="470" font-size="23" fill="#8ee6b8" font-weight="700" text-anchor="middle">Núcleos: trabajadores y bóveda</text>
+<rect x="190" y="495" width="260" height="190" rx="18" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(268,508) scale(0.9)" fill="none" stroke="#8ee6b8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="76" height="76" rx="6"/><circle cx="50" cy="50" r="20"/><circle cx="50" cy="50" r="6"/><path d="M50 30 V38 M50 62 V70 M30 50 H38 M62 50 H70"/><path d="M22 88 V94 M78 88 V94"/></g>
+<text x="320" y="625" font-size="26" fill="#e8f1f2" font-weight="700" text-anchor="middle">crm-core</text>
+<text x="320" y="658" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">10.10.10.10</text>
+<line x1="320" y1="405" x2="320" y2="495" stroke="#5fd3c8" stroke-width="3" marker-end="url(#aC)"/>
+<rect x="610" y="495" width="260" height="190" rx="18" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(688,508) scale(0.9)" fill="none" stroke="#8ee6b8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="76" height="76" rx="6"/><circle cx="50" cy="50" r="20"/><circle cx="50" cy="50" r="6"/><path d="M50 30 V38 M50 62 V70 M30 50 H38 M62 50 H70"/><path d="M22 88 V94 M78 88 V94"/></g>
+<text x="740" y="625" font-size="26" fill="#e8f1f2" font-weight="700" text-anchor="middle">crm-core-b</text>
+<text x="740" y="658" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">10.10.10.11</text>
+<line x1="740" y1="405" x2="740" y2="495" stroke="#5fd3c8" stroke-width="3" marker-end="url(#aC)"/>
+<line x1="455" y1="590" x2="605" y2="590" stroke="#f2b35a" stroke-width="3" marker-end="url(#aA)"/>
+<line x1="605" y1="620" x2="455" y2="620" stroke="#f2b35a" stroke-width="3" marker-end="url(#aA)"/>
+<text x="530" y="570" font-size="20" fill="#f2b35a" font-weight="600" text-anchor="middle">réplica</text>
+<rect x="1310" y="40" width="510" height="200" rx="18" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<g transform="translate(1330,60) scale(0.7)" fill="none" stroke="#a99cf0" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><path d="M6 50 C22 22 78 22 94 50 C78 78 22 78 6 50 Z"/><circle cx="50" cy="50" r="15"/><circle cx="50" cy="50" r="5"/></g>
+<text x="1570" y="95" font-size="24" fill="#a99cf0" font-weight="700" text-anchor="middle">crm-mon · 10.10.10.20</text>
+<text x="1570" y="138" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">Contenedor de monitoreo</text>
+<text x="1570" y="168" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">fuera de las VMs (Kuma)</text>
+<rect x="1310" y="270" width="510" height="200" rx="18" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(1330,290) scale(0.7)" fill="none" stroke="#f2b35a" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="24" width="76" height="52" rx="8"/><circle cx="34" cy="50" r="12"/><circle cx="34" cy="50" r="3"/><path d="M58 40 H80 M58 50 H80 M58 60 H72"/></g>
+<text x="1570" y="325" font-size="24" fill="#f2b35a" font-weight="700" text-anchor="middle">crm-nas · 10.10.10.30</text>
+<text x="1570" y="368" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">Contenedor NAS de respaldos</text>
+<text x="1570" y="398" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">en el disco externo</text>
+<rect x="1310" y="500" width="510" height="200" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3" stroke-dasharray="10 8"/>
+<text x="1565" y="555" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="middle">La regla de oro:</text>
+<text x="1565" y="589" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="middle">todo está duplicado.</text>
+<text x="1565" y="623" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="middle">La caída de una máquina</text>
+<text x="1565" y="657" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="middle">no corta el servicio.</text>
+</svg>

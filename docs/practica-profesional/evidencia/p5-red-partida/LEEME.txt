@@ -1,0 +1,9 @@
+P5 - Red partida (27-09-2026, horas UTC). Se aislo por iptables (etiqueta P5-PARTIDA) al lider crm-core del resto del
+cluster (etcd y crm-core-b), dejando solo el SSH desde crm-edge. Aislamiento 02:31:42.156, retiro 02:33:25.586.
+Registros de 1 s: rol y estado que Patroni informa localmente en cada nucleo, y sondeo de https://10.10.10.5/api/auth/health
+desde crm-edge. Mide el estado informado por Patroni, NO escrituras reales.
+
+REPETICION CON ESCRITURAS REALES (27-09-2026, UTC). Aislamiento del lider crm-core-b: 02:41:08.593; retiro: 02:42:51.938.
+Cada segundo, cada nucleo intento un INSERT real (limite 2 s) en una base aparte 'prueba_p5' (tabla latido), ademas del rol de Patroni.
+Ultima escritura aceptada por el nodo aislado: 02:41:09.587 (t+1,0 s), presente al final. Primera del nuevo lider: 02:41:36.219 (t+27,6 s).
+Hueco sin escrituras: 26,6 s. Ningun nodo acepto escrituras a la vez. La base prueba_p5 se borro al terminar.

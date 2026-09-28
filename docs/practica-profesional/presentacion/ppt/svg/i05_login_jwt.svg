@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="40" y="190" width="260" height="330" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="170" cy="190" r="26" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="170" y="199" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">1</text>
+<g transform="translate(128,235) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="170" y="370" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">Ingresa</text>
+<text x="170" y="415" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Usuario y clave</text>
+<text x="170" y="447" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">por HTTPS</text>
+<line x1="302" y1="355" x2="328" y2="355" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="330" y="190" width="260" height="330" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="460" cy="190" r="26" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="460" y="199" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">2</text>
+<g transform="translate(418,235) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><ellipse cx="50" cy="50" rx="16" ry="38"/><path d="M12 50 H88 M18 30 H82 M18 70 H82"/></g>
+<text x="460" y="370" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">El gateway</text>
+<text x="460" y="415" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">enruta la solicitud</text>
+<text x="460" y="447" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">al servicio auth</text>
+<line x1="592" y1="355" x2="618" y2="355" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="620" y="190" width="260" height="330" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="750" cy="190" r="26" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="750" y="199" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">3</text>
+<g transform="translate(708,235) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="50" r="18"/><circle cx="30" cy="50" r="5"/><path d="M48 50 H92 M76 50 V64 M64 50 V60"/></g>
+<text x="750" y="370" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">Verifica</text>
+<text x="750" y="415" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">contraseña con hash</text>
+<text x="750" y="447" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">bcrypt en auth_db</text>
+<line x1="882" y1="355" x2="908" y2="355" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="910" y="190" width="260" height="330" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="1040" cy="190" r="26" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1040" y="199" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">4</text>
+<g transform="translate(998,235) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="42" width="60" height="46" rx="6"/><path d="M32 42 V30 C32 8 68 8 68 30 V42"/><circle cx="50" cy="63" r="6"/><path d="M50 69 V78"/></g>
+<text x="1040" y="370" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">Emite el token</text>
+<text x="1040" y="415" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">JWT firmado</text>
+<text x="1040" y="447" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">vence en 8 horas</text>
+<line x1="1172" y1="355" x2="1198" y2="355" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="1200" y="190" width="260" height="330" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="1330" cy="190" r="26" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1330" y="199" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">5</text>
+<g transform="translate(1288,235) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="24" width="80" height="54" rx="5"/><path d="M10 28 L50 56 L90 28"/></g>
+<text x="1330" y="370" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">Lo presenta</text>
+<text x="1330" y="415" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">cada solicitud lleva</text>
+<text x="1330" y="447" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">el token</text>
+<line x1="1462" y1="355" x2="1488" y2="355" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="1490" y="190" width="260" height="330" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="1620" cy="190" r="26" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1620" y="199" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">6</text>
+<g transform="translate(1578,235) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><path d="M50 8 L86 22 V50 C86 72 68 86 50 94 C32 86 14 72 14 50 V22 Z"/><path d="M34 50 L46 62 L68 36"/></g>
+<text x="1620" y="370" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">Cada servicio</text>
+<text x="1620" y="415" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">valida token y permiso</text>
+<text x="1620" y="447" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">del módulo</text>
+<rect x="120" y="590" width="1620" height="130" rx="18" fill="#20343f" stroke="#f2b35a" stroke-width="2.5" stroke-dasharray="10 8"/>
+<g transform="translate(140,612) scale(0.6)" fill="none" stroke="#f2b35a" stroke-width="5.00" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="230" y="640" font-size="25" fill="#e8f1f2" font-weight="400" text-anchor="start">Analogía: el token es la pulsera de un evento. Se entrega una vez en la puerta (login)</text>
+<text x="230" y="678" font-size="25" fill="#e8f1f2" font-weight="400" text-anchor="start">y después cada sala solo mira la pulsera: no vuelve a pedir la contraseña.</text>
+<text x="930" y="770" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="middle" font-style="italic">Las contraseñas nunca se guardan: solo su huella (hash)</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<text x="930" y="45" font-size="28" fill="#e8f1f2" font-weight="700" text-anchor="middle">Segunda tanda de pruebas: continuidad y recuperación</text>
+<text x="930" y="78" font-size="19" fill="#93a9b1" font-weight="400" text-anchor="middle">Mismo método que antes —apagar o forzar una falla real y medir—; esta vez, además, discos, red y restauración</text>
+<rect x="40" y="130" width="280" height="350" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(148,160) scale(0.62)" fill="none" stroke="#8ee6b8" stroke-width="4.84" stroke-linecap="round" stroke-linejoin="round"><path d="M10 24 H38 L46 34 H90 V84 H10 Z"/></g>
+<text x="180" y="275" font-size="21" fill="#8ee6b8" font-weight="700" text-anchor="middle">Restauración</text>
+<text x="180" y="335" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">Un respaldo real se</text>
+<text x="180" y="359" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">descifra y se restaura:</text>
+<text x="180" y="383" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">NAS, nube y una máquina</text>
+<text x="180" y="407" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">virtual completa</text>
+<rect x="340" y="130" width="280" height="350" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<g transform="translate(448,160) scale(0.62)" fill="none" stroke="#a99cf0" stroke-width="4.84" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><ellipse cx="50" cy="50" rx="16" ry="38"/><path d="M12 50 H88 M18 30 H82 M18 70 H82"/></g>
+<text x="480" y="275" font-size="21" fill="#a99cf0" font-weight="700" text-anchor="middle">P5 · Red partida</text>
+<text x="480" y="335" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">Se aísla al líder de la</text>
+<text x="480" y="359" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">base sin apagar nada:</text>
+<text x="480" y="383" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">cero escrituras dobles</text>
+<rect x="640" y="130" width="280" height="350" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(748,160) scale(0.62)" fill="none" stroke="#5fd3c8" stroke-width="4.84" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="24" width="76" height="52" rx="8"/><circle cx="34" cy="50" r="12"/><circle cx="34" cy="50" r="3"/><path d="M58 40 H80 M58 50 H80 M58 60 H72"/></g>
+<text x="780" y="275" font-size="21" fill="#5fd3c8" font-weight="700" text-anchor="middle">D1 / D2 · Disco</text>
+<text x="780" y="302" font-size="21" fill="#5fd3c8" font-weight="700" text-anchor="middle">casi lleno</text>
+<text x="780" y="335" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">Disco al 100 % primero en</text>
+<text x="780" y="359" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">la réplica y luego en el</text>
+<text x="780" y="383" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">líder: sin fallos</text>
+<rect x="940" y="130" width="280" height="350" rx="20" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(1048,160) scale(0.62)" fill="none" stroke="#f2b35a" stroke-width="4.84" stroke-linecap="round" stroke-linejoin="round"><path d="M50 10 L92 86 H8 Z"/><path d="M50 38 V60"/><circle cx="50" cy="73" r="2"/></g>
+<text x="1080" y="275" font-size="21" fill="#f2b35a" font-weight="700" text-anchor="middle">D2b · Disco</text>
+<text x="1080" y="302" font-size="21" fill="#f2b35a" font-weight="700" text-anchor="middle">agotado</text>
+<text x="1080" y="335" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">Se fuerza el límite real;</text>
+<text x="1080" y="359" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">hallazgo de fondo</text>
+<text x="1080" y="383" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">encontrado y corregido</text>
+<text x="1080" y="407" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">sin perder datos</text>
+<rect x="1240" y="130" width="280" height="350" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<g transform="translate(1348,160) scale(0.62)" fill="none" stroke="#a99cf0" stroke-width="4.84" stroke-linecap="round" stroke-linejoin="round"><path d="M50 8 L86 22 V50 C86 72 68 86 50 94 C32 86 14 72 14 50 V22 Z"/><path d="M34 50 L46 62 L68 36"/></g>
+<text x="1380" y="275" font-size="21" fill="#a99cf0" font-weight="700" text-anchor="middle">Ampliación de etcd</text>
+<text x="1380" y="335" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">El árbitro pasa de 3 a 5</text>
+<text x="1380" y="359" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">miembros, en caliente,</text>
+<text x="1380" y="383" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">sin cortar el servicio</text>
+<rect x="1540" y="130" width="280" height="350" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(1648,160) scale(0.62)" fill="none" stroke="#8ee6b8" stroke-width="4.84" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1680" y="275" font-size="21" fill="#8ee6b8" font-weight="700" text-anchor="middle">P6 · Doble caída</text>
+<text x="1680" y="335" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">Ya con etcd de 5</text>
+<text x="1680" y="359" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">miembros, caen dos</text>
+<text x="1680" y="383" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">máquinas a la vez y el</text>
+<text x="1680" y="407" font-size="17" fill="#e8f1f2" font-weight="400" text-anchor="middle">servicio sigue</text>
+<rect x="30" y="505" width="1800" height="265" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(65,540) scale(0.85)" fill="none" stroke="#8ee6b8" stroke-width="3.53" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="190" y="565" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="start">En las seis pruebas, el CRM no dejó de responder cuando la mayoría del sistema seguía sana, y cuando</text>
+<text x="190" y="598" font-size="23" fill="#e8f1f2" font-weight="400" text-anchor="start">un componente sí se detuvo, lo hizo por diseño y a propósito, para proteger los datos.</text>
+<text x="190" y="655" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="start">Cero transacciones perdidas. Cero escrituras duplicadas. Todo medido con relojes y registros reales,</text>
+<text x="190" y="685" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="start">con la misma disciplina de las primeras cuatro pruebas.</text>
+</svg>

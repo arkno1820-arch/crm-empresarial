@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<text x="930" y="40" font-size="30" fill="#e8f1f2" font-weight="700" text-anchor="middle">¿Cuánto tardó cada cosa? (segundos)</text>
+<text x="60" y="108" font-size="22" fill="#e8f1f2" font-weight="500" text-anchor="start">P1 · Núcleo cae: base con escrituras</text>
+<rect x="60" y="120" width="1020" height="34" rx="8" fill="#182a34" stroke="#3d5c69" stroke-width="1"/>
+<rect x="60" y="120" width="898" height="34" rx="8" fill="#ef6b6b" opacity="0.9"/>
+<text x="971.5999999999999" y="146" font-size="23" fill="#ef6b6b" font-weight="700" text-anchor="start">26,4 s</text>
+<text x="60" y="201" font-size="22" fill="#e8f1f2" font-weight="500" text-anchor="start">P2 · Borde cae: IP virtual en el otro borde</text>
+<rect x="60" y="213" width="1020" height="34" rx="8" fill="#182a34" stroke="#3d5c69" stroke-width="1"/>
+<rect x="60" y="213" width="102" height="34" rx="8" fill="#f2b35a" opacity="0.9"/>
+<text x="176.0" y="239" font-size="23" fill="#f2b35a" font-weight="700" text-anchor="start">≈ 3 s</text>
+<text x="60" y="294" font-size="22" fill="#e8f1f2" font-weight="500" text-anchor="start">P4 · Conmutación planificada del núcleo</text>
+<rect x="60" y="306" width="1020" height="34" rx="8" fill="#182a34" stroke="#3d5c69" stroke-width="1"/>
+<rect x="60" y="306" width="160" height="34" rx="8" fill="#8ee6b8" opacity="0.9"/>
+<text x="233.8" y="332" font-size="23" fill="#8ee6b8" font-weight="700" text-anchor="start">≈ 4,7 s</text>
+<text x="60" y="387" font-size="22" fill="#e8f1f2" font-weight="500" text-anchor="start">P5 · Red partida: hueco real sin escrituras</text>
+<rect x="60" y="399" width="1020" height="34" rx="8" fill="#182a34" stroke="#3d5c69" stroke-width="1"/>
+<rect x="60" y="399" width="904" height="34" rx="8" fill="#a99cf0" opacity="0.9"/>
+<text x="978.4000000000001" y="425" font-size="23" fill="#a99cf0" font-weight="700" text-anchor="start">26,6 s</text>
+<text x="60" y="480" font-size="22" fill="#e8f1f2" font-weight="500" text-anchor="start">P6 · Doble caída (etcd de 5): nuevo líder</text>
+<rect x="60" y="492" width="1020" height="34" rx="8" fill="#182a34" stroke="#3d5c69" stroke-width="1"/>
+<rect x="60" y="492" width="925" height="34" rx="8" fill="#5fd3c8" opacity="0.9"/>
+<text x="998.8" y="518" font-size="23" fill="#5fd3c8" font-weight="700" text-anchor="start">27,2 s</text>
+<text x="60" y="573" font-size="22" fill="#e8f1f2" font-weight="500" text-anchor="start">Recuperación: la IP virtual vuelve a crm-edge</text>
+<rect x="60" y="585" width="1020" height="34" rx="8" fill="#182a34" stroke="#3d5c69" stroke-width="1"/>
+<rect x="60" y="585" width="136" height="34" rx="8" fill="#5fd3c8" opacity="0.9"/>
+<text x="210.0" y="611" font-size="23" fill="#5fd3c8" font-weight="700" text-anchor="start">≈ 4 s</text>
+<text x="60" y="666" font-size="22" fill="#e8f1f2" font-weight="500" text-anchor="start">Recuperación: Kuma principal tras encender crm-mon</text>
+<rect x="60" y="678" width="1020" height="34" rx="8" fill="#182a34" stroke="#3d5c69" stroke-width="1"/>
+<rect x="60" y="678" width="952" height="34" rx="8" fill="#f2b35a" opacity="0.9"/>
+<text x="1026.0" y="704" font-size="23" fill="#f2b35a" font-weight="700" text-anchor="start">28 s</text>
+<rect x="1180" y="90" width="650" height="590" rx="22" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(1450,110) scale(0.9)" fill="none" stroke="#f2b35a" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M50 26 V50 L68 60"/></g>
+<text x="1505" y="245" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">Por qué 26,4 s y no menos</text>
+<text x="1505" y="293" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">Casi todo ese tiempo es esperar</text>
+<text x="1505" y="325" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">que venza la clave del líder</text>
+<text x="1505" y="357" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">en etcd (30 s), no promover.</text>
+<text x="1505" y="389" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle"></text>
+<text x="1505" y="421" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">La promoción en sí duró</text>
+<text x="1505" y="453" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">0,296 segundos.</text>
+<text x="1505" y="485" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle"></text>
+<text x="1505" y="517" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">P5 y P6 confirman el mismo</text>
+<text x="1505" y="549" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">patrón: el sistema espera lo</text>
+<text x="1505" y="581" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">justo para no arriesgarse a</text>
+<text x="1505" y="613" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="middle">que dos nodos se crean líder.</text>
+<text x="60" y="745" font-size="20" fill="#93a9b1" font-weight="400" text-anchor="start" font-style="italic">Todas las pruebas —también las nuevas— con el CRM respondiendo y sin pérdida de datos confirmados</text>
+</svg>

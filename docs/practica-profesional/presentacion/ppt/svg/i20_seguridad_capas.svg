@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="30" y="25" width="1500" height="78" rx="16" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="70" cy="64" r="21" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="70" y="73" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="middle">1</text>
+<text x="110" y="59" font-size="24" fill="#5fd3c8" font-weight="700" text-anchor="start">Aislamiento de red</text>
+<text x="110" y="87" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">El núcleo no tiene entrada ni salida a Internet</text>
+<rect x="65" y="117" width="1430" height="78" rx="16" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="105" cy="156" r="21" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="105" y="165" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="middle">2</text>
+<text x="145" y="151" font-size="24" fill="#8ee6b8" font-weight="700" text-anchor="start">Transporte</text>
+<text x="145" y="179" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">HTTPS con una CA propia: candado en todos los equipos</text>
+<rect x="100" y="209" width="1360" height="78" rx="16" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<circle cx="140" cy="248" r="21" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="140" y="257" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">3</text>
+<text x="180" y="243" font-size="24" fill="#f2b35a" font-weight="700" text-anchor="start">Acceso a las máquinas</text>
+<text x="180" y="271" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">Solo con llave SSH; ninguna VM tiene contraseña</text>
+<rect x="135" y="301" width="1290" height="78" rx="16" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<circle cx="175" cy="340" r="21" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<text x="175" y="349" font-size="26" fill="#a99cf0" font-weight="700" text-anchor="middle">4</text>
+<text x="215" y="335" font-size="24" fill="#a99cf0" font-weight="700" text-anchor="start">Secretos</text>
+<text x="215" y="363" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">Claves y contraseñas fuera de Git, en carpetas restringidas</text>
+<rect x="170" y="393" width="1220" height="78" rx="16" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="210" cy="432" r="21" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="210" y="441" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="middle">5</text>
+<text x="250" y="427" font-size="24" fill="#5fd3c8" font-weight="700" text-anchor="start">Aplicación</text>
+<text x="250" y="455" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">Roles y permisos por módulo, token con vencimiento</text>
+<rect x="205" y="485" width="1150" height="78" rx="16" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="245" cy="524" r="21" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="245" y="533" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="middle">6</text>
+<text x="285" y="519" font-size="24" fill="#8ee6b8" font-weight="700" text-anchor="start">Datos</text>
+<text x="285" y="547" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">Salud cifrada en reposo, consentimiento y auditoría</text>
+<rect x="240" y="577" width="1080" height="78" rx="16" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<circle cx="280" cy="616" r="21" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="280" y="625" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">7</text>
+<text x="320" y="611" font-size="24" fill="#f2b35a" font-weight="700" text-anchor="start">Respaldo</text>
+<text x="320" y="639" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">Cifrado con clave pública; receptor de solo escritura</text>
+<rect x="275" y="669" width="1010" height="78" rx="16" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="315" cy="708" r="21" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="315" y="717" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="middle">8</text>
+<text x="355" y="703" font-size="24" fill="#8ee6b8" font-weight="700" text-anchor="start">Continuidad en la nube</text>
+<text x="355" y="731" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">Copia redundante fuera del PC, en Google Cloud Storage</text>
+<g transform="translate(1640,300) scale(1.6)" fill="none" stroke="#5fd3c8" stroke-width="1.88" stroke-linecap="round" stroke-linejoin="round"><path d="M50 8 L86 22 V50 C86 72 68 86 50 94 C32 86 14 72 14 50 V22 Z"/><path d="M34 50 L46 62 L68 36"/></g>
+<text x="1720" y="520" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="middle">Defensa en</text>
+<text x="1720" y="552" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="middle">profundidad:</text>
+<text x="1720" y="584" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="middle">si una capa falla,</text>
+<text x="1720" y="616" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="middle">queda la siguiente</text>
+</svg>

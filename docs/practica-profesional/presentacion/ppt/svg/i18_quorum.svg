@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<text x="930" y="45" font-size="30" fill="#e8f1f2" font-weight="700" text-anchor="middle">El árbitro se puso a prueba y se reforzó</text>
+<rect x="30" y="90" width="880" height="630" rx="22" fill="#20343f" stroke="#93a9b1" stroke-width="3"/>
+<text x="470" y="140" font-size="28" fill="#93a9b1" font-weight="700" text-anchor="middle">ANTES · 3 miembros</text>
+<text x="470" y="172" font-size="20" fill="#93a9b1" font-weight="400" text-anchor="middle">mayoría = 2 de 3 · tolera 1 caída</text>
+<circle cx="130" cy="280" r="50" fill="#20343f" stroke="#93a9b1" stroke-width="3"/>
+<g transform="translate(104,250) scale(0.52)" fill="none" stroke="#93a9b1" stroke-width="5.77" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="130" y="355" font-size="17" fill="#93a9b1" font-weight="500" text-anchor="middle">crm-edge</text>
+<circle cx="430" cy="280" r="50" fill="#182a34" stroke="#ef6b6b" stroke-width="3" stroke-dasharray="10 8"/>
+<g transform="translate(404,254) scale(0.46)" fill="none" stroke="#ef6b6b" stroke-width="6.52" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M34 34 L66 66 M66 34 L34 66"/></g>
+<text x="430" y="355" font-size="17" fill="#93a9b1" font-weight="500" text-anchor="middle">crm-edge-b</text>
+<circle cx="730" cy="280" r="50" fill="#182a34" stroke="#ef6b6b" stroke-width="3" stroke-dasharray="10 8"/>
+<g transform="translate(704,254) scale(0.46)" fill="none" stroke="#ef6b6b" stroke-width="6.52" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M34 34 L66 66 M66 34 L34 66"/></g>
+<text x="730" y="355" font-size="17" fill="#93a9b1" font-weight="500" text-anchor="middle">crm-core-b</text>
+<g transform="translate(400,420) scale(0.8)" fill="none" stroke="#ef6b6b" stroke-width="3.75" stroke-linecap="round" stroke-linejoin="round"><path d="M50 10 L92 86 H8 Z"/><path d="M50 38 V60"/><circle cx="50" cy="73" r="2"/></g>
+<text x="470" y="545" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Con 2 caídas simultáneas: 1 de 3 votos.</text>
+<text x="470" y="577" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Sin mayoría: la base se detiene por</text>
+<text x="470" y="609" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">seguridad (sin split-brain) hasta que</text>
+<text x="470" y="641" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">vuelva la mayoría.</text>
+<text x="470" y="675" font-size="19" fill="#ef6b6b" font-weight="600" text-anchor="middle">Límite real, visto en el incidente 20</text>
+<rect x="970" y="90" width="860" height="630" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<text x="1400" y="140" font-size="28" fill="#8ee6b8" font-weight="700" text-anchor="middle">AHORA · 5 miembros</text>
+<text x="1400" y="172" font-size="20" fill="#e8f1f2" font-weight="500" text-anchor="middle">mayoría = 3 de 5 · tolera 2 caídas</text>
+<circle cx="1035" cy="280" r="42" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(1013,254) scale(0.44)" fill="none" stroke="#8ee6b8" stroke-width="6.82" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="1035" y="345" font-size="15" fill="#e8f1f2" font-weight="500" text-anchor="middle">crm-edge</text>
+<circle cx="1210" cy="280" r="42" fill="#182a34" stroke="#ef6b6b" stroke-width="3" stroke-dasharray="10 8"/>
+<g transform="translate(1188,258) scale(0.4)" fill="none" stroke="#ef6b6b" stroke-width="7.50" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M34 34 L66 66 M66 34 L34 66"/></g>
+<text x="1210" y="345" font-size="15" fill="#93a9b1" font-weight="500" text-anchor="middle">crm-edge-b</text>
+<circle cx="1385" cy="280" r="42" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(1363,254) scale(0.44)" fill="none" stroke="#8ee6b8" stroke-width="6.82" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="1385" y="345" font-size="15" fill="#e8f1f2" font-weight="500" text-anchor="middle">crm-core</text>
+<circle cx="1560" cy="280" r="42" fill="#182a34" stroke="#ef6b6b" stroke-width="3" stroke-dasharray="10 8"/>
+<g transform="translate(1538,258) scale(0.4)" fill="none" stroke="#ef6b6b" stroke-width="7.50" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M34 34 L66 66 M66 34 L34 66"/></g>
+<text x="1560" y="345" font-size="15" fill="#93a9b1" font-weight="500" text-anchor="middle">crm-core-b</text>
+<circle cx="1735" cy="280" r="42" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(1713,254) scale(0.44)" fill="none" stroke="#8ee6b8" stroke-width="6.82" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="1735" y="345" font-size="15" fill="#e8f1f2" font-weight="500" text-anchor="middle">crm-mon</text>
+<g transform="translate(1310,420) scale(0.8)" fill="none" stroke="#8ee6b8" stroke-width="3.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1400" y="545" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Con las MISMAS 2 caídas simultáneas:</text>
+<text x="1400" y="577" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">3 de 5 votos. Mayoría intacta: Patroni</text>
+<text x="1400" y="609" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">elige nuevo líder y el CRM no se detiene.</text>
+<text x="1400" y="675" font-size="19" fill="#8ee6b8" font-weight="600" text-anchor="middle">Verificado en P6 (27-09-2026)</text>
+</svg>

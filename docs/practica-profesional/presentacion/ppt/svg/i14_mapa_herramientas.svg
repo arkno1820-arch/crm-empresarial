@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="40" y="30" width="430" height="225" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="115" cy="142" r="48" fill="none" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(79,106) scale(0.72)" fill="none" stroke="#5fd3c8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="12" width="72" height="24" rx="4"/><rect x="14" y="40" width="72" height="24" rx="4"/><rect x="14" y="68" width="72" height="24" rx="4"/><circle cx="28" cy="24" r="3"/><circle cx="28" cy="52" r="3"/><circle cx="28" cy="80" r="3"/><path d="M50 24 H74 M50 52 H74 M50 80 H74"/></g>
+<text x="185" y="120" font-size="30" fill="#5fd3c8" font-weight="700" text-anchor="start">Proxmox VE</text>
+<text x="185" y="158" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Crea y ejecuta VMs y</text>
+<text x="185" y="186" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">contenedores; hace de</text>
+<text x="185" y="214" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">router</text>
+<rect x="495" y="30" width="430" height="225" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<circle cx="570" cy="142" r="48" fill="none" stroke="#a99cf0" stroke-width="3"/>
+<g transform="translate(534,106) scale(0.72)" fill="none" stroke="#a99cf0" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><rect x="22" y="10" width="56" height="82" rx="3"/><path d="M34 26 H44 M56 26 H66 M34 44 H44 M56 44 H66 M34 62 H44 M56 62 H66"/><rect x="42" y="74" width="16" height="18"/></g>
+<text x="640" y="120" font-size="30" fill="#a99cf0" font-weight="700" text-anchor="start">VMware</text>
+<text x="640" y="158" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Aloja a Proxmox en la</text>
+<text x="640" y="186" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">simulación</text>
+<rect x="950" y="30" width="430" height="225" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="1025" cy="142" r="48" fill="none" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(989,106) scale(0.72)" fill="none" stroke="#8ee6b8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><ellipse cx="50" cy="50" rx="16" ry="38"/><path d="M12 50 H88 M18 30 H82 M18 70 H82"/></g>
+<text x="1095" y="120" font-size="30" fill="#8ee6b8" font-weight="700" text-anchor="start">Nginx</text>
+<text x="1095" y="158" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Puerta web: HTTPS y</text>
+<text x="1095" y="186" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">reparto entre núcleos</text>
+<rect x="1405" y="30" width="430" height="225" rx="20" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<circle cx="1480" cy="142" r="48" fill="none" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(1444,106) scale(0.72)" fill="none" stroke="#f2b35a" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14 L40 12 L46 34 L36 42 C42 56 52 66 64 72 L72 62 L92 68 L90 84 C60 96 8 50 24 14 Z"/></g>
+<text x="1550" y="120" font-size="30" fill="#f2b35a" font-weight="700" text-anchor="start">Keepalived</text>
+<text x="1550" y="158" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Mueve la IP virtual al</text>
+<text x="1550" y="186" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">borde sano</text>
+<rect x="40" y="285" width="430" height="225" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="115" cy="397" r="48" fill="none" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(79,361) scale(0.72)" fill="none" stroke="#5fd3c8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="30" width="84" height="46" rx="4"/><path d="M22 30 V76 M36 30 V76 M50 30 V76 M64 30 V76 M78 30 V76"/><path d="M8 30 L18 18 H82 L92 30"/></g>
+<text x="185" y="375" font-size="30" fill="#5fd3c8" font-weight="700" text-anchor="start">Docker</text>
+<text x="185" y="413" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Empaqueta los</text>
+<text x="185" y="441" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">microservicios del CRM</text>
+<rect x="495" y="285" width="430" height="225" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="570" cy="397" r="48" fill="none" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(534,361) scale(0.72)" fill="none" stroke="#8ee6b8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="50" cy="20" rx="34" ry="12"/><path d="M16 20 V76 C16 90 84 90 84 76 V20"/><path d="M16 48 C16 62 84 62 84 48"/></g>
+<text x="640" y="375" font-size="30" fill="#8ee6b8" font-weight="700" text-anchor="start">PostgreSQL</text>
+<text x="640" y="413" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Guarda los datos,</text>
+<text x="640" y="441" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">cifrados los de salud</text>
+<rect x="950" y="285" width="430" height="225" rx="20" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<circle cx="1025" cy="397" r="48" fill="none" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(989,361) scale(0.72)" fill="none" stroke="#f2b35a" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="15"/><circle cx="50" cy="50" r="32"/><path d="M50 8 V18 M50 82 V92 M8 50 H18 M82 50 H92 M20 20 L27 27 M73 73 L80 80 M80 20 L73 27 M27 73 L20 80"/></g>
+<text x="1095" y="375" font-size="30" fill="#f2b35a" font-weight="700" text-anchor="start">Patroni</text>
+<text x="1095" y="413" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Elige y cambia el</text>
+<text x="1095" y="441" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">líder de la base</text>
+<rect x="1405" y="285" width="430" height="225" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<circle cx="1480" cy="397" r="48" fill="none" stroke="#a99cf0" stroke-width="3"/>
+<g transform="translate(1444,361) scale(0.72)" fill="none" stroke="#a99cf0" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><path d="M50 8 L86 22 V50 C86 72 68 86 50 94 C32 86 14 72 14 50 V22 Z"/><path d="M34 50 L46 62 L68 36"/></g>
+<text x="1550" y="375" font-size="30" fill="#a99cf0" font-weight="700" text-anchor="start">etcd</text>
+<text x="1550" y="413" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Árbitro: guarda quién</text>
+<text x="1550" y="441" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">es el líder</text>
+<rect x="40" y="540" width="430" height="225" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="115" cy="652" r="48" fill="none" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(79,616) scale(0.72)" fill="none" stroke="#5fd3c8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="38" width="22" height="24" rx="3"/><rect x="68" y="38" width="22" height="24" rx="3"/><path d="M32 50 H68"/></g>
+<text x="185" y="630" font-size="30" fill="#5fd3c8" font-weight="700" text-anchor="start">HAProxy</text>
+<text x="185" y="668" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Lleva siempre a la</text>
+<text x="185" y="696" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">base al líder vigente</text>
+<rect x="495" y="540" width="430" height="225" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="570" cy="652" r="48" fill="none" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(534,616) scale(0.72)" fill="none" stroke="#8ee6b8" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><path d="M6 50 C22 22 78 22 94 50 C78 78 22 78 6 50 Z"/><circle cx="50" cy="50" r="15"/><circle cx="50" cy="50" r="5"/></g>
+<text x="640" y="630" font-size="30" fill="#8ee6b8" font-weight="700" text-anchor="start">Uptime Kuma</text>
+<text x="640" y="668" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Monitoreo NOC: ve y</text>
+<text x="640" y="696" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">alerta</text>
+<rect x="950" y="540" width="430" height="225" rx="20" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<circle cx="1025" cy="652" r="48" fill="none" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(989,616) scale(0.72)" fill="none" stroke="#f2b35a" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="42" width="60" height="46" rx="6"/><path d="M32 42 V30 C32 8 68 8 68 30 V42"/><circle cx="50" cy="63" r="6"/><path d="M50 69 V78"/></g>
+<text x="1095" y="630" font-size="30" fill="#f2b35a" font-weight="700" text-anchor="start">GnuPG</text>
+<text x="1095" y="668" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Cifra los respaldos</text>
+<text x="1095" y="696" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">con clave pública</text>
+<rect x="1405" y="540" width="430" height="225" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<circle cx="1480" cy="652" r="48" fill="none" stroke="#a99cf0" stroke-width="3"/>
+<g transform="translate(1444,616) scale(0.72)" fill="none" stroke="#a99cf0" stroke-width="4.17" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="50" r="18"/><circle cx="30" cy="50" r="5"/><path d="M48 50 H92 M76 50 V64 M64 50 V60"/></g>
+<text x="1550" y="630" font-size="30" fill="#a99cf0" font-weight="700" text-anchor="start">OpenSSH</text>
+<text x="1550" y="668" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Acceso solo con llave,</text>
+<text x="1550" y="696" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">sin contraseñas</text>
+</svg>

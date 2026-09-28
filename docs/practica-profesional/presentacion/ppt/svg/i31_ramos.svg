@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="30" y="40" width="430" height="320" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="60" y="95" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="start">Redes Virtuales</text>
+<rect x="60" y="171" width="105" height="43" rx="21" fill="none" stroke="#5fd3c8" stroke-width="2.5"/>
+<text x="78" y="204" font-size="21" fill="#5fd3c8" font-weight="600" text-anchor="start">Fuerte</text>
+<text x="60" y="255" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">NAT de VMware, DNAT en Proxmox,</text>
+<text x="60" y="285" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">bridges virtuales aislados</text>
+<rect x="485" y="40" width="430" height="320" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="515" y="95" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">Virtualización</text>
+<rect x="515" y="171" width="105" height="43" rx="21" fill="none" stroke="#8ee6b8" stroke-width="2.5"/>
+<text x="533" y="204" font-size="21" fill="#8ee6b8" font-weight="600" text-anchor="start">Fuerte</text>
+<text x="515" y="255" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">VMware + Proxmox/KVM, LXC,</text>
+<text x="515" y="285" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">recursos por VM</text>
+<rect x="940" y="40" width="430" height="320" rx="20" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="970" y="95" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="start">Arquitectura Cloud</text>
+<rect x="970" y="171" width="105" height="43" rx="21" fill="none" stroke="#f2b35a" stroke-width="2.5"/>
+<text x="988" y="204" font-size="21" fill="#f2b35a" font-weight="600" text-anchor="start">Fuerte</text>
+<text x="970" y="255" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">Bucket real en Google Cloud</text>
+<text x="970" y="285" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">Storage: IAM, credencial de</text>
+<text x="970" y="315" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">solo-creación, verificación por</text>
+<text x="970" y="345" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">MD5</text>
+<rect x="1395" y="40" width="430" height="320" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<text x="1425" y="95" font-size="26" fill="#a99cf0" font-weight="700" text-anchor="start">Gestión de Proyectos</text>
+<rect x="1425" y="171" width="128" height="43" rx="21" fill="none" stroke="#a99cf0" stroke-width="2.5"/>
+<text x="1443" y="204" font-size="21" fill="#a99cf0" font-weight="600" text-anchor="start">Cubierta</text>
+<text x="1425" y="255" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">Acta, EDT, cronograma de 360 h,</text>
+<text x="1425" y="285" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">RACI, riesgos</text>
+<rect x="30" y="400" width="430" height="320" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="60" y="455" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="start">Gestión de Servicios TI</text>
+<text x="60" y="489" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="start">(ITIL)</text>
+<rect x="60" y="531" width="105" height="43" rx="21" fill="none" stroke="#5fd3c8" stroke-width="2.5"/>
+<text x="78" y="564" font-size="21" fill="#5fd3c8" font-weight="600" text-anchor="start">Fuerte</text>
+<text x="60" y="615" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">Bitácora de 33 incidentes y</text>
+<text x="60" y="645" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">monitoreo NOC</text>
+<rect x="485" y="400" width="430" height="320" rx="20" fill="#20343f" stroke="#a99cf0" stroke-width="3"/>
+<text x="515" y="455" font-size="26" fill="#a99cf0" font-weight="700" text-anchor="start">Gestión de la Información</text>
+<text x="515" y="489" font-size="26" fill="#a99cf0" font-weight="700" text-anchor="start">con TICs</text>
+<rect x="515" y="531" width="105" height="43" rx="21" fill="none" stroke="#a99cf0" stroke-width="2.5"/>
+<text x="533" y="564" font-size="21" fill="#a99cf0" font-weight="600" text-anchor="start">Fuerte</text>
+<text x="515" y="615" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">Plataforma de código abierto y</text>
+<text x="515" y="645" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">ampliamente adoptada (Proxmox VE);</text>
+<text x="515" y="675" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">protección de datos con roles,</text>
+<text x="515" y="705" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">cifrado y auditoría</text>
+<rect x="940" y="400" width="430" height="320" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="970" y="455" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">Diseño y Arquitectura de</text>
+<text x="970" y="489" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">Redes</text>
+<rect x="970" y="531" width="151" height="43" rx="21" fill="none" stroke="#8ee6b8" stroke-width="2.5"/>
+<text x="988" y="564" font-size="21" fill="#8ee6b8" font-weight="600" text-anchor="start">Más fuerte</text>
+<text x="970" y="615" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">FCAPS: fallas, configuración,</text>
+<text x="970" y="645" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">contabilidad, seguridad,</text>
+<text x="970" y="675" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">rendimiento</text>
+</svg>

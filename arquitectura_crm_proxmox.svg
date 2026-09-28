@@ -1,5 +1,5 @@
-<svg viewBox="0 0 1300 1140" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
-  <rect width="1300" height="1140" fill="#f4f5f2"/>
+<svg viewBox="0 0 1300 1180" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1300" height="1180" fill="#f4f5f2"/>
   <defs>
     <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#8a5a1c"/></marker>
     <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1f6f68"/></marker>
@@ -69,7 +69,7 @@
 
   <rect x="70" y="604" width="480" height="212" rx="10" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
   <text x="310" y="628" text-anchor="middle" font-size="19" font-weight="700" fill="#161b1a">crm-core (VM 101) — 10.10.10.10</text>
-  <text x="310" y="646" text-anchor="middle" font-size="13.5" fill="#535e5c">4 vCPU / 6 GB — nodo de datos + aplicación</text>
+  <text x="310" y="646" text-anchor="middle" font-size="13.5" fill="#535e5c">4 vCPU / 6 GB — nodo de datos + aplicación + etcd</text>
   <line x1="90" y1="654" x2="530" y2="654" stroke="#d9dbd3"/>
   <rect x="90" y="664" width="440" height="34" rx="6" fill="#e2efec" stroke="#1f6f68"/>
   <text x="310" y="686" text-anchor="middle" font-size="14.5" fill="#0f403c" font-weight="600">Aplicación Docker (8 contenedores) — ACTIVA</text>
@@ -102,13 +102,13 @@
   <text x="310" y="856" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">crm-mon (contenedor LXC 104) — 10.10.10.20</text>
   <text x="310" y="877" text-anchor="middle" font-size="14" fill="#333">Uptime Kuma PRINCIPAL — 13 monitores, fuera de las VMs</text>
   <text x="310" y="897" text-anchor="middle" font-size="13" fill="#666">arranque automático (orden 1) · 768 MB · sin Internet</text>
-  <text x="310" y="916" text-anchor="middle" font-size="13" fill="#666">vigilado a su vez por el centinela de crm-edge</text>
+  <text x="310" y="916" text-anchor="middle" font-size="13" fill="#666">vigilado a su vez por el centinela · miembro etcd :2379</text>
 
   <rect x="750" y="832" width="480" height="98" rx="10" fill="#eceee8" stroke="#8a8f8a" stroke-width="1.5"/>
-  <text x="990" y="856" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">Árbitro: cluster etcd de 3 miembros</text>
-  <text x="990" y="877" text-anchor="middle" font-size="14" fill="#333">en crm-edge · crm-edge-b · crm-core-b (mayoría = 2)</text>
+  <text x="990" y="856" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">Árbitro: cluster etcd de 5 miembros</text>
+  <text x="990" y="877" text-anchor="middle" font-size="14" fill="#333">ambos bordes, ambos núcleos y crm-mon (mayoría = 3)</text>
   <text x="990" y="897" text-anchor="middle" font-size="13" fill="#666">guarda quién es el líder de la base (clave con TTL de 30 s)</text>
-  <text x="990" y="916" text-anchor="middle" font-size="13" fill="#666">tolera la caída de UNA VM cualquiera</text>
+  <text x="990" y="916" text-anchor="middle" font-size="13" fill="#666">tolera la caída de HASTA DOS VMs (ampliado el 27-09)</text>
 
   <line x1="310" y1="832" x2="310" y2="806" stroke="#8a5a1c" stroke-width="1.5" stroke-dasharray="4,3"/>
   <text x="326" y="826" font-size="12.5" fill="#8a5a1c">vigila todas las capas por vmbr1</text>
@@ -120,11 +120,19 @@
   <text x="310" y="1030" text-anchor="middle" font-size="13" fill="#666">almacenamiento «nas-respaldos» · arranque automático (orden 2)</text>
 
   <rect x="750" y="946" width="480" height="98" rx="10" fill="#eceee8" stroke="#8a8f8a" stroke-width="1.5"/>
-  <text x="990" y="970" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">Respaldos automáticos</text>
+  <text x="990" y="970" text-anchor="middle" font-size="17" font-weight="700" fill="#161b1a">Respaldos automáticos (dentro del PC)</text>
   <text x="990" y="991" text-anchor="middle" font-size="14" fill="#333">BD cifrada: cada noche (03:00 y 03:30), 30 días</text>
   <text x="990" y="1011" text-anchor="middle" font-size="13" fill="#666">VMs y crm-mon completos (vzdump): domingos 02:00, últimas 3</text>
-  <text x="990" y="1030" text-anchor="middle" font-size="13" fill="#666">Copia en Google Cloud Storage cada noche (04:30) · Kuma vigila el envío</text>
+  <text x="990" y="1030" text-anchor="middle" font-size="13" fill="#666">crm-nas envía cada noche una copia a la nube (caja de abajo)</text>
 
-  <text x="60" y="1096" font-size="14" fill="#535e5c">Protege contra la falla de UNA VM o servicio a la vez (borde, núcleo o monitoreo). No protege contra la falla del servidor físico completo: eso requiere el segundo servidor (cotizado).</text>
-  <text x="60" y="1120" font-size="13" fill="#8a8f8a">Actualizado 2026-09-26 — núcleo con Patroni + etcd + HAProxy, monitoreo externo en LXC con centinela, NAS de respaldos en disco externo, red NAT (VMnet8).</text>
+  <line x1="310" y1="1044" x2="310" y2="1064" stroke="#3b6fb5" stroke-width="2" stroke-dasharray="5,4"/>
+  <rect x="70" y="1064" width="480" height="66" rx="10" fill="#eef4fb" stroke="#3b6fb5" stroke-width="2"/>
+  <text x="310" y="1086" text-anchor="middle" font-size="16" font-weight="700" fill="#0f403c">☁ Google Cloud Storage — fuera del PC</text>
+  <text x="310" y="1106" text-anchor="middle" font-size="13" fill="#3b6fb5">bucket crm-chic-respaldos · credencial de solo-creación · cada noche 04:30, verificado por MD5</text>
+  <rect x="750" y="1064" width="480" height="66" rx="10" fill="#ffffff" stroke="#d9dbd3" stroke-dasharray="4,3"/>
+  <text x="990" y="1090" text-anchor="middle" font-size="13" fill="#8a8f8a">Único componente fuera del servidor físico: si el PC entero se pierde,</text>
+  <text x="990" y="1108" text-anchor="middle" font-size="13" fill="#8a8f8a">la base de datos (no las VMs completas) se puede recuperar desde aquí.</text>
+
+  <text x="60" y="1156" font-size="14" fill="#535e5c">Protege contra la falla de HASTA DOS VMs o servicios a la vez (borde, núcleo o monitoreo). No protege contra la falla del servidor físico completo: eso requiere el segundo servidor (cotizado).</text>
+  <text x="60" y="1174" font-size="13" fill="#8a8f8a">Actualizado 2026-09-27 — etcd ampliado a 5 miembros, copia de respaldo fuera del PC en Google Cloud Storage, NAS de respaldos en disco externo, red NAT (VMnet8).</text>
 </svg>

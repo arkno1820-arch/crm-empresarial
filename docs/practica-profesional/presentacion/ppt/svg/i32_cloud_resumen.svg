@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<text x="930" y="45" font-size="30" fill="#e8f1f2" font-weight="700" text-anchor="middle">La copia fuera del PC: Google Cloud Storage</text>
+<rect x="30" y="90" width="600" height="680" rx="22" fill="#20343f" stroke="#5fd3c8" stroke-width="3" filter="url(#glow)"/>
+<text x="330" y="140" font-size="27" fill="#5fd3c8" font-weight="700" text-anchor="middle">Regla 3-2-1, cumplida</text>
+<rect x="60" y="190" width="540" height="150" rx="16" fill="#182a34" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="110" cy="265" r="26" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<text x="110" y="274" font-size="26" fill="#5fd3c8" font-weight="700" text-anchor="middle">1</text>
+<g transform="translate(155,230) scale(0.66)" fill="none" stroke="#5fd3c8" stroke-width="4.55" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="50" cy="20" rx="34" ry="12"/><path d="M16 20 V76 C16 90 84 90 84 76 V20"/><path d="M16 48 C16 62 84 62 84 48"/></g>
+<text x="270" y="252" font-size="23" fill="#5fd3c8" font-weight="700" text-anchor="start">Los núcleos</text>
+<text x="270" y="282" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">la base de datos activa, en</text>
+<text x="270" y="307" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">dos máquinas</text>
+<rect x="60" y="365" width="540" height="150" rx="16" fill="#182a34" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="110" cy="440" r="26" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<text x="110" y="449" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="middle">2</text>
+<g transform="translate(155,405) scale(0.66)" fill="none" stroke="#8ee6b8" stroke-width="4.55" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="24" width="76" height="52" rx="8"/><circle cx="34" cy="50" r="12"/><circle cx="34" cy="50" r="3"/><path d="M58 40 H80 M58 50 H80 M58 60 H72"/></g>
+<text x="270" y="427" font-size="23" fill="#8ee6b8" font-weight="700" text-anchor="start">La NAS (disco externo)</text>
+<text x="270" y="457" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">copia cifrada, mismo PC</text>
+<rect x="60" y="540" width="540" height="150" rx="16" fill="#182a34" stroke="#f2b35a" stroke-width="3"/>
+<circle cx="110" cy="615" r="26" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="110" y="624" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">3</text>
+<g transform="translate(155,580) scale(0.66)" fill="none" stroke="#f2b35a" stroke-width="4.55" stroke-linecap="round" stroke-linejoin="round"><path d="M28 72 C10 72 8 46 28 44 C28 22 62 16 70 40 C92 40 92 72 72 72 Z"/></g>
+<text x="270" y="602" font-size="23" fill="#f2b35a" font-weight="700" text-anchor="start">Google Cloud</text>
+<text x="270" y="632" font-size="19" fill="#e8f1f2" font-weight="400" text-anchor="start">copia cifrada, fuera del PC</text>
+<text x="330" y="730" font-size="20" fill="#e8f1f2" font-weight="500" text-anchor="middle">Tres copias, en dos medios, una fuera del PC</text>
+<rect x="660" y="90" width="1170" height="330" rx="22" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1245" y="140" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">Cómo se protege el envío</text>
+<g transform="translate(700,195) scale(0.56)" fill="none" stroke="#f2b35a" stroke-width="5.36" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="76" height="76" rx="6"/><circle cx="50" cy="50" r="20"/><circle cx="50" cy="50" r="6"/><path d="M50 30 V38 M50 62 V70 M30 50 H38 M62 50 H70"/><path d="M22 88 V94 M78 88 V94"/></g>
+<text x="766" y="221" font-size="21" fill="#e8f1f2" font-weight="700" text-anchor="start">Bucket privado</text>
+<text x="766" y="249" font-size="17" fill="#93a9b1" font-weight="400" text-anchor="start">us-east1 · sin acceso público, sin</text>
+<text x="766" y="272" font-size="17" fill="#93a9b1" font-weight="400" text-anchor="start">datos legibles (todo sale cifrado)</text>
+<g transform="translate(1270,195) scale(0.56)" fill="none" stroke="#f2b35a" stroke-width="5.36" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="50" r="18"/><circle cx="30" cy="50" r="5"/><path d="M48 50 H92 M76 50 V64 M64 50 V60"/></g>
+<text x="1336" y="221" font-size="21" fill="#e8f1f2" font-weight="700" text-anchor="start">Credencial de solo-creación</text>
+<text x="1336" y="249" font-size="17" fill="#93a9b1" font-weight="400" text-anchor="start">esa llave no puede leer, listar ni</text>
+<text x="1336" y="272" font-size="17" fill="#93a9b1" font-weight="400" text-anchor="start">borrar nada del bucket</text>
+<g transform="translate(700,305) scale(0.56)" fill="none" stroke="#f2b35a" stroke-width="5.36" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="766" y="331" font-size="21" fill="#e8f1f2" font-weight="700" text-anchor="start">Verificación por MD5</text>
+<text x="766" y="359" font-size="17" fill="#93a9b1" font-weight="400" text-anchor="start">cada archivo se compara con lo que</text>
+<text x="766" y="382" font-size="17" fill="#93a9b1" font-weight="400" text-anchor="start">Google confirma haber recibido</text>
+<g transform="translate(1270,305) scale(0.56)" fill="none" stroke="#f2b35a" stroke-width="5.36" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M50 26 V50 L68 60"/></g>
+<text x="1336" y="331" font-size="21" fill="#e8f1f2" font-weight="700" text-anchor="start">Automático, cada noche</text>
+<text x="1336" y="359" font-size="17" fill="#93a9b1" font-weight="400" text-anchor="start">04:30 UTC, sin intervención humana;</text>
+<text x="1336" y="382" font-size="17" fill="#93a9b1" font-weight="400" text-anchor="start">Kuma vigila que el envío ocurra</text>
+<rect x="660" y="440" width="1170" height="330" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<g transform="translate(700,470) scale(0.9)" fill="none" stroke="#8ee6b8" stroke-width="3.33" stroke-linecap="round" stroke-linejoin="round"><path d="M50 8 L86 22 V50 C86 72 68 86 50 94 C32 86 14 72 14 50 V22 Z"/><path d="M34 50 L46 62 L68 36"/></g>
+<text x="800" y="515" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">Por qué importa para el negocio</text>
+<text x="700" y="565" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">Si el PC completo se pierde —robo, incendio, falla total—, la base de</text>
+<text x="700" y="595" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">datos (empleados, reservas, inventario) se puede recuperar desde</text>
+<text x="700" y="625" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">fuera del edificio. Las máquinas se reconstruyen con el código</text>
+<text x="700" y="655" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">(Terraform y Ansible), ya guardado en GitHub.</text>
+<text x="700" y="720" font-size="20" fill="#f2b35a" font-weight="600" text-anchor="start">Ensayado con éxito: un respaldo real, restaurado desde la nube</text>
+</svg>

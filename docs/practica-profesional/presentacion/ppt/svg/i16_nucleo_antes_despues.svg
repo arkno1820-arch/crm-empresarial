@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="30" y="40" width="890" height="720" rx="22" fill="#20343f" stroke="#ef6b6b" stroke-width="3" stroke-dasharray="10 8"/>
+<text x="475" y="95" font-size="30" fill="#ef6b6b" font-weight="700" text-anchor="middle">Primera versión: redundancia aparente</text>
+<rect x="70" y="170" width="250" height="150" rx="14" fill="#182a34" stroke="#5fd3c8" stroke-width="3"/>
+<text x="195" y="235" font-size="26" fill="#e8f1f2" font-weight="700" text-anchor="middle">crm-core</text>
+<text x="195" y="272" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">base activa</text>
+<rect x="600" y="170" width="250" height="150" rx="14" fill="#182a34" stroke="#93a9b1" stroke-width="3" stroke-dasharray="10 8"/>
+<text x="725" y="235" font-size="26" fill="#e8f1f2" font-weight="700" text-anchor="middle">crm-core-b</text>
+<text x="725" y="272" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">base en espera</text>
+<line x1="325" y1="245" x2="595" y2="245" stroke="#f2b35a" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aA)"/>
+<text x="460" y="222" font-size="20" fill="#f2b35a" font-weight="500" text-anchor="middle">volcado cada 15 min</text>
+<text x="80" y="410" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• La copia iba con retraso de hasta 15 minutos</text>
+<text x="80" y="450" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• La promoción era un procedimiento manual</text>
+<text x="80" y="490" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• Nginx solo conocía a crm-core</text>
+<rect x="80" y="560" width="780" height="150" rx="14" fill="#182a34" stroke="#ef6b6b" stroke-width="2.5"/>
+<g transform="translate(100,580) scale(0.6)" fill="none" stroke="#ef6b6b" stroke-width="5.00" stroke-linecap="round" stroke-linejoin="round"><path d="M50 10 L92 86 H8 Z"/><path d="M50 38 V60"/><circle cx="50" cy="73" r="2"/></g>
+<text x="190" y="615" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">Prueba de estrés: al apagar crm-core,</text>
+<text x="190" y="653" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">cayeron la base de datos y el servicio (error 502)</text>
+<line x1="925" y1="400" x2="965" y2="400" stroke="#f2b35a" stroke-width="6" marker-end="url(#aA)"/>
+<rect x="970" y="40" width="860" height="720" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<text x="1400" y="95" font-size="30" fill="#8ee6b8" font-weight="700" text-anchor="middle">Versión final: Patroni + etcd + HAProxy</text>
+<rect x="1010" y="170" width="250" height="150" rx="14" fill="#182a34" stroke="#5fd3c8" stroke-width="3"/>
+<text x="1135" y="235" font-size="26" fill="#e8f1f2" font-weight="700" text-anchor="middle">crm-core</text>
+<text x="1135" y="272" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">líder o réplica</text>
+<rect x="1540" y="170" width="250" height="150" rx="14" fill="#182a34" stroke="#5fd3c8" stroke-width="3"/>
+<text x="1665" y="235" font-size="26" fill="#e8f1f2" font-weight="700" text-anchor="middle">crm-core-b</text>
+<text x="1665" y="272" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="middle">líder o réplica</text>
+<line x1="1265" y1="225" x2="1535" y2="225" stroke="#8ee6b8" stroke-width="4" marker-end="url(#aM)"/>
+<line x1="1535" y1="265" x2="1265" y2="265" stroke="#8ee6b8" stroke-width="4" marker-end="url(#aM)"/>
+<text x="1400" y="205" font-size="20" fill="#8ee6b8" font-weight="600" text-anchor="middle">réplica sincrónica</text>
+<text x="1020" y="410" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• Una operación solo se confirma si la réplica la recibió</text>
+<text x="1020" y="450" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• El cambio de líder es automático</text>
+<text x="1020" y="490" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• La aplicación corre activa en los dos núcleos</text>
+<text x="1020" y="530" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• Nginx reparte entre ambos con reintento</text>
+<rect x="1020" y="600" width="760" height="110" rx="14" fill="#182a34" stroke="#8ee6b8" stroke-width="2.5"/>
+<g transform="translate(1040,618) scale(0.55)" fill="none" stroke="#8ee6b8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1120" y="650" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">Al apagar el núcleo activo, el servicio siguió</text>
+<text x="1120" y="688" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">y no se perdió ninguna transacción confirmada</text>
+</svg>

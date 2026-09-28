@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<circle cx="930" cy="400" r="120" fill="#20343f" stroke="#5fd3c8" stroke-width="4" filter="url(#glow)"/>
+<text x="930" y="392" font-size="30" fill="#5fd3c8" font-weight="700" text-anchor="middle">Portal único</text>
+<text x="930" y="430" font-size="22" fill="#93a9b1" font-weight="400" text-anchor="middle">(gateway HTTPS)</text>
+<rect x="130" y="150" width="400" height="120" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(145,172) scale(0.7)" fill="none" stroke="#5fd3c8" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="230" y="202" font-size="28" fill="#e8f1f2" font-weight="700" text-anchor="start">Empleados</text>
+<text x="230" y="238" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="start">fichas y datos de salud</text>
+<line x1="330" y1="270" x2="738.0" y2="331.6" stroke="#5fd3c8" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<rect x="730" y="60" width="400" height="120" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(745,82) scale(0.7)" fill="none" stroke="#5fd3c8" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M50 26 V50 L68 60"/></g>
+<text x="830" y="112" font-size="28" fill="#e8f1f2" font-weight="700" text-anchor="start">Calendario</text>
+<text x="830" y="148" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="start">eventos y participantes</text>
+<line x1="930" y1="180" x2="930.0" y2="299.2" stroke="#5fd3c8" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<rect x="1330" y="150" width="400" height="120" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(1345,172) scale(0.7)" fill="none" stroke="#5fd3c8" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><path d="M10 24 H38 L46 34 H90 V84 H10 Z"/></g>
+<text x="1430" y="202" font-size="28" fill="#e8f1f2" font-weight="700" text-anchor="start">Inventario</text>
+<text x="1430" y="238" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="start">stock, precios, ubicación</text>
+<line x1="1530" y1="270" x2="1122.0" y2="331.6" stroke="#5fd3c8" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<rect x="130" y="560" width="400" height="120" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(145,582) scale(0.7)" fill="none" stroke="#5fd3c8" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><rect x="22" y="10" width="56" height="82" rx="3"/><path d="M34 26 H44 M56 26 H66 M34 44 H44 M56 44 H66 M34 62 H44 M56 62 H66"/><rect x="42" y="74" width="16" height="18"/></g>
+<text x="230" y="612" font-size="28" fill="#e8f1f2" font-weight="700" text-anchor="start">Reservas</text>
+<text x="230" y="648" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="start">habitaciones y huéspedes</text>
+<line x1="330" y1="560" x2="738.0" y2="479.2" stroke="#5fd3c8" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<rect x="730" y="660" width="400" height="120" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(745,682) scale(0.7)" fill="none" stroke="#5fd3c8" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="24" width="80" height="54" rx="5"/><path d="M10 28 L50 56 L90 28"/></g>
+<text x="830" y="712" font-size="28" fill="#e8f1f2" font-weight="700" text-anchor="start">Chat interno</text>
+<text x="830" y="748" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="start">mensajes y archivos</text>
+<line x1="930" y1="660" x2="930.0" y2="515.2" stroke="#5fd3c8" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<rect x="1330" y="560" width="400" height="120" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(1345,582) scale(0.7)" fill="none" stroke="#5fd3c8" stroke-width="4.29" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="50" r="18"/><circle cx="30" cy="50" r="5"/><path d="M48 50 H92 M76 50 V64 M64 50 V60"/></g>
+<text x="1430" y="612" font-size="28" fill="#e8f1f2" font-weight="700" text-anchor="start">Usuarios y accesos</text>
+<text x="1430" y="648" font-size="21" fill="#93a9b1" font-weight="400" text-anchor="start">roles y permisos</text>
+<line x1="1530" y1="560" x2="1122.0" y2="479.2" stroke="#5fd3c8" stroke-width="3" stroke-dasharray="12 9" marker-end="url(#aC)"/>
+<text x="60" y="785" font-size="22" fill="#f2b35a" font-weight="600" text-anchor="start">Roles: Administrador · Recursos humanos · Recepción · Empleado</text>
+</svg>

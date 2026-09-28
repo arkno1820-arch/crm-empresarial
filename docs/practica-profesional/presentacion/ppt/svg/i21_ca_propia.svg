@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="30" y="60" width="560" height="480" rx="22" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<g transform="translate(240,90) scale(1.0)" fill="none" stroke="#f2b35a" stroke-width="3.00" stroke-linecap="round" stroke-linejoin="round"><path d="M50 8 L86 22 V50 C86 72 68 86 50 94 C32 86 14 72 14 50 V22 Z"/><path d="M34 50 L46 62 L68 36"/></g>
+<text x="310" y="240" font-size="30" fill="#f2b35a" font-weight="700" text-anchor="middle">1 · La CA de CHIC</text>
+<text x="310" y="290" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Nuestro propio «registro civil»:</text>
+<text x="310" y="324" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">emite y firma los certificados.</text>
+<text x="310" y="358" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Su llave privada NO sale nunca</text>
+<text x="310" y="392" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">del equipo del responsable.</text>
+<line x1="595" y1="300" x2="665" y2="300" stroke="#f2b35a" stroke-width="4" marker-end="url(#aA)"/>
+<rect x="670" y="60" width="560" height="480" rx="22" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<g transform="translate(880,90) scale(1.0)" fill="none" stroke="#5fd3c8" stroke-width="3.00" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="42" width="60" height="46" rx="6"/><path d="M32 42 V30 C32 8 68 8 68 30 V42"/><circle cx="50" cy="63" r="6"/><path d="M50 69 V78"/></g>
+<text x="950" y="240" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">2 · El certificado de los bordes</text>
+<text x="950" y="290" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Firmado por la CA e incluye las</text>
+<text x="950" y="324" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">direcciones del CRM (SAN).</text>
+<text x="950" y="358" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Cada servidor lo presenta al</text>
+<text x="950" y="392" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">conectarse: «soy el CRM real».</text>
+<line x1="1235" y1="300" x2="1305" y2="300" stroke="#5fd3c8" stroke-width="4" marker-end="url(#aC)"/>
+<rect x="1310" y="60" width="520" height="480" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<g transform="translate(1490,90) scale(1.0)" fill="none" stroke="#8ee6b8" stroke-width="3.00" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1570" y="240" font-size="30" fill="#8ee6b8" font-weight="700" text-anchor="middle">3 · El dispositivo confía</text>
+<text x="1570" y="290" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Se instala la CA una sola vez</text>
+<text x="1570" y="324" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">(se descarga de /ca.crt).</text>
+<text x="1570" y="358" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">Desde ahí muestra candado</text>
+<text x="1570" y="392" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="middle">sin advertencias.</text>
+<rect x="30" y="580" width="1800" height="190" rx="18" fill="#20343f" stroke="#a99cf0" stroke-width="2.5" stroke-dasharray="10 8"/>
+<g transform="translate(60,605) scale(0.6)" fill="none" stroke="#a99cf0" stroke-width="5.00" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="150" y="640" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">Analogía: sin una CA propia, cada certificado es un carné que uno mismo se firma y el navegador desconfía («no seguro»).</text>
+<text x="150" y="678" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">Con una CA propia es como un registro civil corporativo: se confía en él una vez y todo lo que firma queda validado.</text>
+<text x="150" y="716" font-size="22" fill="#e8f1f2" font-weight="400" text-anchor="start">Verificado también en un segundo notebook conectado al celular, con candado y sin advertencias.</text>
+</svg>

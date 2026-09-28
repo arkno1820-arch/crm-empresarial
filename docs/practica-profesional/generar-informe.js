@@ -30,6 +30,8 @@ const FIG_KEYS = [
   "empleados", "calendario", "inventario", "reservas", "habitaciones", "chataviso",
   "permrrhh", "permemp", "permrec", "permadm", "ficha", "hist1", "hist2", "hist3", "anonim", "chataud",
   "secuencia",
+  "restnas", "restnube", "restvm1", "restvm2", "restvm3",
+  "p6proxapag", "p6kumadet", "p6kumalista", "p6proxenc",
 ];
 // Los numeros de figura se resuelven AL FINAL, cuando ya se conoce el orden real del documento:
 // cada referencia es un marcador ⟦clave⟧ que se sustituye por el numero de la figura que lleva esa clave.
@@ -65,7 +67,7 @@ const s1 = [
   new Paragraph({ alignment: AlignmentType.CENTER,
     children: [new TextRun({ text: "Periodo de la práctica: 28 de septiembre al 27 de noviembre de 2026 (360 horas)", size: 18, color: "535E5C" })] }),
   new Paragraph({ alignment: AlignmentType.CENTER,
-    children: [new TextRun({ text: "Documento base, versión 6.0 — 26 de septiembre de 2026 (previo al inicio formal de la práctica)", size: 18, color: "535E5C" })] }),
+    children: [new TextRun({ text: "Documento base, versión 7.0 — 27 de septiembre de 2026 (previo al inicio formal de la práctica)", size: 18, color: "535E5C" })] }),
 ];
 
 // ============================================================
@@ -106,8 +108,8 @@ const s3 = [
     "Este informe cubre el diseño, la implementación y la validación en simulación, con evidencia real: " +
     "una red NAT independiente de la red externa, aislamiento del núcleo verificado, failover de la " +
     "IP virtual probado contra la infraestructura real, HTTPS con CA propia, monitoreo activo, respaldos cifrados automáticos hacia una NAS simulada en un disco externo y hacia Google Cloud Storage (copia fuera del PC), y una " +
-    "bitácora de treinta y dos incidentes resueltos. La migración a producción bare metal y el respaldo " +
-    "offsite en la nube se abordan como las siguientes fases formales de la práctica, con su " +
+    "bitácora de treinta y tres incidentes resueltos, restauraciones ensayadas con éxito y un árbitro etcd ampliado y verificado contra dos caídas simultáneas. La migración a producción bare metal " +
+    "se aborda como la siguiente fase formal de la práctica, con su " +
     "cronograma y su cotización de hardware ya definidos en este documento."
   ),
   p(
@@ -202,7 +204,7 @@ const acadRows = [
   ["Virtualización\n(CR401ICRE)", "Fuerte", "Dos tecnologías de virtualización en la misma pila (VMware anida a Proxmox/KVM), segmentación de redes virtuales (vmbr1), asignación de recursos por VM. La migración en vivo real entre servidores queda como la fase siguiente de la práctica, ligada a la cotización de hardware (sección 5.7)."],
   ["Arquitectura Cloud\n(IF304CIINF)", "Fuerte", "Automatización de la topología completa con Terraform (IaC) contra la API de Proxmox, incluyendo modificaciones en caliente sobre una infraestructura ya desplegada (migración de la red de las VMs). El respaldo offsite hacia Google Cloud Storage (Fase F4, ya operativo) y la evaluación de arquitectura híbrida on-premise/nube completan la evidencia de esta asignatura sobre el propio proyecto."],
   ["Gestión de Proyectos\n(IF405IINF)", "Cubierto en este informe", "Acta de Constitución, EDT, cronograma real de 360 horas, matriz RACI, registro de riesgos y línea base de Valor Planificado, todos construidos para el periodo real de la práctica (sección 5)."],
-  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 32 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
+  ["Gestión de Servicios TI — ITIL\n(CR304ICRE)", "Fuerte", "La bitácora de 33 incidentes reales (sección 8) es evidencia genuina de gestión de incidentes/problemas/cambios. El monitoreo con Uptime Kuma cubre el requisito de supervisión, SLA y métricas."],
   ["Gestión de la Información con TICs\n(AS300PCOM)", "Parcial", "Calza en comparación de plataformas cloud y en seguridad/protección de datos según marco legal (Ley 21.719): roles y permisos, cifrado de datos de salud, consentimiento, auditoría y anonimización, verificados en la sección 6.6. El resto del programa (IA, IoT, redes sociales) no aplica a un proyecto de infraestructura —no se fuerza."],
   ["Diseño y Arquitectura de Redes\n(CR301ICRE)", "Uno de los más fuertes", "El estándar FCAPS mapea con los 5 pilares cubiertos: Fault (bitácora), Configuration (Git/Terraform/Ansible), Accounting (RBAC), Security (HTTPS/CA privada/cifrado/aislamiento verificado) y Performance (Uptime Kuma). Diagrama topológico incluido en este informe."],
 ];
@@ -218,18 +220,18 @@ s4.push(h2("2.1 Propuesta integral transversal: cierre de brechas por asignatura
 s4.push(p("Con la copia cifrada de la base de datos ya fuera del PC, las brechas que quedan dejan de ser urgentes y pasan a ser mejoras. Esta propuesta las ordena por asignatura y las agrupa en principios transversales, para que el resto de la práctica cierre cada una con evidencia. La tabla distingue lo que ya existe de lo que se propone, y a qué fase del cronograma (sección 5.3) corresponde."));
 s4.push(makeTable([1500, 2400, 3900, 1900], ["Asignatura", "Brecha que queda", "Propuesta de cierre", "Estado y fase"], [
   ["Redes Virtuales", "Una sola red interna plana y un solo host: el tráfico de administración, de datos y de respaldo comparte segmento.", "Segmentar en redes separadas (administración, aplicación, base de datos y respaldo) y activar el cortafuegos de Proxmox por VM y por red; usar un túnel WireGuard hacia la nube para la administración remota, en lugar de puertos de SSH publicados.", "Propuesto · F5. Parcial: la salida de crm-nas ya está acotada a HTTPS y DNS (ADR-14)."],
-  ["Virtualización", "Un solo nodo: sin migración en vivo ni alta disponibilidad a nivel de hipervisor; las copias de las VMs son completas y voluminosas.", "Formar un clúster Proxmox de dos nodos con el segundo servidor cotizado y un dispositivo de quórum; migración en vivo real; Proxmox Backup Server para copias incrementales y deduplicadas, con verificación de integridad y ensayo de restauración de una VM.", "Propuesto · F5. Las copias con vzdump ya operan (sección 6.9)."],
-  ["Arquitectura Cloud", "La nube guarda solo copias, y el bucket y sus permisos se crearon a mano, no como código.", "Definir el bucket, la cuenta y las políticas con Terraform para que sean reproducibles; política de retención con bloqueo y ciclo de vida; rotación periódica de la clave HMAC; réplica asíncrona de Patroni y un voto de etcd en la nube, por VPN, como continuidad ante la pérdida del equipo.", "Parcial: copia cifrada y verificada (ADR-14). Resto propuesto · F4 y F5."],
-  ["Gestión de Proyectos", "Los riesgos abiertos (R14, R16, R20 y R21) dependen de acciones cuya fecha aún no está comprometida.", "Revisión semanal del registro de riesgos con responsable y fecha por mitigación; actualizar la curva de valor planificado con las horas reales; hitos de aceptación por fase con criterios medibles.", "Propuesto · F1 a F8. El registro R1 a R21 ya está vigente."],
-  ["Gestión de Servicios TI (ITIL)", "Faltan objetivos de servicio y un proceso de cambios formal; el almacenamiento de las VMs supera el 85 % de uso (capacidad).", "Catálogo de servicios con objetivos medidos en las pruebas: RPO 0 ante la falla de un nodo (réplica sincrónica) y hasta 24 horas ante la pérdida del sitio (respaldo nocturno); RTO de 3 a 26 segundos en las conmutaciones. Solicitud de cambio asociada a cada commit, análisis posterior a cada incidente y plan de capacidad (depurar o ampliar el disco de las VMs antes de operar en producción).", "Parcial: bitácora de 32 incidentes y monitoreo NOC. Resto propuesto · F3 a F6."],
+  ["Virtualización", "Un solo nodo: sin migración en vivo ni alta disponibilidad a nivel de hipervisor; las copias de las VMs son completas y voluminosas.", "Formar un clúster Proxmox de dos nodos con el segundo servidor cotizado y un dispositivo de quórum; migración en vivo real; Proxmox Backup Server para copias incrementales y deduplicadas, con verificación de integridad periódica.", "Parcial: las copias con vzdump ya operan (sección 6.9) y la restauración de una VM completa ya se ensayó con éxito (qmrestore, sección 9.9). Resto propuesto · F5."],
+  ["Arquitectura Cloud", "La nube guarda solo copias, y el bucket y sus permisos se crearon a mano, no como código.", "Definir el bucket, la cuenta y las políticas con Terraform para que sean reproducibles; política de retención con bloqueo y ciclo de vida; rotación periódica de la clave HMAC; réplica asíncrona de Patroni y un voto de etcd en la nube, por VPN, como continuidad ante la pérdida del equipo.", "Parcial: copia cifrada, verificada y con restauración ensayada (ADR-14, sección 9.9). Resto propuesto · F4 y F5."],
+  ["Gestión de Proyectos", "Los riesgos abiertos (R14, R18 y R21) dependen de acciones cuya fecha aún no está comprometida.", "Revisión semanal del registro de riesgos con responsable y fecha por mitigación; actualizar la curva de valor planificado con las horas reales; hitos de aceptación por fase con criterios medibles.", "Propuesto · F1 a F8. El registro R1 a R22 ya está vigente."],
+  ["Gestión de Servicios TI (ITIL)", "Faltan objetivos de servicio y un proceso de cambios formal; el almacenamiento de las VMs supera el 85 % de uso (capacidad).", "Catálogo de servicios con objetivos medidos en las pruebas: RPO 0 ante la falla de un nodo (réplica sincrónica) y hasta 24 horas ante la pérdida del sitio (respaldo nocturno); RTO de 3 a 27 segundos en las conmutaciones. Solicitud de cambio asociada a cada commit, análisis posterior a cada incidente y plan de capacidad (depurar o ampliar el disco de las VMs antes de operar en producción; activar la alerta de espacio del pool compartido, hallazgo de D2b).", "Parcial: bitácora de 33 incidentes y monitoreo NOC. Resto propuesto · F3 a F6."],
   ["Gestión de la Información con TICs", "Los documentos legales son borradores, y los respaldos conservan durante 30 días datos que ya se anonimizaron en la aplicación.", "Revisión de un abogado del registro de actividades y del procedimiento ante brechas; documentar el plazo de conservación de los respaldos frente al derecho de supresión; acuerdo de tratamiento con el proveedor de nube (los datos salen cifrados y la clave queda solo en poder de CHIC); simulacro de notificación de una brecha.", "Parcial: cifrado, consentimiento y auditoría. Resto propuesto · F3 a F7."],
   ["Diseño y Arquitectura de Redes (FCAPS)", "Rendimiento y contabilidad sin línea base; falta reforzar el acceso y gestionar parches.", "Línea base de rendimiento (latencia, CPU, memoria y disco) con alertas por umbral; registros centralizados; endurecimiento de SSH y actualizaciones programadas de las VMs; detección de deriva de configuración ejecutando Ansible en modo de comprobación.", "Parcial: fallas, configuración y seguridad cubiertas; rendimiento con Kuma. Resto propuesto · F3 a F6."],
 ]));
 s4.push(p("Cuatro principios atraviesan todas las propuestas y sirven de criterio para priorizarlas:"));
 s4.push(bullet("Mínimo privilegio en todas las capas: ya aplicado a la NAS y a la nube (solo escritura); falta extenderlo a las cuentas de administración, con verificación en dos pasos y llaves con vencimiento."));
-s4.push(bullet("Regla 3-2-1 con verificación: hoy hay tres copias de la base de datos, en dos medios y una fuera del PC; falta ensayar la restauración y, después, tener una copia inmutable."));
+s4.push(bullet("Regla 3-2-1 con verificación: hoy hay tres copias de la base de datos, en dos medios y una fuera del PC, y la restauración ya se ensayó desde las tres (sección 9.9); falta, después, tener una copia inmutable."));
 s4.push(bullet("Todo como código: incluir en Terraform y Ansible la nube y las reglas de red del host, que hoy se aplican a mano."));
-s4.push(bullet("Medir para declarar: cada objetivo se acompaña de una prueba con tiempos, como las pruebas P1 a P4 de la sección 9."));
+s4.push(bullet("Medir para declarar: cada objetivo se acompaña de una prueba con tiempos, como las pruebas P1 a P6 de la sección 9."));
 
 
 // ============================================================
@@ -285,12 +287,13 @@ const adrs = [
   ["ADR-06", "Red NAT de VMware en lugar de red puenteada (bridged)", "En modo bridged sobre Wi-Fi/hotspot, la red externa descartaba las direcciones MAC de las VMs anidadas (solo veía el PC), Proxmox llegó a compartir IP con el equipo host y tumbó su conexión, y cada cambio de red obligaba a reconfigurar todas las IPs. Con la red NAT VMnet8 (192.168.80.0/24) la infraestructura queda detrás del PC y su direccionamiento es independiente de la red externa."],
   ["ADR-07", "Proxmox como router de las VMs (DNAT + VIP interna)", "Como las VMs ya no están en la red externa, el host Proxmox publica el CRM mediante DNAT (80/443 hacia la VIP interna 10.10.10.5) y el acceso de administración por puertos dedicados (2211/2212) a cada borde. Las reglas viven en un script idempotente que se reaplica en cada arranque, y la salida a Internet (MASQUERADE) se limita a los bordes."],
   ["ADR-08", "Monitoreo redundante: una instancia de Kuma por borde (SUPERADA por ADR-10)", "Solución intermedia a un hallazgo de una prueba de estrés: al apagar crm-edge desaparecía el monitoreo, porque Kuma corría solo en ese nodo. Se instaló una instancia en cada borde con monitoreo cruzado. Una tercera prueba mostró que seguía atada a las VMs de borde; ver ADR-10."],
-  ["ADR-09", "Núcleo con Patroni, etcd y HAProxy (conmutación automática de la base de datos)", "Una prueba de estrés mostró que apagar crm-core tumbaba la base de datos y el servicio: las dos VMs del núcleo no compartían la base en vivo (volcado cada 15 min, promoción manual). Se reemplazó por PostgreSQL 14 nativo bajo Patroni en ambos núcleos, con replicación sincrónica, un clúster etcd de tres miembros repartido en tres VMs como árbitro (evita el split-brain sin un tercer servidor) y HAProxy en cada núcleo apuntando siempre al primario vigente. La aplicación pasó a correr activa en ambos núcleos, y los adjuntos del chat se guardan en la base para replicarse con ella. Límite declarado: se tolera la caída de UNA VM a la vez."],
+  ["ADR-09", "Núcleo con Patroni, etcd y HAProxy (conmutación automática de la base de datos)", "Una prueba de estrés mostró que apagar crm-core tumbaba la base de datos y el servicio: las dos VMs del núcleo no compartían la base en vivo (volcado cada 15 min, promoción manual). Se reemplazó por PostgreSQL 14 nativo bajo Patroni en ambos núcleos, con replicación sincrónica, un clúster etcd de tres miembros repartido en tres VMs como árbitro (evita el split-brain sin un tercer servidor) y HAProxy en cada núcleo apuntando siempre al primario vigente. La aplicación pasó a correr activa en ambos núcleos, y los adjuntos del chat se guardan en la base para replicarse con ella. Límite declarado en su momento: se tolera la caída de UNA VM a la vez (ampliado a dos por ADR-15)."],
   ["ADR-10", "Monitoreo externo en contenedor LXC con un centinela secundario", "El monitoreo debe sobrevivir a la caída de cualquier VM. Se movió Uptime Kuma a un contenedor LXC del propio nodo Proxmox (crm-mon, 10.10.10.20, arranque automático con orden 1, 768 MB), fuera de las cuatro VMs. Como el monitor no se vigila a sí mismo, el Kuma del borde se redujo a un centinela con solo dos monitores (el principal y el servicio extremo a extremo), en tema oscuro para distinguirlo. Se prefirió detectar y avisar antes que reiniciar automáticamente, para no ocultar la falla. Límite declarado: ambos comparten servidor físico."],,
   ["ADR-11", "Acceso desde otros equipos mediante reenvío de puertos en el PC anfitrión", "La red NAT aísla la infraestructura, pero un equipo externo no podía abrir el CRM. En lugar de volver a una red puenteada (que causó los incidentes 13 y 14), se reenvían los puertos 80 y 443 del PC hacia la infraestructura y se reemitió el certificado con la dirección del PC en la red del celular. Se conserva el aislamiento y se gana acceso; límite declarado: la dirección la asigna el celular y puede cambiar (sección 6.4.1)."],
   ["ADR-12", "NAS de respaldos simulada sobre el disco externo (disco virtual + contenedor)", "El respaldo del PC (backup.ps1) dependía de Docker Desktop, ya retirado, y la redundancia de Patroni no protege contra un borrado por error, porque el borrado se replica. Se creó una NAS simulada: un contenedor LXC (crm-nas) cuyo disco raíz vive en un almacenamiento de Proxmox respaldado por un disco virtual (.vmdk de 200 GB, dinámico) alojado en el disco externo del PC. Se descartó formatear el disco (contiene datos del usuario) y pasarlo por USB a una VM anidada (menos estable). No se cifra el disco con LUKS: exigiría una clave manual en cada reinicio y rompería el arranque automático; el cifrado se aplica a cada respaldo (ADR-13). Ver sección 6.9."],
   ["ADR-13", "Respaldos cifrados con clave asimétrica y entregados a un receptor SSH de solo escritura", "Los núcleos solo tienen la clave pública de cifrado y una llave SSH que únicamente permite subir archivos nuevos a crm-nas; la clave privada existe solo en poder del administrador, con contraseña y una copia de restauración verificada fuera del equipo (sección 6.9.9). Un núcleo comprometido no puede leer, sobrescribir ni borrar los respaldos. Se eligió SSH y no NFS porque un servidor NFS de kernel no funciona en un contenedor sin privilegios y uno privilegiado ampliaría la superficie de ataque del host. Ver sección 6.9."],
   ["ADR-14", "Copia fuera del PC en Google Cloud Storage con credencial de solo creación y verificación por MD5", "Para cerrar el límite de tener todo en el mismo PC se evaluaron Oracle Cloud (capa gratuita real, sin riesgo de cobro) y Google Cloud (prueba de 90 días con crédito, ya disponible durante la práctica, y 5 GB gratuitos en regiones de EE. UU.). Se eligió Google por disponibilidad inmediata, con el bucket en us-east1 (región gratuita) y sin datos legibles: los volcados salen ya cifrados con GPG. Una política de la organización impidió crear claves de cuentas de servicio, por lo que la credencial es una clave HMAC de una cuenta de Google dedicada, con solo el rol Creador de objetos: puede subir, pero no leer, listar, borrar ni sobrescribir. Como no puede leer, la verificación compara el MD5 que Google devuelve al aceptar la subida con el MD5 local. Solo crm-nas sale a la nube, por HTTPS y DNS; los núcleos siguen sin salida. Al vencer la prueba (26-12-2026) habrá que pasar a una cuenta de pago (costo despreciable con estos volúmenes) o migrar el mismo diseño a Oracle. Ver sección 6.9.8."],
+  ["ADR-15", "Ampliación del árbitro etcd de tres a cinco miembros", "La prueba de disco D2b (sección 9.11) mostró en la práctica el límite declarado en ADR-09: con tres miembros, dos caídas simultáneas del clúster etcd detienen el servicio por seguridad. Se sumaron crm-core y crm-mon como cuarto y quinto voto —ya existían como VM y contenedor, sin necesitar hardware nuevo—, llevando la mayoría de dos a tres miembros y la tolerancia de una caída a dos. La migración se hizo en caliente, sin interrumpir el servicio: se inicializaron los nuevos miembros con etcdctl member add y estado existing (nunca new, que reiniciaría el clúster), y se recargó la configuración de Patroni en los núcleos existentes. Verificado con P6 (sección 9.13). Riesgo aceptado y declarado: los cinco miembros siguen en el mismo servidor físico; no protege ante su caída completa (sección 5.7)."],
 ];
 s8.push(makeTable([1200, 3100, 5400], ["ID", "Decisión", "Justificación"], adrs));
 
@@ -413,14 +416,15 @@ const riskRows = [
   ["R11", "Configuración de monitoreo desactualizada tras cambios de direccionamiento", "Media", "Medio", "Materializado", "Monitores actualizados y recuperación verificada (sección 6.5)"],
   ["R12", "Punto único de falla del monitoreo (una sola instancia de Kuma)", "Media", "Alto", "Materializado", "Kuma externo en contenedor LXC y centinela secundario (ADR-10, sección 6.5)"],
   ["R13", "Núcleo sin redundancia real: la caída de crm-core tumbaba la base de datos", "Alta", "Crítico", "Materializado", "Patroni + etcd + HAProxy con conmutación automática (ADR-09, sección 6.7)"],
-  ["R14", "Pérdida de mayoría de etcd por dos fallas simultáneas", "Baja", "Alto", "Abierto — límite declarado", "El diseño tolera UNA falla a la vez; con dos VMs de etcd caídas el sistema se detiene por seguridad (sin split-brain) y se recupera solo al volver la mayoría"],
+  ["R14", "Pérdida de mayoría de etcd por fallas simultáneas", "Baja", "Alto", "Abierto — límite declarado, ampliado", "Ampliado el 27-09 de tres a cinco miembros (ADR-15): el diseño tolera DOS fallas a la vez, verificado en P6 (sección 9.13); con tres VMs de etcd caídas a la vez el sistema se detendría por seguridad (sin split-brain) y se recuperaría solo al volver la mayoría"],
   ["R15", "Punto único de falla del servidor físico durante la simulación", "Media", "Crítico", "Abierto — en gestión activa", "Cotización formal del segundo servidor en curso (sección 5.7), fase F5 del cronograma"],
-  ["R16", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Abierto — mitigado", "Copia local cifrada en la NAS del disco externo (ADR-12) y copia fuera del PC en Google Cloud Storage (ADR-14, sección 6.9.8); falta ensayar una restauración completa desde la nube"],
+  ["R16", "Pérdida total de datos sin respaldo offsite", "Media", "Alto", "Mitigado — ensayado", "Copia local cifrada en la NAS del disco externo (ADR-12) y copia fuera del PC en Google Cloud Storage (ADR-14, sección 6.9.8); restauración ensayada con éxito desde la NAS, desde la nube y en una máquina virtual completa (sección 9.9)"],
   ["R17", "Compromiso de la llave privada de la CA interna", "Baja", "Crítico", "Abierto — mitigado por diseño", "La llave nunca sale del equipo del responsable; nunca se copia a ninguna VM"],
   ["R18", "Documentos legales en borrador sin revisión jurídica", "Media", "Alto", "Abierto — pendiente", "Solicitar revisión de un abogado especializado antes de considerarlos oficiales (sección 6.6)"],
   ["R19", "Desconexión del disco externo con Proxmox encendido (pausa de la VM anfitriona)", "Media", "Alto", "Materializado", "Desactivar el ahorro de energía USB, conexión directa al PC y procedimiento «Retry» documentado (incidente 26, sección 6.9.6)"],
   ["R21", "Vencimiento de la prueba gratuita de Google Cloud (26-12-2026) o cambio de sus condiciones", "Media", "Medio", "Abierto — con plan", "Pasar a una cuenta de pago con alerta de presupuesto (costo despreciable con estos volúmenes) o migrar el mismo diseño a otro proveedor; los respaldos locales no dependen de la nube"],
   ["R20", "Pérdida de la clave privada que descifra los respaldos", "Baja", "Crítico", "Mitigado — con un custodio", "Subclave de descifrado protegida con contraseña y copia de restauración verificada (importada en un llavero vacío y descifrando un mensaje de prueba) guardada fuera del PC (sección 6.9.9); queda un solo custodio, que se cubriría con un segundo en producción"],
+  ["R22", "Almacenamiento de disco compartido entre VMs sin reserva por VM (thin-provisioning)", "Media", "Crítico", "Materializado y mitigado", "La prueba de disco D2b mostró que agotar el disco virtual de UNA VM puede agotar el pool físico compartido de TODAS: incidente real, recuperado sin pérdida de datos extendiendo el pool (sección 9.11). Mitigación declarada, pendiente de aplicar: activar la alerta de espacio thin_pool_autoextend_threshold en el host Proxmox"],
 ];
 s11.push(makeTable([700, 2700, 1100, 1000, 1600, 2600],
   ["ID", "Riesgo", "Prob.", "Impacto", "Estado", "Mitigación"], riskRows));
@@ -779,7 +783,7 @@ const s67 = [
   h2("6.7 Núcleo redundante: Patroni, etcd y HAProxy"),
   p(`El núcleo aloja la aplicación y su base de datos. Su primera versión tenía redundancia solo aparente: crm-core-b recibía un volcado de la base cada 15 minutos y la promoción era manual. Una prueba de estrés lo puso en evidencia: al apagar crm-core cayeron la base de datos y el servicio, porque el borde solo conocía a crm-core y la réplica no estaba en línea. El diseño se reemplazó por una arquitectura de alta disponibilidad real (ADR-09), cuya ubicación de cada pieza se muestra en la figura ${F.patronipiezas}.`),
   bullet("Base de datos: PostgreSQL 14 nativo en crm-core y crm-core-b, gestionado por Patroni, con replicación en vivo (streaming) en modo sincrónico: una transacción solo se confirma cuando la réplica la recibió, por lo que no se pierden datos."),
-  bullet("Árbitro: un clúster etcd de tres miembros repartido en crm-edge, crm-edge-b y crm-core-b. Guarda quién es el líder mediante una clave con vencimiento (TTL de 30 s). Con tres miembros basta una mayoría de dos, por lo que la caída de cualquier VM no detiene el clúster, y un nodo aislado nunca se promueve solo (sin split-brain), sin necesitar un tercer servidor."),
+  bullet("Árbitro: un clúster etcd, ampliado el 27-09-2026 de tres a cinco miembros —crm-edge, crm-edge-b, crm-core, crm-core-b y crm-mon— tras el hallazgo de la prueba de disco D2b (sección 9.11). Guarda quién es el líder mediante una clave con vencimiento (TTL de 30 s). Con cinco miembros basta una mayoría de tres, por lo que el clúster tolera hasta dos caídas simultáneas sin detenerse, y un nodo aislado nunca se promueve solo (sin split-brain); verificado en P6 (sección 9.13)."),
   bullet("Punto de entrada: HAProxy en cada núcleo escucha en el puerto 5000 y comprueba GET /primary en el agente de Patroni de cada nodo, de modo que la aplicación siempre llega al primario vigente sin reconfigurarse."),
   bullet("Aplicación: los ocho contenedores corren activos en ambos núcleos (docker-compose.ha.yml). Como son sin estado, Nginx en los bordes reparte entre los dos núcleos con reintento automático (un núcleo caído se omite 30 s y el tiempo de espera de conexión es de 1 s). Los adjuntos del chat se guardan en la base de datos, para replicarse con ella."),
   bullet("Traspaso de datos: un playbook único volcó las seis bases del contenedor heredado al clúster nuevo y comparó el número de tablas de origen y destino; el volumen antiguo se conservó como respaldo. La réplica quedó con los mismos datos que el primario (5 usuarios y 5 empleados en ambos nodos, réplica en modo solo lectura)."),
@@ -800,7 +804,7 @@ const toolRows = [
   ["Docker y Docker Compose", "Empaquetan y ejecutan los microservicios de la aplicación.", "crm-core y crm-core-b", "Un núcleo caído lo cubre el otro."],
   ["PostgreSQL 14", "Base de datos de las seis bases del CRM; los datos de salud se guardan cifrados a nivel de columna.", "crm-core y crm-core-b", "Ver Patroni."],
   ["Patroni", "Gestiona PostgreSQL en cada núcleo: replicación sincrónica y conmutación automática del primario.", "Un agente por núcleo (no hay uno “principal”)", "Un agente caído provoca la elección de otro líder."],
-  ["etcd", "Árbitro de Patroni: guarda quién es el líder (clave con TTL de 30 s); tres miembros, mayoría de dos.", "crm-edge, crm-edge-b y crm-core-b", "Tolera una caída; con dos caídas se detiene por seguridad (sin split-brain)."],
+  ["etcd", "Árbitro de Patroni: guarda quién es el líder (clave con TTL de 30 s); cinco miembros, mayoría de tres (ampliado el 27-09, sección 9.12).", "crm-edge, crm-edge-b, crm-core, crm-core-b y crm-mon", "Tolera dos caídas simultáneas; con tres caídas se detiene por seguridad (sin split-brain)."],
   ["HAProxy", "Punto de entrada único a la base (puerto 5000): comprueba /primary y dirige al líder vigente.", "crm-core y crm-core-b", "Cada núcleo tiene el suyo."],
   ["Uptime Kuma", "Monitoreo tipo NOC: trece monitores en el panel principal (tres de ellos vigilan los respaldos) y dos en el centinela; alertas por cambio de estado.", "Contenedor crm-mon; centinela en crm-edge", "El centinela vigila al principal."],
   ["Autoridad certificadora privada (openssl)", "Emite el certificado HTTPS de los bordes; su llave nunca sale del equipo del responsable.", "Equipo del operador", "Si caduca, hay que renovarlo (vigencia de 2 años)."],
@@ -815,7 +819,7 @@ const toolRows = [
 s67.push(makeTable([2200, 3600, 1700, 2100], ["Herramienta", "Función en el sistema", "Dónde vive", "Si falla"], toolRows));
 const s67a = [
   ...figura(DIA, "11-patroni-donde-vive-cada-pieza.png", "Alta disponibilidad de la base de datos: dónde vive cada pieza",
-    "Qué se observa: el clúster etcd de tres miembros (arriba) arbitra, y cada núcleo tiene su propio Patroni con PostgreSQL, HAProxy y la aplicación. Ninguno de los dos agentes es “el principal”; crm-core-b aloja un nodo de datos y un voto de etcd a la vez, por lo que el diseño tolera una falla a la vez.", 1000, 540),
+    "Qué se observa: el clúster etcd, aquí en su configuración original de tres miembros (arbitra), y cada núcleo con su propio Patroni, PostgreSQL, HAProxy y la aplicación. Ninguno de los dos agentes es “el principal”; crm-core-b aloja un nodo de datos y un voto de etcd a la vez. El 27-09-2026 el árbitro se amplió a cinco miembros —se suma crm-core como quinto voto— para tolerar dos caídas en vez de una (sección 9.12); el diagrama conserva el diseño original con el que se construyó el sistema.", 1000, 540),
   pageBreak(),
   ...figura(DIA, "08-conmutacion-antes-despues.png", "Conmutación automática de la base de datos: antes y después",
     "Qué se observa: a la izquierda, operación normal con crm-core como líder y crm-core-b como réplica sincrónica; a la derecha, tras apagar crm-core, crm-core-b es el nuevo líder y HAProxy dirige a él sin cambiar la configuración de las aplicaciones.", 1000, 540),
@@ -938,13 +942,12 @@ const s69a = [
 const s20 = [
   h1("7. Control de Versiones (GitHub)"),
   p("Todo el trabajo descrito en este informe está versionado con git y publicado en un repositorio real de GitHub (arkno1820-arch/crm-empresarial), con cada commit correspondiendo a un cambio real y verificable."),
-];
-const s20a = [
   ...figura(EVI, "2026-09-24-07-github-commits.png", "Historial de commits en GitHub",
-    "Qué se observa: el historial real de commits del repositorio, con mensajes descriptivos de cada cambio de la fase de simulación (septiembre de 2026).", 1000, 480),
+    "Qué se observa: el historial real de commits del repositorio, con mensajes descriptivos de cada cambio de la fase de simulación (septiembre de 2026).", 900, 480),
 ];
 
 // ---- 8 Bitacora (portrait) ----
+const s21c = [];
 const s21 = [
   h1("8. Bitácora de Incidentes Reales (fase de simulación)"),
   p("Treinta y dos incidentes reales, encontrados y resueltos durante el desarrollo y despliegue en el entorno de simulación —evidencia auténtica de gestión de incidentes para Gestión de Servicios TI (ITIL) y Gestión de Proyectos."),
@@ -982,6 +985,7 @@ const incidents = [
   ["30", "Subidas a la nube rechazadas de forma intermitente (403)", "Con la credencial ya cargada, Google aceptaba y rechazaba peticiones de forma aparentemente aleatoria (SignatureDoesNotMatch, Forbidden). Se descartaron primero el reloj de la NAS, la región de la firma, el formato de la credencial, la cabecera de ACL y la propagación de permisos.", "La clave HMAC de una cuenta de usuario necesita un proyecto predeterminado para el acceso interoperable, y no estaba configurado. Al configurarlo, las subidas se aceptaron de forma consistente."],
   ["31", "Verificación del respaldo que daba éxito sin serlo (defecto propio)", "Un primer script de envío ocultaba los errores de rclone con «|| true» y filtros de texto, y declaró «verificado» un envío que en realidad no podía leer el bucket. Además, rclone reportaba como fallo subidas que sí se habían aceptado, por las lecturas posteriores que Google rechaza para una credencial de solo crear.", "Se reemplazó rclone por un script Python de solo creación que verifica cada archivo comparando el MD5 que Google devuelve con el local, y solo da el envío por bueno (y avisa a Kuma) si todos coinciden. Lección: un respaldo dado por bueno sin serlo es peor que uno que avisa del fallo."],
   ["32", "Cambio de contraseña de la clave de descifrado con resultado parcial y una copia incompleta", "Al proteger con contraseña la clave privada que abre los respaldos, varios intentos se cruzaron (ventanas de contraseña cerradas o completadas en el orden equivocado): la subclave de descifrado quedó protegida, pero la clave principal quedó con una contraseña distinta. La primera exportación de respaldo salió con solo 439 bytes y con un aviso de «clave omitida».", "Se detectó por comprobar el tamaño del archivo exportado. Se exportó solo la subclave de descifrado, que es la única necesaria para restaurar, y se verificó importándola en un llavero vacío y aislado y descifrando un mensaje de prueba. La clave principal (solo certifica) no se alineó, por no intervenir en la restauración; queda declarada. Lección: una copia de seguridad no está lista hasta que se ensaya su restauración."],
+  ["33", "Prueba de disco D2b: el pool de almacenamiento compartido se agotó y ambos núcleos quedaron caídos", "Al llenar por completo el disco virtual de crm-core-b (líder) para probar el límite del diseño, se agotó también el pool thin-provisioned local-lvm del host Proxmox, compartido por las cuatro VMs. Ambos núcleos entraron en io-error de QEMU y quedaron inalcanzables; Patroni, correctamente, no promovió sola a crm-core-b por no ser «el nodo más sano», dejando el clúster sin líder.", "Se extendió el pool con el espacio libre del volume group (lvextend, +9 GB, sin pérdida de datos), se reiniciaron ambas VMs y se hizo un failover manual al nodo que ya era réplica sincrónica con lag 0. Verificado sin pérdida de datos (sección 9.11). Motivó R22 y la propuesta de activar la alerta de espacio del pool."],
 ];
 s21.push(makeTable([500, 2500, 3500, 3200], ["#", "Incidente", "Causa raíz", "Resolución"], incidents));
 
@@ -1008,9 +1012,25 @@ s21.push(makeTable([1500, 2900, 2500, 2600], ["Prueba", "Qué se apaga", "Qué d
   ["P4 — Conmutación planificada", "Se pasa el liderazgo de crm-core a crm-core-b con patronictl switchover", "Cambio de líder controlado, sin cortar el servicio", "≈ 5 s de orden a orden; el CRM respondió HTTP 200 en los 6 sondeos; sin pérdida de datos"],
   ["Recuperación", "Se reencienden las VMs y el contenedor", "Todo vuelve solo a su estado previo, sin intervención manual", "etcd 3/3, réplica sincrónica con lag 0, IP virtual de vuelta en crm-edge en ≈ 4 s"],
 ]));
-
-s21.push(h2("9.2 P1 — Apagado del núcleo activo (crm-core)"));
 s21.push(p(
+  "Una segunda tanda de pruebas, ejecutada el 26 y 27 de septiembre de 2026 ya con la copia offsite en marcha, cierra las brechas que esta primera tanda había dejado declaradas: la restauración sin ensayar, el disco como falla no simulada y el límite de tolerar solo una caída del árbitro etcd. Se presenta en las secciones 9.9 a 9.13, resumidas en la tabla de la página siguiente."
+));
+
+const s21x = [
+  new Paragraph({ heading: HeadingLevel.HEADING_3, spacing: { before: 0, after: 160 },
+    children: [new TextRun({ text: "Resumen de la segunda tanda de pruebas (9.9 a 9.13)", bold: true, size: 22, color: "333333" })] }),
+];
+s21x.push(makeTable([2400, 4700, 3800, 4538], ["Prueba", "Qué se hizo", "Qué se buscaba responder", "Resultado medido"], [
+  ["Restauración ×3 (sección 9.9)", "Se restauró un respaldo real (NAS, nube y una VM completa) en un entorno aislado, sin tocar la base ni las VMs reales", "¿Un respaldo que se guarda también se puede recuperar?", "9 tablas / 117 filas, 0 diferencias con la base real en los dos primeros; VM restaurada y arrancada con red desconectada en el tercero"],
+  ["P5 — Red partida (sección 9.10)", "Se aísla por firewall al líder del resto del clúster (etcd y su réplica), sin apagar nada", "¿Puede haber doble escritura si el nodo aislado no se entera de inmediato?", "Ningún nodo aceptó escrituras a la vez; hueco real sin escrituras de 26,6 s hasta el nuevo líder"],
+  ["D1 / D2 — Disco casi lleno (sección 9.11)", "Se llena al 100 % (50 MB libres) el disco de la réplica y luego del líder", "¿Un disco casi lleno degrada o corta el servicio?", "Sin fallos en ninguno de los dos casos: 72 y 76 escrituras aceptadas; el margen alcanzó para el WAL"],
+  ["D2b — Disco agotado (incidente real, sección 9.11)", "Se agota por completo (0 MB) el disco del líder", "¿Qué pasa si el margen no alcanza?", "Incidente real: se agotó el pool compartido del host y ambos núcleos cayeron; recuperado sin pérdida de datos"],
+  ["Ampliación de etcd (sección 9.12)", "Se pasa el árbitro de 3 a 5 miembros, en caliente y sin interrumpir el servicio", "¿Se puede tolerar más de una caída sin hardware nuevo?", "Migración sin corte; verificada de inmediato con P6"],
+  ["P6 — Doble caída (etcd de 5, sección 9.13)", "Se apagan a la vez un borde y el líder del núcleo (2 de 5 miembros de etcd)", "¿El nuevo diseño tolera lo que el anterior no toleraba?", "Quórum preservado (3 de 5); nuevo líder en 27,2 s; 0 fallos en 175 sondeos del CRM"],
+]));
+
+s21c.push(h2("9.2 P1 — Apagado del núcleo activo (crm-core)"));
+s21c.push(p(
   `Se apagó crm-core (VM 101) a las 17:25:57 UTC, cuando era el líder de la base de datos. Patroni en crm-core-b detectó la ` +
   `falla a las 17:26:24,131 —al vencer la clave del líder en etcd, cuyo TTL es de 30 s—, adquirió el bloqueo de sesión a los 48 ms ` +
   `y habilitó las escrituras a los 296 ms (17:26:24,427), con lo que la línea de tiempo de la base pasó de 7 a 8. Desde el apagado ` +
@@ -1018,20 +1038,20 @@ s21.push(p(
   `que fue prácticamente instantánea (figura ${F.ltnucleo}). La réplica era sincrónica, por lo que no se perdieron transacciones: la última ` +
   `confirmada fue a las 17:25:24 UTC, antes de la falla.`
 ));
-s21.push(p(
+s21c.push(p(
   `Mientras tanto, el CRM siguió respondiendo (figura ${F.p1crm}), porque los microservicios corren activos en ambos núcleos y Nginx omite ` +
   `el núcleo caído; solo la primera solicitud pagó una espera breve, ajustada después a 1 s (incidente 21). El monitoreo lo señaló en rojo ` +
   `(figura ${F.p1kuma}) y Proxmox lo confirma (figura ${F.p1proxmox}).`
 ));
-s21.push(h3("Hallazgo previo que originó esta prueba"));
-s21.push(p(
+s21c.push(h3("Hallazgo previo que originó esta prueba"));
+s21c.push(p(
   "La primera versión de esta prueba, ejecutada antes de rediseñar el núcleo, mostró que apagar crm-core tumbaba la base de datos " +
   "y el servicio (error 502 y monitor PostgreSQL en rojo): las dos VMs no compartían la base en vivo. Ese resultado motivó el " +
   "rediseño de la sección 6.7 (ADR-09) y es la razón por la que esta prueba se repitió con la solución aplicada."
 ));
 
-s21.push(h2("9.3 P2 — Apagado del borde activo (crm-edge)"));
-s21.push(p(
+s21c.push(h2("9.3 P2 — Apagado del borde activo (crm-edge)"));
+s21c.push(p(
   `Con crm-core todavía apagada, se apagó crm-edge (VM 103) a las 17:55:11 UTC. Keepalived en crm-edge-b registró "Entering MASTER STATE" ` +
   `a las 17:55:14, es decir, unos 3 s después: VRRP detecta la pérdida del maestro con anuncios cada segundo, mucho más rápido que el ` +
   `vencimiento del TTL de la base de datos (figura ${F.ltborde}). El usuario casi no lo notó: el monitor del enlace de servicio mantuvo ` +
@@ -1041,8 +1061,8 @@ s21.push(p(
   `simultáneas en capas distintas (núcleo y borde), y el servicio se mantuvo.`
 ));
 
-s21.push(h2("9.4 P3 — Prueba extrema: monitoreo principal y un borde caídos a la vez"));
-s21.push(p(
+s21c.push(h2("9.4 P3 — Prueba extrema: monitoreo principal y un borde caídos a la vez"));
+s21c.push(p(
   `Con todo el sistema sano, se apagó el contenedor crm-mon a las 18:35:56 UTC y la VM crm-edge-b a las 18:36:07. Resultados: el CRM siguió ` +
   `funcionando con otro usuario (figura ${F.p3crm}); etcd quedó con dos de sus tres miembros (con mayoría) y Patroni no cambió (crm-core-b líder, ` +
   `crm-core réplica sincrónica); la IP virtual permaneció en crm-edge, por lo que no hubo conmutación de borde (figura ${F.p3proxmox}). ` +
@@ -1050,55 +1070,151 @@ s21.push(p(
   `“MONITOREO · Kuma principal” y mantuvo en verde “ENLACE · CRM extremo a extremo” (figura ${F.p3centinela}): la falla del monitoreo quedó ` +
   `evidenciada sin afectar el servicio. Esta prueba motivó ADR-10 (incidente 22).`
 ));
-s21.push(p(
+s21c.push(p(
   "Al encender crm-mon a las 19:22:47 UTC, el centinela lo vio de nuevo en verde a las 19:23:15: 28 s desde el comando de inicio, sin " +
   "reconfigurar nada, porque Uptime Kuma arranca solo con sus monitores. El monitor del principal estuvo caído 46 min 51 s, y esa " +
   "ventana quedó registrada como un hueco en su histórico."
 ));
 
-s21.push(h2("9.5 Recuperación tras las pruebas"));
-s21.push(p(
+s21c.push(h2("9.5 Recuperación tras las pruebas"));
+s21c.push(p(
   "Al reencender las VMs, el sistema volvió a su estado previo sin intervención manual, y varias de sus reacciones ilustran el diseño:"
 ));
-s21.push(bullet("Keepalived: crm-edge arrancó en BACKUP a las 18:14:50 y entró a MASTER a las 18:14:54, recuperando la IP virtual por su prioridad mayor (150 frente a 100), en unos 4 s; crm-edge-b volvió a BACKUP."));
-s21.push(bullet("Patroni: crm-core se reincorporó como réplica sincrónica con lag 0, pero crm-core-b siguió siendo el líder. Es el comportamiento correcto: no existe un líder “original”, y devolver el liderazgo sería una segunda interrupción sin beneficio (sección 6.7)."));
-s21.push(bullet("etcd: los tres miembros volvieron a estar sanos y el clúster recuperó la mayoría completa."));
-s21.push(bullet("Aislamiento: verificado al final, los núcleos y el contenedor de monitoreo siguen sin salida a Internet; solo los bordes la tienen (prueba del 25-09; desde el 26-09 crm-nas tiene además una salida acotada a HTTPS hacia la nube de respaldo, ADR-14)."));
+s21c.push(bullet("Keepalived: crm-edge arrancó en BACKUP a las 18:14:50 y entró a MASTER a las 18:14:54, recuperando la IP virtual por su prioridad mayor (150 frente a 100), en unos 4 s; crm-edge-b volvió a BACKUP."));
+s21c.push(bullet("Patroni: crm-core se reincorporó como réplica sincrónica con lag 0, pero crm-core-b siguió siendo el líder. Es el comportamiento correcto: no existe un líder “original”, y devolver el liderazgo sería una segunda interrupción sin beneficio (sección 6.7)."));
+s21c.push(bullet("etcd: los tres miembros volvieron a estar sanos y el clúster recuperó la mayoría completa."));
+s21c.push(bullet("Aislamiento: verificado al final, los núcleos y el contenedor de monitoreo siguen sin salida a Internet; solo los bordes la tienen (prueba del 25-09; desde el 26-09 crm-nas tiene además una salida acotada a HTTPS hacia la nube de respaldo, ADR-14)."));
 
-s21.push(h2("9.6 Límites del diseño, declarados"));
-s21.push(bullet("Se tolera la caída de UNA VM a la vez. Con dos VMs del clúster etcd caídas simultáneamente (por ejemplo crm-edge-b y crm-core-b), etcd pierde la mayoría y Patroni no promueve: el servicio de base de datos se detiene por seguridad, sin riesgo de split-brain, y se recupera solo al volver la mayoría (incidente 20)."));
-s21.push(bullet("Todo reside en un único servidor físico: ni el panel de monitoreo ni el centinela protegen ante la caída del equipo completo. Eso requiere el segundo servidor cotizado (sección 5.7)."));
-s21.push(bullet("El apagado de la prueba es abrupto pero de máquina virtual; no se simularon fallas de disco, corrupción de datos ni de red física, que quedan fuera del alcance de la simulación."));
-s21.push(bullet("La copia en la nube contiene solo los volcados de la base de datos; las máquinas completas (vzdump) siguen en el mismo PC, porque pueden reconstruirse con Terraform y Ansible desde GitHub. Todavía no se ensayó una restauración completa, ni desde la nube ni desde las copias de las máquinas (sección 6.9.8)."));
-s21.push(h2("9.7 Verificaciones complementarias"));
-s21.push(bullet(`Acceso desde un equipo externo: un segundo notebook, conectado a la red del celular, abre el CRM por https://172.20.10.2 con el candado cerrado y comparte el chat con el PC anfitrión en tiempo real (figuras ${F.otro1} y ${F.otro2}).`));
-s21.push(bullet(`HTTPS con CA privada: confirmado con openssl s_client y curl --cacert (validación real de la cadena de confianza, código 0) y en el navegador, con candado y sin advertencias (figura ${F.login}); el SAN incluye 192.168.80.10.`));
-s21.push(bullet(`Aislamiento del núcleo: el ping desde el PC hacia 10.10.10.10 termina con 100 % de pérdida (figura ${F.ping}) y las reglas de NAT dejan salida solo a los bordes (figura ${F.iptables}).`));
-s21.push(bullet(`Cifrado en reposo: una consulta directa a PostgreSQL devuelve texto cifrado (gAAAA…) en las columnas de salud (figura ${F.cifrado}).`));
-s21.push(bullet(`Control de acceso: el menú y los datos de salud dependen del rol y de los permisos (figura ${F.usuarios}, figura ${F.sinpermiso} y, en el Anexo B, figuras ${F.permrrhh} a ${F.permadm}).`));
-s21.push(bullet(`Failover de Keepalived en la red NAT: al detener Keepalived en crm-edge, la IP virtual pasó a crm-edge-b en menos de 5 s y el CRM siguió respondiendo (figuras ${F.crmfailover} y ${F.ciclo}).`));
-s21.push(bullet(`Respaldo cifrado de punta a punta: un volcado entregado a crm-nas se descargó al PC, se descifró con la clave privada local y contenía las seis bases de datos (sección 6.9.5).`));
-s21.push(bullet(`Receptor de solo escritura: desde un núcleo, las seis órdenes de prueba (listar, leer un archivo del sistema, sobrescribir un respaldo, nombres con rutas relativas o de extensión ajena y una orden vacía) fueron rechazadas y la NAS conservó su único archivo (sección 6.9.5).`));
+s21c.push(h2("9.6 Límites del diseño, declarados"));
+s21c.push(p("Estado al cierre de la primera tanda de pruebas (P1 a P4, 23 al 26 de septiembre). La segunda tanda (secciones 9.9 a 9.13) superó los dos primeros límites; se dejan ambas versiones para que quede constancia de cómo cambió el diseño con evidencia."));
+s21c.push(bullet("Se tolera la caída de UNA VM a la vez. Con dos VMs del clúster etcd caídas simultáneamente (por ejemplo crm-edge-b y crm-core-b), etcd pierde la mayoría y Patroni no promueve: el servicio de base de datos se detiene por seguridad, sin riesgo de split-brain, y se recupera solo al volver la mayoría (incidente 20). — Superado el 27-09: con el árbitro ampliado a 5 miembros (ADR-15) se toleran DOS caídas simultáneas, verificado en P6 (sección 9.13). El límite de fondo no desaparece, solo sube: con tres caídas de cinco miembros se repetiría la misma pérdida de quórum, ahora por diseño (no se ensayó, por ser un escenario poco plausible frente a los ya observados; sección 9.13)."));
+s21c.push(bullet("Todo reside en un único servidor físico: ni el panel de monitoreo ni el centinela protegen ante la caída del equipo completo. Eso requiere el segundo servidor cotizado (sección 5.7). Vigente: los cinco miembros de etcd también comparten el mismo servidor."));
+s21c.push(bullet("El apagado de la prueba es abrupto pero de máquina virtual; no se simularon fallas de disco, corrupción de datos ni de red física, que quedan fuera del alcance de la simulación. — Superado en parte el 27-09: se simularon fallas de disco reales (D1, D2 y D2b) y una partición de red del líder (P5), sección 9.11 y 9.10; la corrupción de datos y la falla de red física del host siguen fuera del alcance."));
+s21c.push(bullet("La copia en la nube contiene solo los volcados de la base de datos; las máquinas completas (vzdump) siguen en el mismo PC, porque pueden reconstruirse con Terraform y Ansible desde GitHub. — Superado el 26-09: se ensayó una restauración completa desde la NAS, desde la nube y de una máquina virtual completa, con resultado exitoso en los tres casos (sección 9.9)."));
+s21c.push(h2("9.7 Verificaciones complementarias"));
+s21c.push(bullet(`Acceso desde un equipo externo: un segundo notebook, conectado a la red del celular, abre el CRM por https://172.20.10.2 con el candado cerrado y comparte el chat con el PC anfitrión en tiempo real (figuras ${F.otro1} y ${F.otro2}).`));
+s21c.push(bullet(`HTTPS con CA privada: confirmado con openssl s_client y curl --cacert (validación real de la cadena de confianza, código 0) y en el navegador, con candado y sin advertencias (figura ${F.login}); el SAN incluye 192.168.80.10.`));
+s21c.push(bullet(`Aislamiento del núcleo: el ping desde el PC hacia 10.10.10.10 termina con 100 % de pérdida (figura ${F.ping}) y las reglas de NAT dejan salida solo a los bordes (figura ${F.iptables}).`));
+s21c.push(bullet(`Cifrado en reposo: una consulta directa a PostgreSQL devuelve texto cifrado (gAAAA…) en las columnas de salud (figura ${F.cifrado}).`));
+s21c.push(bullet(`Control de acceso: el menú y los datos de salud dependen del rol y de los permisos (figura ${F.usuarios}, figura ${F.sinpermiso} y, en el Anexo B, figuras ${F.permrrhh} a ${F.permadm}).`));
+s21c.push(bullet(`Failover de Keepalived en la red NAT: al detener Keepalived en crm-edge, la IP virtual pasó a crm-edge-b en menos de 5 s y el CRM siguió respondiendo (figuras ${F.crmfailover} y ${F.ciclo}).`));
+s21c.push(bullet(`Respaldo cifrado de punta a punta: un volcado entregado a crm-nas se descargó al PC, se descifró con la clave privada local y contenía las seis bases de datos (sección 6.9.5).`));
+s21c.push(bullet(`Receptor de solo escritura: desde un núcleo, las seis órdenes de prueba (listar, leer un archivo del sistema, sobrescribir un respaldo, nombres con rutas relativas o de extensión ajena y una orden vacía) fueron rechazadas y la NAS conservó su único archivo (sección 6.9.5).`));
 
-s21.push(bullet(`Copia fuera del PC: tres subidas nuevas a Google Cloud Storage con el MD5 de la nube igual al local, un intento de sobrescribir un archivo existente rechazado (403) y un ciclo completo —un núcleo entrega a crm-nas, que sube y verifica solo— (sección 6.9.8, figura ${F.offsite1}).`));
+s21c.push(bullet(`Copia fuera del PC: tres subidas nuevas a Google Cloud Storage con el MD5 de la nube igual al local, un intento de sobrescribir un archivo existente rechazado (403) y un ciclo completo —un núcleo entrega a crm-nas, que sube y verifica solo— (sección 6.9.8, figura ${F.offsite1}).`));
 
-s21.push(bullet("Restauración de la clave de descifrado: la copia de la subclave, importada en un llavero vacío y aislado, descifró un mensaje de prueba tras pedir la contraseña (sección 6.9.9)."));
+s21c.push(bullet("Restauración de la clave de descifrado: la copia de la subclave, importada en un llavero vacío y aislado, descifró un mensaje de prueba tras pedir la contraseña (sección 6.9.9)."));
+s21c.push(bullet("Restauración completa de un respaldo: un volcado real, tomado de la NAS y también uno descargado de la nube, se descifró y se restauró en una instancia PostgreSQL temporal y aislada, sin tocar la base real; las 9 tablas de las 6 bases coincidieron con la base real, sin diferencias (sección 9.9)."));
 
-s21.push(h2("9.8 P4 — Conmutación planificada del núcleo y respaldo de las máquinas"));
-s21.push(p(
+s21c.push(h2("9.8 P4 — Conmutación planificada del núcleo y respaldo de las máquinas"));
+s21c.push(p(
   "A diferencia de P1 a P3, esta prueba no apaga nada: se pide a Patroni un cambio de líder ordenado (patronictl switchover) para poder " +
   "respaldar el núcleo sobre su réplica sin exponer al líder a la carga del respaldo. Se midió sondeando la IP virtual cada 2 s. " +
   "Las horas son UTC, tomadas del reloj de crm-edge."
 ));
-s21.push(makeTable([2600, 2400, 4700], ["Momento", "Hora / valor", "Observación"], [
+s21c.push(makeTable([2600, 2400, 4700], ["Momento", "Hora / valor", "Observación"], [
   ["Orden de conmutación", "22:48:10,78", "patronictl switchover --master crm-core --candidate crm-core-b --force"],
   ["Orden terminada", "22:48:15,53", "≈ 4,7 s desde la orden; crm-core-b es el líder y crm-core reinicia como réplica"],
   ["Sondeos del CRM durante el cambio", "6 de 6 con HTTP 200", "Sin corte visible: los ocho contenedores atienden en ambos núcleos y HAProxy dirige a la base al nuevo líder"],
   ["Reincorporación de crm-core", "≈ 1 min después", "Réplica sincrónica con lag 0; línea de tiempo de Patroni de 10 a 11"],
   ["Respaldo de crm-core (VM 101)", "5 min 15 s", "Con el núcleo ya como réplica; CRM en HTTP 200 y Patroni sin alteración durante todo el respaldo"],
 ]));
-s21.push(new Paragraph({ children: [] }));
-s21.push(p("El diseño permite entonces respaldar los núcleos sin riesgo para el servicio: un núcleo se respalda siempre desde su papel de réplica, y el líder no participa. Así, el mantenimiento de un núcleo no genera una interrupción visible para el usuario."));
+s21c.push(new Paragraph({ children: [] }));
+s21c.push(p("El diseño permite entonces respaldar los núcleos sin riesgo para el servicio: un núcleo se respalda siempre desde su papel de réplica, y el líder no participa. Así, el mantenimiento de un núcleo no genera una interrupción visible para el usuario."));
+
+// ---- Segunda tanda de pruebas: continuidad, restauración y tolerancia a fallas (26-27 sept.) ----
+s21c.push(h2("9.9 Ensayos de restauración (NAS, nube y una máquina virtual completa)"));
+s21c.push(p(
+  "Un respaldo que nunca se restaura es una promesa sin verificar. El 26 de septiembre de 2026 se ensayaron tres restauraciones reales, cada una en un entorno aislado que no toca la base de datos ni las máquinas reales, con dos scripts propios " +
+  "(scripts/ensayo-restauracion.sh en el PC y scripts/ensayo-restauracion-nucleo.sh en el núcleo) que automatizan y miden cada paso: descarga o localización del respaldo, descifrado con la clave GPG, restauración en una instancia PostgreSQL temporal (puerto 5544, en RAM) y comparación tabla por tabla contra la base real."
+));
+s21c.push(h3("Ensayo 1: restauración desde la NAS"));
+s21c.push(p(
+  `A las 22:54:45 se pidió un respaldo fresco al núcleo y se descargó desde crm-nas (9177 bytes cifrados). Descifrado en 658 ms (42146 bytes en claro), restaurado en la instancia temporal y comparado: 9 tablas de las 6 bases, 117 filas, 0 diferencias con la base real. Tiempo total del ensayo: 17 s (figura ${F.restnas}).`
+));
+s21c.push(h3("Ensayo 2: restauración desde la nube"));
+s21c.push(p(
+  `A las 23:06:35 se restauró, en vez de un respaldo fresco, un archivo descargado minutos antes de Google Cloud Storage con la cuenta principal (db_db-crm-core-b-20260927_001942.sql.gpg, 9179 bytes). Mismo resultado exacto: 9 tablas, 117 filas, 0 diferencias. Tiempo total: 19 s (figura ${F.restnube}). Con esto la copia offsite queda verificada de punta a punta: no solo se sube y se confirma su integridad (sección 6.9.8), sino que el archivo que llega a la nube efectivamente restaura la base.`
+));
+s21c.push(h3("Ensayo 3: restauración de una máquina virtual completa"));
+s21c.push(p(
+  `A diferencia de los dos anteriores (que restauran solo el volcado de la base de datos), este ensayo restauró un respaldo de máquina completa (vzdump) con qmrestore, en una VM temporal y separada (id 190) para no arriesgar la infraestructura real, con su red desconectada. La restauración corrió de 23:11:18 a 23:14:47 (3 min 29 s); la VM arrancó en 6 s (23:16:03 a 23:16:09) y quedó operativa (figuras ${F.restvm1} y ${F.restvm2}); verificada, se detuvo y se destruyó (23:19:23 a 23:19:31). El historial completo de tareas de Proxmox registra las cuatro etapas (figura ${F.restvm3}). Con esto queda demostrado que las copias de máquinas completas no solo existen, sino que se pueden recuperar y arrancar.`
+));
+
+s21c.push(h2("9.10 P5 — Partición de red del líder (aislamiento sin apagar)"));
+s21c.push(p(
+  "Las pruebas P1 a P4 apagan una VM por completo. Pero una falla de red no apaga nada: el nodo aislado sigue encendido y podría, en teoría, seguir aceptando escrituras si no se entera a tiempo de que perdió contacto con el resto del clúster — el escenario clásico de doble escritura (split-brain) en sistemas distribuidos. El 27 de septiembre se aisló al líder por reglas de iptables (sin apagar nada), dejando solo el acceso SSH de administración."
+));
+s21c.push(p(
+  "Una primera pasada (02:31:42,156 a 02:33:25,586 UTC) aisló a crm-core del resto del clúster (etcd y crm-core-b) y midió el rol y estado que Patroni informa localmente en cada nodo: mostró la conmutación, pero no escrituras reales, una limitación declarada de esa primera medición."
+));
+s21c.push(p(
+  "Se repitió con una medición más exigente: aislamiento del líder crm-core-b de 02:41:08,593 a 02:42:51,938 UTC, con cada núcleo intentando, cada segundo, un INSERT real (con límite de 2 s) en una base aparte (prueba_p5). La última escritura que el nodo aislado logró fue a las 02:41:09,587, apenas 1,0 s después de quedar aislado: Patroni exige confirmar el quórum para aceptar escrituras y, sin él, se congela casi de inmediato. La primera escritura del nuevo líder llegó a las 02:41:36,219, es decir, 27,6 s después del aislamiento: un hueco real de 26,6 s sin escrituras en todo el clúster, pero " +
+  "en ningún momento dos nodos aceptaron escrituras a la vez. La base prueba_p5 se borró al terminar."
+));
+s21c.push(p(
+  "Con esto el diseño queda validado no solo contra la caída de un nodo (P1 a P4), sino contra el escenario más peligroso en teoría de sistemas distribuidos: el nodo fallado sigue “vivo”, solo que aislado."
+));
+
+s21c.push(h2("9.11 Pruebas de disco: D1, D2 y D2b (una prueba escaló a un incidente real)"));
+s21c.push(p(
+  "Ninguna prueba anterior había tocado el disco. Se diseñaron tres pasos de severidad creciente, todos el 27 de septiembre, midiendo con el mismo patrón que P5: un INSERT real por segundo en una base aparte, además del estado de Patroni."
+));
+s21c.push(makeTable([900, 2600, 3800, 3300], ["Prueba", "Qué se hizo", "Qué debía ocurrir", "Resultado medido"], [
+  ["D1", "Disco de la RÉPLICA (crm-core) lleno al 100 %, con 50 MB libres (15:00:09 a 15:01:45)", "El líder sigue aceptando escrituras; la réplica no se ve afectada", "72 de 72 escrituras aceptadas por el líder, sin fallos; réplica con lag 0 al retirar el relleno; CRM en 200 todo el tiempo"],
+  ["D2", "Disco del LÍDER (crm-core-b) lleno al 100 %, con 50 MB libres (15:04:55 a 15:06:34)", "Al ser el líder, el margen es más crítico", "76 de 76 escrituras aceptadas, sin fallos: 50 MB alcanzaron para el WAL de una base de prueba pequeña; sin conmutación ni degradación"],
+  ["D2b — incidente real", "Disco del LÍDER agotado por completo (0 MB libres)", "Forzar el fallo real que D2 no alcanzó a producir", "Se agotó también el POOL COMPARTIDO del host: ambos núcleos cayeron (io-error); recuperado sin pérdida de datos — ver detalle abajo"],
+]));
+s21c.push(p(
+  "Al llenar crm-core-b al 100 % real (no ya con 50 MB de margen), se agotó también el pool de almacenamiento thin-provisioned local-lvm del host Proxmox, compartido por las cuatro VMs: quedó en 0,0 GB libres para todas. Las consecuencias fueron reales, no solo simuladas:"
+));
+s21c.push(bullet("crm-core-b entró en io-error de QEMU y quedó colgada, sin completar el arranque tras un ciclo de apagado/encendido."));
+s21c.push(bullet("crm-core —que NUNCA se llenó a propósito— también entró en io-error, por quedarse sin espacio en el pool compartido al necesitar escribir su propio WAL como líder. Ambos núcleos quedaron inalcanzables por red."));
+s21c.push(bullet("Patroni, por diseño, NO promovió automáticamente a crm-core-b al quedar sola: “following a different leader because i am not the healthiest node”. El clúster quedó sin líder (sin escrituras) hasta la intervención manual — el mismo comportamiento seguro que en el incidente 20, ahora causado por el disco y no por la red."));
+s21c.push(bullet("Uptime Kuma sí alarmó con evidencia real: los monitores de aplicación y base de datos de CORE-b en rojo, con timeouts y “Connection failed”."));
+s21c.push(p("Recuperación, sin pérdida de datos y verificada paso a paso:"));
+s21c.push(bullet("1. Se extendió el pool con el espacio libre del volume group (lvextend, de 29,75 a 38,75 GB): el único cambio destructivo-cero de toda la recuperación."));
+s21c.push(bullet("2. Se detuvo y encendió crm-core-b: arrancó con normalidad; su temporizador de seguridad ya había borrado el archivo de relleno."));
+s21c.push(bullet("3. Failover manual a crm-core-b, seguro porque era Sync Standby con lag 0 en el último timeline conocido antes de la caída: sin riesgo de pérdida."));
+s21c.push(bullet("4. Se detuvo y encendió crm-core, que nunca tuvo archivo de relleno propio y solo sufrió el efecto colateral del pool compartido."));
+s21c.push(p(
+  "Verificado después: 5 usuarios y 5 empleados intactos, CRM en 200, clúster con lag 0 en ambos sentidos, etcd sano. Un efecto colateral adicional, detectado y resuelto por separado: el mismo agotamiento del pool remontó en solo lectura el sistema de archivos de crm-mon, reparado con e2fsck (limpio) y un reinicio, con los trece monitores de Kuma verificados intactos después."
+));
+s21c.push(p(
+  "Hallazgo principal: un disco “thin-provisioned” compartido convierte la falla de UN disco virtual en una falla del POOL FÍSICO completo, afectando a TODAS las VMs que lo comparten, no solo a la aislada — una brecha real de diseño (sin reserva por VM, sin la protección thin_pool_autoextend_threshold activada), no cubierta por las pruebas P1 a P5. Documentado como incidente 33 (sección 8) y riesgo R22 (sección 7)."
+));
+s21c.push(p(
+  "Siguiendo el criterio de no repetir un incidente ya suficientemente informativo, no se ejecutó una cuarta prueba de disco desconectado: D2b ya deja establecido el hallazgo más severo de esta familia (la brecha del pool compartido), y D1, D2 y D2b se documentan como pruebas de estrés completadas, no como pendientes."
+));
+
+s21c.push(h2("9.12 Ampliación del árbitro etcd de tres a cinco miembros"));
+s21c.push(p(
+  "D2b mostró en la práctica el límite declarado desde ADR-09: con etcd de tres miembros basta la caída (o el efecto colateral) de dos nodos para perder la mayoría y detener el servicio por seguridad. El 27 de septiembre se amplió el árbitro a cinco miembros, sumando como cuarto y quinto voto a crm-core y crm-mon —ambos ya existentes, sin hardware nuevo—, para tolerar dos caídas en vez de una."
+));
+s21c.push(p(
+  "La migración se hizo en caliente, sin interrumpir el servicio: los dos miembros nuevos se incorporaron con etcdctl member add (nombre y URL del par, sin más opciones en esta versión) y con el estado de arranque \"existing\" —nunca \"new\", que reiniciaría el clúster desde cero—; luego se actualizó la lista de endpoints en la configuración de Patroni de ambos núcleos y se recargó el servicio (systemctl reload patroni, sin reinicio)."
+));
+s21c.push(p(
+  "Resultado: la mayoría pasó de dos sobre tres miembros a tres sobre cinco, y la tolerancia, de una caída simultánea a dos. Se dejó declarado que el rol de Ansible que instala etcd (pensado para un clúster nuevo, con estado \"new\") no se actualizó todavía para reflejar los cinco miembros: reejecutarlo hoy sobre el clúster real sería arriesgado, y su actualización queda pendiente para hacerse sin poner en riesgo la infraestructura en marcha."
+));
+
+s21c.push(h2("9.13 P6 — Doble caída simultánea, ya con etcd de cinco miembros"));
+s21c.push(p(
+  `Con el árbitro ampliado, se repitió el escenario del incidente 20: se apagaron a la vez (shutdown ordenado de la VM completa) crm-edge-b y crm-core-b —líder de Patroni en ese momento—, a las 16:32:03,178 UTC (VM 102 detenida a las 16:32:13; VM 100, a las 16:32:17). Son 2 de los 5 miembros de etcd: exactamente el escenario que, con el diseño anterior de 3 miembros, habría dejado 1 de 3 sin mayoría (figuras ${F.p6proxapag}, ${F.p6kumadet} y ${F.p6kumalista}).`
+));
+s21c.push(makeTable([2600, 2400, 4700], ["Momento", "Hora / valor", "Observación"], [
+  ["Apagado simultáneo", "16:32:03,178", "crm-edge-b (borde) y crm-core-b (líder), 2 de los 5 miembros de etcd"],
+  ["etcd", "Degraded, con quórum", "2 miembros inalcanzables; los 3 restantes (crm-edge, crm-core, crm-mon) siguieron sanos"],
+  ["Nuevo líder", "27,2 s", "Patroni promovió a crm-core, confirmado con pg_is_in_recovery()=f y una escritura real aceptada"],
+  ["CRM durante la prueba", "175 sondeos, 0 fallos", "Mediana de 29 ms de respuesta"],
+  ["Recuperación", `Automática, sin intervención`, "Al reencender ambas VMs, etcd volvió a 5/5 sanos y crm-core-b se reincorporó como Sync Standby con lag 0"],
+]));
+s21c.push(p(
+  `Tras reencender ambas VMs (figura ${F.p6proxenc}), el clúster volvió íntegro sin ninguna intervención manual: exactamente el comportamiento que el diseño anterior ya mostraba para una caída, ahora verificado para dos.`
+));
+s21c.push(p(
+  "Limitación honesta declarada: ningún monitor de Kuma mide el árbitro etcd directamente; la evidencia de que siguió con quórum es indirecta —etcdctl cluster-health y que Patroni pudo conmutar con normalidad, porque si hubiera perdido el quórum se habría detenido por seguridad, como en D2b—. El registro de escritura de crm-core-b se perdió al apagar esa VM (su proceso murió con la máquina); el de crm-core, que fue el que se promovió, quedó completo."
+));
 
 const s21a = [
   ...figura(DIA, "09-conmutacion-linea-de-tiempo.png", "Línea de tiempo de la conmutación del núcleo (P1)",
@@ -1147,6 +1263,29 @@ const s21a = [
   pageBreak(),
   ...figura(CAP, "ha-02-crm-durante-failover.png", "El CRM disponible durante el failover del borde",
     "Qué se observa: con crm-edge sin Keepalived, el CRM sigue respondiendo con su pantalla de inicio de sesión en https://192.168.80.10.", 640, 480),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "restauracion-01-ensayo-desde-la-nas.png", titulo: "Ensayo de restauración desde la NAS", texto: "Qué se observa: el script descifra el respaldo, lo restaura en una instancia temporal y compara 9 tablas con la base real: 117 filas, 0 diferencias, 17 s en total." },
+    { file: "restauracion-02-ensayo-desde-la-nube.png", titulo: "Ensayo de restauración desde la nube", texto: "Qué se observa: el mismo procedimiento, esta vez con un archivo descargado de Google Cloud Storage; mismo resultado exacto (117 filas, 0 diferencias)." },
+  ], 620, 280),
+  pageBreak(),
+  ...figura(CAP, "restauracion-03-vm-en-restauracion.png", "Restauración de una VM completa en curso (qmrestore)",
+    "Qué se observa: Proxmox restaurando el respaldo de una máquina completa en la VM temporal 190, con las cuatro VMs y el contenedor originales intactos.", 1000, 480),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "restauracion-04-vm-restaurada-arrancada.png", titulo: "La VM restaurada arranca con normalidad", texto: "Qué se observa: la VM 190 (ensayo-restauracion-190) en ejecución tras la restauración, con su red desconectada a propósito." },
+    { file: "restauracion-05-historial-de-tareas.png", titulo: "Historial completo del ensayo en Proxmox", texto: "Qué se observa: las cuatro etapas con su hora exacta: Restore, Start, Stop y Destroy de la VM temporal." },
+  ], 620, 250),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "p6-proxmox-apagado.png", titulo: "P6: crm-edge-b y crm-core-b apagadas a la vez", texto: "Qué se observa: el historial de tareas de Proxmox con el Shutdown simultáneo de las VMs 100 y 102 a las 13:32 (hora local)." },
+    { file: "p6-proxmox-encendido.png", titulo: "P6: recuperación tras reencender ambas VMs", texto: "Qué se observa: el historial de tareas con el Start de las VMs 100 y 102, ambas de vuelta en ejecución." },
+  ], 620, 280),
+  pageBreak(),
+  ...figurasApiladas(CAP, [
+    { file: "p6-kuma-detalle-caida.png", titulo: "P6: Kuma detecta la caída del borde y la base de CORE-b", texto: "Qué se observa: las alarmas reales “Connection failed”, “connect ECONNREFUSED” y “timeout of 4000ms exceeded” para BORDE · respaldo, APP · CORE respaldo y BD · Gestor de la base (Patroni) · CORE-b." },
+    { file: "p6-kuma-lista-caida.png", titulo: "P6: panel principal con varios monitores en rojo a la vez", texto: "Qué se observa: la lista de monitores mostrando en rojo, simultáneamente, todos los servicios que dependían de las dos VMs apagadas." },
+  ], 620, 280),
 ];
 
 
@@ -1179,16 +1318,19 @@ const s23 = [
   ),
   p(
     "El valor del trabajo no reside solo en el resultado —la infraestructura funcionando en " +
-    "simulación—, sino en el proceso documentado de treinta y dos incidentes reales resueltos con su " +
+    "simulación—, sino en el proceso documentado de treinta y tres incidentes reales resueltos con su " +
     "causa raíz identificada (varios de ellos de red: choque de IP, direcciones MAC descartadas por " +
-    "el hotspot, reglas de NAT persistentes), y en la experiencia adquirida que habilita, con " +
+    "el hotspot, reglas de NAT persistentes; el más reciente, de almacenamiento compartido), y en la experiencia adquirida que habilita, con " +
     "conocimiento real y no teórico, la migración responsable a producción sobre el servidor físico de CHIC."
+  ),
+  p(
+    "Una segunda tanda de pruebas (sección 9.9 a 9.13) cerró las tres brechas que la primera había dejado declaradas: se ensayó con éxito la restauración completa de un respaldo, tanto desde la NAS como desde la copia en la nube y de una máquina virtual íntegra; se simularon fallas de disco reales y una partición de red del líder, sin que el sistema perdiera datos ni incurriera en doble escritura; y el árbitro etcd se amplió de tres a cinco miembros, verificado tolerando dos caídas simultáneas donde antes solo toleraba una."
   ),
   p(
     "El sistema CRM, desarrollado a partir de una necesidad real y perfeccionado durante el proyecto, es " +
     "la carga de trabajo que da sentido a esa infraestructura y una habilidad de software adicional " +
     "adquirida en el camino; su detalle funcional se conserva en el Anexo B. Las fases pendientes —" +
-    "ensayo de restauración completa desde la copia en la nube, cotización y adquisición del segundo servidor, y la migración " +
+    "cotización y adquisición del segundo servidor y la migración " +
     "a producción bare metal— están planificadas dentro del cronograma oficial de 360 horas de la " +
     "práctica (sección 5.3) y se reportarán con evidencia real en los sucesivos informes de avance. Los " +
     "documentos legales de respaldo permanecen como borradores a la espera de su revisión jurídica."
@@ -1323,8 +1465,9 @@ const doc = new Document({
     portraitSection(s69),
     landscapeSection(s69a),
     portraitSection(s20),
-    landscapeSection(s20a),
     portraitSection(s21),
+    landscapeSection(s21x),
+    portraitSection(s21c),
     landscapeSection(s21a),
     portraitSection(s22),
     landscapeSection(s22a),

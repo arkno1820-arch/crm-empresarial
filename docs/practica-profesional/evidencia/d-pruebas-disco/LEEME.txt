@@ -1,0 +1,31 @@
+D1 - Disco lleno en la REPLICA (27-09-2026, UTC). Se lleno el disco de crm-core (replica en ese momento) dejando 50 MB
+libres (100% de uso) entre 15:00:09.012 y 15:01:45.526. Cada segundo, ambos nucleos intentaron una escritura real
+(INSERT con RETURNING id) en una base aparte 'prueba_d1', ademas del rol que informa Patroni.
+Resultado: el lider (crm-core-b) acepto TODAS las escrituras durante la ventana (72 de 72), sin fallos. La replica
+(crm-core) siguio siendo replica en todo momento (rechazando escrituras, comportamiento normal) y termino con lag 0
+tras retirar el relleno. El CRM respondio 200 durante toda la prueba. Ninguna alarma se disparo porque no hubo
+degradacion real del servicio.
+
+D2 - Disco lleno (50 MB libres) en el LIDER (27-09-2026, UTC). Se lleno crm-core-b (lider) entre 15:04:55.326 y
+15:06:34.679. Resultado inesperado mas alla del margen de 50 MB: el lider acepto las 76 escrituras de la ventana, sin
+un solo fallo. Con 50 MB libres, PostgreSQL siguio pudiendo escribir su WAL (la base de prueba es muy pequena). No
+hubo conmutacion ni degradacion del servicio. Se repite como D2b dejando el disco en 0 MB libres, para forzar el fallo real.
+
+D2b - Disco AGOTADO por completo (0 MB libres) en el LIDER (27-09-2026, UTC). Al llenar crm-core-b (lider) al 100%
+real, se agoto tambien el POOL COMPARTIDO local-lvm del host Proxmox (los discos de VM son thin-provisioned): quedo
+en 0,0 GB libres para las 4 VMs. Consecuencias reales, no solo simuladas:
+  - crm-core-b entro en io-error (QEMU) y quedo colgada sin completar el arranque tras un ciclo de apagado/encendido.
+  - crm-core (que NUNCA se lleno a proposito) tambien entro en io-error, por quedarse sin espacio en el pool
+    COMPARTIDO al necesitar escribir su propio WAL como lider. Ambos nucleos quedaron inalcanzables por red.
+  - Patroni, por diseno, NO promovio automaticamente a crm-core-b al quedar sola: "following a different leader
+    because i am not the healthiest node". El cluster quedo SIN LIDER (sin escrituras) hasta la intervencion manual.
+  - Kuma SI alarmo con evidencia real (APP/BD de CORE-b en rojo, timeouts y "Connection failed").
+Recuperacion (sin perdida de datos, verificada): 1) extender el thin pool con el espacio libre del volume group
+(lvextend, de 29,75 a 38,75 GB, unico cambio destructivo-cero realizado); 2) detener y encender crm-core-b (arranco,
+temporizador de seguridad borro su archivo de relleno); 3) failover manual a crm-core-b (era Sync Standby con lag 0
+en el ultimo timeline conocido, sin riesgo de perdida); 4) detener y encender crm-core (nunca tuvo archivo de
+relleno, solo sufrio el efecto colateral). Verificado: 5 usuarios y 5 empleados intactos, CRM en 200, cluster con
+lag 0 en ambos sentidos, etcd sano.
+Hallazgo principal: un disco "thin-provisioned" compartido convierte la falla de UN disco virtual en una falla del
+POOL FISICO completo, afectando a TODAS las VMs que lo comparten, no solo a la aislada. Es una brecha real de diseno
+(sin reserva por VM, sin proteccion "thin_pool_autoextend_threshold" activada), no cubierta por las pruebas P1-P5.

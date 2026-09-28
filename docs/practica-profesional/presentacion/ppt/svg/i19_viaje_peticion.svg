@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="40" y="130" width="260" height="300" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="170" cy="130" r="24" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="170" y="139" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">1</text>
+<g transform="translate(128,165) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="28" r="16"/><path d="M18 90 C18 60 82 60 82 90"/></g>
+<text x="170" y="300" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="middle">Navegador</text>
+<text x="170" y="340" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">https://192.168.80.10</text>
+<line x1="302" y1="280" x2="328" y2="280" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="330" y="130" width="260" height="300" rx="20" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<circle cx="460" cy="130" r="24" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="460" y="139" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">2</text>
+<g transform="translate(418,165) scale(0.84)" fill="none" stroke="#f2b35a" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><ellipse cx="50" cy="50" rx="16" ry="38"/><path d="M12 50 H88 M18 30 H82 M18 70 H82"/></g>
+<text x="460" y="300" font-size="25" fill="#f2b35a" font-weight="700" text-anchor="middle">Proxmox</text>
+<text x="460" y="340" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">reenvía 443 a la IP</text>
+<text x="460" y="368" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">virtual</text>
+<line x1="592" y1="280" x2="618" y2="280" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="620" y="130" width="260" height="300" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="750" cy="130" r="24" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="750" y="139" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">3</text>
+<g transform="translate(708,165) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><circle cx="42" cy="26" r="13"/><path d="M20 62 C20 46 64 46 64 62"/><rect x="10" y="62" width="80" height="26" rx="3"/><rect x="62" y="34" width="26" height="18" rx="2"/><path d="M75 52 V62"/></g>
+<text x="750" y="300" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="middle">Borde (Nginx)</text>
+<text x="750" y="340" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">termina HTTPS y</text>
+<text x="750" y="368" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">reparte</text>
+<line x1="882" y1="280" x2="908" y2="280" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="910" y="130" width="260" height="300" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="1040" cy="130" r="24" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1040" y="139" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">4</text>
+<g transform="translate(998,165) scale(0.84)" fill="none" stroke="#8ee6b8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><rect x="12" y="12" width="76" height="76" rx="6"/><circle cx="50" cy="50" r="20"/><circle cx="50" cy="50" r="6"/><path d="M50 30 V38 M50 62 V70 M30 50 H38 M62 50 H70"/><path d="M22 88 V94 M78 88 V94"/></g>
+<text x="1040" y="300" font-size="25" fill="#8ee6b8" font-weight="700" text-anchor="middle">Núcleo</text>
+<text x="1040" y="340" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">gateway y</text>
+<text x="1040" y="368" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">microservicio</text>
+<line x1="1172" y1="280" x2="1198" y2="280" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="1200" y="130" width="260" height="300" rx="20" fill="#20343f" stroke="#5fd3c8" stroke-width="3"/>
+<circle cx="1330" cy="130" r="24" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1330" y="139" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">5</text>
+<g transform="translate(1288,165) scale(0.84)" fill="none" stroke="#5fd3c8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="38" width="22" height="24" rx="3"/><rect x="68" y="38" width="22" height="24" rx="3"/><path d="M32 50 H68"/></g>
+<text x="1330" y="300" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="middle">HAProxy :5000</text>
+<text x="1330" y="340" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">busca al líder de la</text>
+<text x="1330" y="368" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">base</text>
+<line x1="1462" y1="280" x2="1488" y2="280" stroke="#8ee6b8" stroke-width="3" marker-end="url(#aM)"/>
+<rect x="1490" y="130" width="260" height="300" rx="20" fill="#20343f" stroke="#8ee6b8" stroke-width="3"/>
+<circle cx="1620" cy="130" r="24" fill="#20343f" stroke="#f2b35a" stroke-width="3"/>
+<text x="1620" y="139" font-size="26" fill="#f2b35a" font-weight="700" text-anchor="middle">6</text>
+<g transform="translate(1578,165) scale(0.84)" fill="none" stroke="#8ee6b8" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="50" cy="20" rx="34" ry="12"/><path d="M16 20 V76 C16 90 84 90 84 76 V20"/><path d="M16 48 C16 62 84 62 84 48"/></g>
+<text x="1620" y="300" font-size="25" fill="#8ee6b8" font-weight="700" text-anchor="middle">Base (líder)</text>
+<text x="1620" y="340" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">lee o escribe el</text>
+<text x="1620" y="368" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="middle">dato</text>
+<polyline points="1620,445 1620,500 170,500 170,445" fill="none" stroke="#f2b35a" stroke-width="4" stroke-dasharray="12 9" marker-end="url(#aA)"/>
+<text x="895" y="490" font-size="22" fill="#f2b35a" font-weight="500" text-anchor="middle">la respuesta hace el camino de vuelta</text>
+<rect x="60" y="560" width="1740" height="200" rx="18" fill="#20343f" stroke="#5fd3c8" stroke-width="2.5"/>
+<text x="100" y="615" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• En ningún punto hay una sola máquina imprescindible: cada paso tiene un reemplazo.</text>
+<text x="100" y="657" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• Si un borde cae, la IP virtual pasa al otro. Si un núcleo cae, Nginx usa el otro.</text>
+<text x="100" y="699" font-size="24" fill="#e8f1f2" font-weight="400" text-anchor="start">• Si el líder de la base cae, HAProxy encuentra al nuevo sin reconfigurar nada.</text>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1860 800" width="1860" height="800" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#12232d" stroke-width="1"/></pattern>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="aC" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#5fd3c8"/></marker>
+  <marker id="aA" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#f2b35a"/></marker>
+  <marker id="aM" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#8ee6b8"/></marker>
+  <marker id="aR" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#ef6b6b"/></marker>
+</defs>
+<rect width="1860" height="800" fill="#182a34"/><rect width="1860" height="800" fill="url(#grid)"/>
+<rect x="30" y="30" width="890" height="740" rx="22" fill="#20343f" stroke="#8ee6b8" stroke-width="3" filter="url(#glow)"/>
+<text x="475" y="90" font-size="30" fill="#8ee6b8" font-weight="700" text-anchor="middle">Al encender de nuevo: vuelve solo</text>
+<g transform="translate(60,138) scale(0.55)" fill="none" stroke="#8ee6b8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="135" y="162" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">Keepalived</text>
+<text x="135" y="196" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">crm-edge recupera la IP virtual por prioridad</text>
+<text x="135" y="224" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">(≈ 4 s)</text>
+<g transform="translate(60,256) scale(0.55)" fill="none" stroke="#8ee6b8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="135" y="280" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">Patroni</text>
+<text x="135" y="314" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">el núcleo reincorporado entra como réplica</text>
+<text x="135" y="342" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">sincrónica, lag 0</text>
+<g transform="translate(60,374) scale(0.55)" fill="none" stroke="#8ee6b8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="135" y="398" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">etcd</text>
+<text x="135" y="432" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">los cinco miembros vuelven a estar sanos</text>
+<g transform="translate(60,492) scale(0.55)" fill="none" stroke="#8ee6b8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="135" y="516" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">Kuma</text>
+<text x="135" y="550" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">el panel principal vuelve 28 s tras encender</text>
+<text x="135" y="578" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">su contenedor</text>
+<g transform="translate(60,610) scale(0.55)" fill="none" stroke="#8ee6b8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="135" y="634" font-size="26" fill="#8ee6b8" font-weight="700" text-anchor="start">Aislamiento</text>
+<text x="135" y="668" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">verificado al final: solo los bordes tienen</text>
+<text x="135" y="696" font-size="21" fill="#e8f1f2" font-weight="400" text-anchor="start">salida a Internet</text>
+<text x="475" y="735" font-size="24" fill="#f2b35a" font-weight="600" text-anchor="middle" font-style="italic">Sin intervención manual</text>
+<rect x="950" y="30" width="880" height="740" rx="22" fill="#20343f" stroke="#5fd3c8" stroke-width="3" filter="url(#glow)"/>
+<text x="1390" y="90" font-size="28" fill="#5fd3c8" font-weight="700" text-anchor="middle">Capacidades de continuidad, verificadas</text>
+<g transform="translate(985,135) scale(0.55)" fill="none" stroke="#5fd3c8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1060" y="160" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="start">Tolera dos caídas simultáneas</text>
+<text x="1060" y="192" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">El árbitro de 5 miembros sostiene el servicio con</text>
+<text x="1060" y="219" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">dos máquinas apagadas a la vez</text>
+<g transform="translate(985,290) scale(0.55)" fill="none" stroke="#5fd3c8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1060" y="315" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="start">Restauración probada en 3 escenarios</text>
+<text x="1060" y="347" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">Un respaldo real se restaura con éxito desde la</text>
+<text x="1060" y="374" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">NAS, la nube y una máquina virtual completa</text>
+<g transform="translate(985,445) scale(0.55)" fill="none" stroke="#5fd3c8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1060" y="470" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="start">Resiliente ante disco y red</text>
+<text x="1060" y="502" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">El servicio se mantiene firme incluso ante un</text>
+<text x="1060" y="529" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">disco lleno o una partición de red del líder</text>
+<g transform="translate(985,600) scale(0.55)" fill="none" stroke="#5fd3c8" stroke-width="5.45" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="38"/><path d="M32 52 L46 66 L70 36"/></g>
+<text x="1060" y="625" font-size="25" fill="#5fd3c8" font-weight="700" text-anchor="start">Almacenamiento con más margen</text>
+<text x="1060" y="657" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">El sistema cuenta hoy con más espacio disponible y</text>
+<text x="1060" y="684" font-size="20" fill="#e8f1f2" font-weight="400" text-anchor="start">mejor protección para los datos</text>
+</svg>

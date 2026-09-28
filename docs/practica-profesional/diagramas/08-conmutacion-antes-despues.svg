@@ -42,10 +42,10 @@
   <text x="335" y="420" text-anchor="middle" font-size="13" fill="#1f6f68">WAL en vivo</text>
 
   <rect x="120" y="524" width="430" height="110" rx="10" fill="#eceee8" stroke="#d9dbd3"/>
-  <text x="335" y="550" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">Árbitro: cluster etcd (3 miembros, mayoría = 2)</text>
-  <text x="335" y="574" text-anchor="middle" font-size="14" fill="#535e5c">crm-edge · crm-edge-b · crm-core-b</text>
+  <text x="335" y="550" text-anchor="middle" font-size="16" font-weight="700" fill="#161b1a">Árbitro: cluster etcd — hoy 5 miembros, mayoría = 3</text>
+  <text x="335" y="574" text-anchor="middle" font-size="14" fill="#535e5c">ambos bordes, ambos núcleos y crm-mon</text>
   <text x="335" y="596" text-anchor="middle" font-size="14" fill="#535e5c">guarda quién es el líder (clave con TTL de 30 s)</text>
-  <text x="335" y="618" text-anchor="middle" font-size="14" fill="#535e5c">los 3 miembros sanos</text>
+  <text x="335" y="618" text-anchor="middle" font-size="13" fill="#8a8f8a">en esta prueba (25-09) eran 3; ampliado a 5 el 27-09</text>
 
   <!-- ===== DESPUES ===== -->
   <rect x="660" y="90" width="610" height="570" rx="14" fill="#ffffff" stroke="#9b3b47" stroke-width="2"/>
@@ -84,5 +84,5 @@
   <text x="965" y="596" text-anchor="middle" font-size="14" fill="#535e5c">detección → escrituras habilitadas: 0,3 s</text>
   <text x="965" y="618" text-anchor="middle" font-size="14" fill="#535e5c">sin pérdida de datos (réplica sincrónica)</text>
 
-  <text x="650" y="688" text-anchor="middle" font-size="14" fill="#8a8f8a">Datos del registro real de Patroni en crm-core-b, 25-sep-2026 (UTC). Una segunda falla simultánea en etcd dejaría sin mayoría: el diseño tolera una falla a la vez.</text>
+  <text x="650" y="688" text-anchor="middle" font-size="14" fill="#8a8f8a">Datos del registro real de Patroni en crm-core-b, 25-sep-2026 (UTC), con etcd de 3 miembros. Ampliado a 5 miembros el 27-09: el diseño ahora tolera dos fallas simultáneas (antes, una).</text>
 </svg>

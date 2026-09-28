@@ -1,0 +1,13 @@
+P6 - Doble caida simultanea con el arbitro etcd ya en 5 miembros (27-09-2026, UTC). Se apagaron a la vez (shutdown
+ordenado, VMs completas) crm-edge-b y crm-core-b (lider de Patroni en ese momento): son 2 de los 5 miembros de etcd,
+justo el escenario que con el diseno anterior de 3 miembros habria dejado 1 de 3 (sin mayoria, servicio detenido).
+Apagado: 16:32:03.178 UTC (102 stopped 16:32:13, 100 stopped 16:32:17).
+Resultado: etcd quedo "degraded" (2 miembros inalcanzables) pero con QUORUM: los 3 restantes (crm-edge, crm-core,
+crm-mon) siguieron sanos. Patroni promovio a crm-core como Leader en 27,2 s (linea de tiempo 18), confirmado con
+pg_is_in_recovery()=f y con una escritura real aceptada. El CRM respondio 200 en los 175 sondeos (0 fallos), mediana
+29 ms. Al reencender ambas VMs, etcd volvio a 5/5 sanos y crm-core-b se reincorporo como Sync Standby con lag 0, sin
+intervencion manual.
+Limitacion honesta: ningun monitor de Kuma mide el arbitro etcd directamente; la evidencia de que SIGUIO teniendo
+quorum es de etcdctl cluster-health (arriba) y de que Patroni pudo conmutar con normalidad (si hubiera perdido el
+quorum, se habria detenido por seguridad, como en D2b). El registro de escritura de crm-core-b se perdio al apagar
+esa VM (su proceso murio con la maquina); el de crm-core (el que se promovio) si quedo completo.

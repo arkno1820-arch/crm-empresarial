@@ -28,6 +28,11 @@ const MAPA = {
   p3crm: "p3-crm-otro-usuario.png", p3centinela: "p3-centinela-detecta-caida.png",
   ciclo: "ha-01-ciclo-failover.png", crmfailover: "ha-02-crm-durante-failover.png",
   permrrhh: "crm-10-permisos-rrhh.png", permadm: "crm-13-permisos-admin.png",
+  restnas: "restauracion-01-ensayo-desde-la-nas.png", restnube: "restauracion-02-ensayo-desde-la-nube.png",
+  restvm1: "restauracion-03-vm-en-restauracion.png", restvm2: "restauracion-04-vm-restaurada-arrancada.png",
+  restvm3: "restauracion-05-historial-de-tareas.png",
+  p6proxapag: "p6-proxmox-apagado.png", p6kumadet: "p6-kuma-detalle-caida.png",
+  p6kumalista: "p6-kuma-lista-caida.png", p6proxenc: "p6-proxmox-encendido.png",
 };
 
 const ABRE = String.fromCharCode(0x27e6);
