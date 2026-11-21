@@ -21,6 +21,13 @@
   roles:
     - uptime_kuma
 
+- name: "Alerta de espacio del pool de Proxmox (hallazgo D2b): vigilancia desde crm-mon hacia Kuma"
+  hosts: monitor
+  become: true
+  tags: [vigilar_pool]
+  roles:
+    - vigilar_pool
+
 - name: "Arbitro de Patroni: cluster etcd de 5 miembros (4 VMs y el contenedor crm-mon)"
   hosts: etcd
   become: true

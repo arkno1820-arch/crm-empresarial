@@ -24,7 +24,8 @@ dentro de una VM de VMware, en tu PC fisico. Todo lo que hay:
       Nucleo gemelo: MISMO software, activo en paralelo (no es pasivo).
       Tambien es miembro de etcd.
   - crm-mon      (CONTENEDOR 104, 10.10.10.20)
-      Uptime Kuma principal (los 10 monitores). Vive FUERA de las VMs
+      Uptime Kuma principal (los 14 monitores, incluido el del espacio del
+      pool de Proxmox) y quinto miembro de etcd. Vive FUERA de las VMs
       para que siga vigilando aunque una VM se caiga.
 
   - crm-nas      (CONTENEDOR 105, 10.10.10.30)
@@ -43,13 +44,13 @@ disco de la VM en VMware (Edit virtual machine settings > Hard Disk 2).
 
 Quien manda en la base de datos: Patroni. Uno de los dos nucleos es
 "Leader" (escribe) y el otro "Sync Standby" (replica sincronica). Si el
-lider cae, el otro asume solo. etcd (3 miembros: crm-edge, crm-edge-b,
-crm-core-b) es el "arbitro" que decide quien es lider.
+lider cae, el otro asume solo. etcd (5 miembros: crm-edge, crm-edge-b,
+crm-core, crm-core-b y crm-mon) es el "arbitro" que decide quien es lider.
 
-REGLA DE ORO DEL QUORUM: etcd necesita 2 de 3 miembros vivos. Por eso,
-con el sistema EN USO, nunca apagues a la vez dos de estas VMs:
-crm-edge, crm-edge-b, crm-core-b. Una a la vez, esperando que la
-anterior vuelva. (Si se caen dos, el sistema se DETIENE a proposito
+REGLA DE ORO DEL QUORUM: etcd necesita 3 de 5 miembros vivos (tolera la
+caida de DOS a la vez). Por eso, con el sistema EN USO, nunca apagues a la
+vez tres de esos cinco (VMs o crm-mon). Si puedes, una a la vez, esperando que la
+anterior vuelva. (Si se caen tres, el sistema se DETIENE a proposito
 para no corromper datos; al volver una, se recupera solo.)
 Cuando apagas TODO, el orden de la seccion 2 ya lo respeta.
 
@@ -137,7 +138,7 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
   PASO 4 - Verificacion rapida en el navegador:
     - CRM:            https://192.168.80.10   (debe mostrar el login
                       con candado, sin advertencias)
-    - Kuma principal: http://192.168.80.10:3001  (los 10 monitores en
+    - Kuma principal: http://192.168.80.10:3001  (los 14 monitores en
                       verde; algunos tardan 1-2 min)
 
   PASO 5 - Verificacion tecnica de la base de datos (recomendada
@@ -150,9 +151,9 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
   Debe verse UN "Leader" y UN "Sync Standby", ambos "running", con
   "Lag in MB" = 0. Y el estado de etcd (desde crm-edge):
 
-    etcdctl --endpoints=http://10.10.10.2:2379,http://10.10.10.3:2379,http://10.10.10.11:2379 cluster-health
+    etcdctl --endpoints=http://10.10.10.2:2379,http://10.10.10.3:2379,http://10.10.10.10:2379,http://10.10.10.11:2379,http://10.10.10.20:2379 cluster-health
 
-  Deben salir los 3 miembros "healthy" y al final "cluster is healthy".
+  Deben salir los 5 miembros "healthy" y al final "cluster is healthy".
 
   PASO 6 - Kuma centinela (opcional): abre un tunel y entra a
   http://localhost:3001 (tema oscuro, 2 alarmas):
@@ -189,9 +190,9 @@ Abre PowerShell o Git Bash y ejecuta, EN ESTE ORDEN:
 - https://192.168.80.10 no responde pero las VMs dicen "corriendo":
   espera unos minutos mas (Docker, Patroni). Luego revisa
   "patronictl list" y "endpoint health" (PASO 5).
-- "patronictl list" sin lider y etcd con menos de 2 miembros sanos:
-  enciende la VM de etcd que falte (crm-edge, crm-edge-b o crm-core-b).
-  Con 2 de 3 el sistema se recupera solo.
+- "patronictl list" sin lider y etcd con menos de 3 miembros sanos:
+  enciende la VM o el contenedor de etcd que falte (crm-edge, crm-edge-b,
+  crm-core, crm-core-b o crm-mon). Con 3 de 5 el sistema se recupera solo.
 - Un nucleo no vuelve a prender (falla real de disco/hardware): el otro
   nucleo ya atiende solo (esa es la redundancia). Reconstruir el caido se
   describe en infra/ansible/README.md.
@@ -266,7 +267,13 @@ Es una exposicion a la red del celular: quitalo si no lo necesitas.
 8. RELACION CON LA OTRA GUIA (RESPALDO DE DATOS)
 --------------------------------------------------------------------
 Este archivo es solo sobre APAGAR/ENCENDER. Los respaldos y recuperacion
-de datos estan en scripts/INSTRUCCIONES_RESPALDO.txt, que todavia
-describe el mundo viejo de Docker Compose y NO refleja Patroni. Esta
-pendiente actualizarla: avisale a Claude.
+de datos estan en scripts/INSTRUCCIONES_RESPALDO.txt (vigente: Proxmox +
+Patroni, actualizada el 21-11-2026).
 Detalle tecnico de la infraestructura: infra/ansible/README.md.
+
+TRAS UN APAGADO LARGO (dias o semanas): al encender, los temporizadores
+ponen al dia lo atrasado (respaldo, limpieza, envio a la nube). Desde el
+21-11-2026 es seguro: la limpieza conserva siempre las 7 copias mas
+recientes y el respaldo espera a que la base este lista. Aun asi, mira el
+monitor 14 (espacio del pool): debe estar en verde antes de dejar el
+sistema en uso.

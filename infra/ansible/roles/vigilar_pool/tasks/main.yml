@@ -1,0 +1,44 @@
+---
+# Alerta de espacio del pool compartido de Proxmox (hallazgo D2b). Corre en crm-mon (grupo monitor).
+# Secretos fuera de Git: se pasan con -e desde crm-edge (token de solo lectura y token "push" de Kuma):
+#   -e vigilar_pool_token='root@pam!monitor-pool=...' -e vigilar_pool_push_url='http://127.0.0.1:3001/api/push/...'
+- name: Script que lee el pool y avisa a Kuma
+  ansible.builtin.copy:
+    src: vigilar-pool
+    dest: /usr/local/bin/vigilar-pool
+    mode: "0755"
+
+- name: Configuracion (el token vive solo aqui, permiso 0600)
+  ansible.builtin.copy:
+    content: |
+      # Gestionado por Ansible (rol vigilar_pool). Contiene secretos: no subir a Git.
+      PVE_HOST={{ vigilar_pool_pve_host }}
+      PVE_NODE={{ vigilar_pool_pve_node }}
+      PVE_STORAGE={{ vigilar_pool_storage }}
+      PVE_FINGERPRINT={{ vigilar_pool_huella }}
+      UMBRAL={{ vigilar_pool_umbral }}
+      PVE_TOKEN={{ vigilar_pool_token }}
+      KUMA_PUSH_URL={{ vigilar_pool_push_url }}
+    dest: /etc/vigilar-pool.env
+    mode: "0600"
+  no_log: true
+  when: vigilar_pool_token | length > 0 and vigilar_pool_push_url | length > 0
+
+- name: Servicio y temporizador
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: "0644"
+  loop:
+    - vigilar-pool.service
+    - vigilar-pool.timer
+  notify: recargar systemd
+
+- name: Aplicar cambios de systemd antes de activar el temporizador
+  ansible.builtin.meta: flush_handlers
+
+- name: Activar la vigilancia del pool
+  ansible.builtin.systemd:
+    name: vigilar-pool.timer
+    enabled: true
+    state: started

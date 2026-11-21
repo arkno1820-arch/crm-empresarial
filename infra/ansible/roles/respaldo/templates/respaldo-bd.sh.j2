@@ -16,6 +16,13 @@ chmod 700 "$TMP"
 trap 'rm -rf "$TMP"' EXIT
 cd /tmp
 
+# Tras un arranque en frio el temporizador "de recuperacion" (Persistent=true) dispara este
+# respaldo antes de que Patroni deje lista la base (incidente 35): se espera hasta 10 minutos.
+for _ in $(seq 1 120); do
+  runuser -u postgres -- pg_isready -q -p {{ pg_port_directo }} && break
+  sleep 5
+done
+
 runuser -u postgres -- pg_dumpall -p {{ pg_port_directo }} > "$TMP/volcado.sql"
 
 if [ "$(wc -c < "$TMP/volcado.sql")" -lt 1000 ] || ! tail -n 5 "$TMP/volcado.sql" | grep -q "cluster dump complete"; then

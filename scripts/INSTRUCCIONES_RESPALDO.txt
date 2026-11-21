@@ -1,8 +1,10 @@
 ========================================================================
  CRM EMPRESARIAL - GUIA DE RESPALDO Y RESTAURACION
  Escrita para que la sigas paso a paso aunque hayas olvidado todo el resto.
- Ultima actualizacion: 25-09-2026 (reescrita para Proxmox + Patroni;
- seccion 10 y 11 sobre seguridad y chat se mantienen)
+ Ultima actualizacion: 21-11-2026 (limpieza que conserva las 7 copias mas
+ recientes, respaldo que espera a la base, alerta del pool: secciones 3b y 3d;
+ reescrita el 25-09-2026 para Proxmox + Patroni; secciones 10 y 11 sobre
+ seguridad y chat se mantienen)
 ========================================================================
 
 --------------------------------------------------------------------
@@ -85,9 +87,18 @@ guardan en la NAS "crm-nas" (contenedor 105, en tu disco externo K:):
     03:30 (dos copias, por si un nucleo esta caido). Cada volcado va
     CIFRADO con la clave publica de "CRM Respaldos"; solo la clave
     PRIVADA (en tu PC, C:\Users\HP\.gnupg) puede abrirlo. Se guardan
-    30 dias y luego se borran solos. Los nucleos solo pueden ESCRIBIR en
+    30 dias y luego se borran solos, PERO la limpieza (script
+    /usr/local/bin/limpiar-respaldos en crm-nas, cada dia 05:00 UTC)
+    conserva SIEMPRE las 7 copias mas recientes de cada nucleo aunque sean
+    mas antiguas. Asi, un apagado largo no deja la NAS sin copias (en
+    nov-2026, tras 55 dias apagado, la regla anterior las borro todas: incidente
+    34; la nube las conservaba). Los nucleos solo pueden ESCRIBIR en
     la NAS (no leer, listar ni borrar): un nucleo comprometido no puede
     destruir los respaldos.
+    Tras un APAGADO LARGO, al encender se ejecutan solas las tareas
+    atrasadas (respaldo, limpieza, envio a la nube). El respaldo espera
+    hasta 10 minutos a que PostgreSQL este listo antes de volcar
+    (incidente 35: antes fallaba si corria antes que Patroni).
   - CADA DOMINGO 02:00, maquinas completas: las 4 VMs y crm-mon, con
     Proxmox (se conservan las 3 ultimas de cada una). Sirven para
     reconstruir una VM entera.
@@ -190,6 +201,41 @@ volumenes el costo es despreciable) o trasladar el mismo diseno a otro proveedor
 
 Solo se sube la BASE DE DATOS. Las maquinas completas siguen en el mismo PC
 (se reconstruyen con Terraform y Ansible desde GitHub).
+
+CUSTODIA DE LA CLAVE (21-11-2026): hay un acta de custodia para designar un
+SEGUNDO custodio y guardar otra copia de la subclave fuera del PC:
+"60 PRACTICA PROF_martes_CRM\informe 3\Acta_de_Custodia_Clave_Respaldos.docx".
+Pendiente: que la jefatura designe al segundo custodio y firmen el acta.
+
+
+--------------------------------------------------------------------
+3d. ALERTA DE ESPACIO DEL POOL DE PROXMOX (desde 21-11-2026)
+--------------------------------------------------------------------
+POR QUE: las 4 VMs y los contenedores comparten UN pool de disco thin
+("local-lvm", 38,7 GiB). Si se llena, las VMs se caen (prueba D2b, incidente
+33). El grupo de volumenes casi no tiene espacio libre (0,88 GiB), asi que el
+pool NO puede autoextenderse: la medida es AVISAR y, antes de produccion,
+AMPLIAR el disco virtual de Proxmox (VMware) y luego "pvresize" + "lvextend".
+
+QUE HACE: en crm-mon (contenedor 104) el servicio vigilar-pool (cada 10 min)
+lee el uso del pool por la API de Proxmox con un token de SOLO LECTURA
+(root@pam!monitor-pool, rol PVEAuditor; no es el de Terraform) y avisa al
+monitor 14 de Kuma ("INFRA . Espacio del pool de Proxmox (local-lvm)"): verde
+bajo el 80 %, rojo desde el 80 %. La conexion fija la huella TLS de Proxmox
+(sha256 F7C0F432...772A88); si cambia, el monitor se pone en rojo.
+Si el servicio dejara de correr, Kuma lo pone en rojo a los 30 minutos.
+
+DONDE ESTA: rol infra/ansible/roles/vigilar_pool (script vigilar-pool, units
+y /etc/vigilar-pool.env en crm-mon, permiso 0600, con el token y la URL push;
+fuera de Git). Se reaplica con Ansible (tag vigilar_pool) pasando el token y la
+URL push con -e.
+
+COMPROBAR (PowerShell):
+
+    ssh -i ~/.ssh/id_ed25519_crm -p 2211 cesar@192.168.80.10 "ssh root@10.10.10.20 'systemctl start vigilar-pool.service; journalctl -u vigilar-pool.service -n 3 --no-pager -o cat'"
+
+Medicion del 21-11-2026: 79,1 % usado (30,6 de 38,7 GiB). Si se acerca al 80 %,
+no crees VMs ni respaldos manuales hasta ampliar el disco.
 
 
 --------------------------------------------------------------------

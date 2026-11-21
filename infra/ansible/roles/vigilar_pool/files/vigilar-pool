@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+# vigilar-pool: avisa a Uptime Kuma cuando el pool compartido de Proxmox (local-lvm) se llena.
+# Gestionado por Ansible (rol vigilar_pool). Corre en crm-mon cada 10 minutos.
+#
+# Por que existe: la prueba de disco D2b (incidente 33) agoto el pool thin compartido y las dos
+# VMs de nucleo quedaron caidas. Este monitor da aviso ANTES de llegar al limite (hallazgo D2b).
+#
+# Como funciona (solo lectura, sin tocar el hipervisor):
+#   1. Consulta la API de Proxmox con un token de SOLO LECTURA (rol PVEAuditor), no con el de Terraform.
+#   2. La conexion TLS se verifica fijando la huella del certificado (sha256): si cambia, avisa.
+#   3. Calcula el porcentaje usado y avisa al monitor "push" de Kuma: arriba si esta bajo el umbral,
+#      caido si lo supera. Si este script dejara de correr, Kuma tambien marca el monitor como caido.
+# Configuracion: /etc/vigilar-pool.env (permiso 0600; el token no vive en Git).
+import hashlib
+import http.client
+import json
+import ssl
+import sys
+import urllib.parse
+import urllib.request
+
+
+def leer_env(ruta="/etc/vigilar-pool.env"):
+    cfg = {}
+    with open(ruta, encoding="utf-8") as f:
+        for linea in f:
+            linea = linea.strip()
+            if linea and not linea.startswith("#") and "=" in linea:
+                k, v = linea.split("=", 1)
+                cfg[k.strip()] = v.strip().strip('"')
+    return cfg
+
+
+def avisar(cfg, estado, mensaje, ping=""):
+    q = urllib.parse.urlencode({"status": estado, "msg": mensaje, "ping": ping})
+    try:
+        urllib.request.urlopen(f"{cfg['KUMA_PUSH_URL']}?{q}", timeout=10).read()
+    except Exception as e:  # sin aviso Kuma igual marca caido por falta de latido
+        print(f"no se pudo avisar a Kuma: {e}", file=sys.stderr)
+    print(f"[{estado}] {mensaje}")
+
+
+def consultar_pool(cfg):
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE  # la identidad se comprueba abajo, fijando la huella
+    con = http.client.HTTPSConnection(cfg["PVE_HOST"], 8006, context=ctx, timeout=15)
+    con.connect()
+    huella = hashlib.sha256(con.sock.getpeercert(binary_form=True)).hexdigest().upper()
+    if huella != cfg["PVE_FINGERPRINT"].replace(":", "").upper():
+        raise RuntimeError("la huella TLS de Proxmox cambio (no se consulta)")
+    ruta = f"/api2/json/nodes/{cfg['PVE_NODE']}/storage/{cfg['PVE_STORAGE']}/status"
+    con.request("GET", ruta, headers={"Authorization": f"PVEAPIToken={cfg['PVE_TOKEN']}"})
+    resp = con.getresponse()
+    cuerpo = resp.read()
+    if resp.status != 200:
+        raise RuntimeError(f"la API respondio HTTP {resp.status}")
+    return json.loads(cuerpo)["data"]
+
+
+def main():
+    cfg = leer_env()
+    umbral = float(cfg.get("UMBRAL", "80"))
+    try:
+        d = consultar_pool(cfg)
+    except Exception as e:
+        avisar(cfg, "down", f"No se pudo leer el pool de Proxmox: {e}")
+        return 1
+    usado, total = d["used"], d["total"]
+    pct = 100.0 * usado / total
+    gib = 1024 ** 3
+    msg = f"Pool {cfg['PVE_STORAGE']} al {pct:.1f} % ({usado / gib:.1f} de {total / gib:.1f} GiB; umbral {umbral:.0f} %)"
+    if pct >= umbral:
+        avisar(cfg, "down", "ALERTA: " + msg, f"{pct:.1f}")
+        return 0
+    avisar(cfg, "up", msg, f"{pct:.1f}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

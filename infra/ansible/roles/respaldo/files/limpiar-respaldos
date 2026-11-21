@@ -1,0 +1,28 @@
+#!/bin/sh
+# Limpieza de respaldos (crm-nas). Gestionado por Ansible (rol respaldo).
+# Uso:  limpiar-respaldos [DIAS] [MINIMO]      (por defecto 30 y 7)
+#
+# Borra los respaldos con mas de DIAS dias, PERO conserva siempre los MINIMO mas recientes
+# de cada nucleo, sin importar su edad. Sin ese minimo, tras un apagado largo la limpieza de
+# "recuperacion" del temporizador (Persistent=true) veia todas las copias como antiguas y
+# las borraba todas (incidente 34).
+# Para pruebas se puede cambiar la carpeta con la variable RESPALDOS_DIR.
+set -eu
+DIR="${RESPALDOS_DIR:-/srv/respaldos/db}"
+DIAS="${1:-30}"
+MINIMO="${2:-7}"
+
+for PATRON in 'db-crm-core-[0-9]*.sql.gpg' 'db-crm-core-b-[0-9]*.sql.gpg'; do
+  # del mas nuevo al mas viejo; se saltan los MINIMO primeros
+  # shellcheck disable=SC2086
+  ls -1t "$DIR"/$PATRON 2>/dev/null | tail -n +"$((MINIMO + 1))" | while IFS= read -r f; do
+    if [ -n "$(find "$f" -maxdepth 0 -mtime +"$DIAS")" ]; then
+      rm -f -- "$f"
+      if [ -z "${RESPALDOS_DIR:-}" ]; then
+        logger -t limpiar-respaldos "borrado $(basename "$f") (mas de $DIAS dias y fuera de los $MINIMO mas recientes)"
+      fi
+      echo "borrado $(basename "$f")"
+    fi
+  done
+done
+exit 0

@@ -40,6 +40,12 @@
     group: respaldos
     mode: "0600"
 
+- name: Script de limpieza (borra lo antiguo pero conserva siempre las copias mas recientes)
+  ansible.builtin.copy:
+    src: limpiar-respaldos
+    dest: /usr/local/bin/limpiar-respaldos
+    mode: "0755"
+
 - name: Limpieza automatica de respaldos antiguos (servicio)
   ansible.builtin.template:
     src: limpiar-respaldos.service.j2

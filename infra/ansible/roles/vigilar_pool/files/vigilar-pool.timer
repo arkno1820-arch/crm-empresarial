@@ -1,0 +1,10 @@
+[Unit]
+Description=Revisa el espacio del pool de Proxmox cada 10 minutos
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=10min
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

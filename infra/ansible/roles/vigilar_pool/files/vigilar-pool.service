@@ -1,0 +1,7 @@
+[Unit]
+Description=Vigila el espacio del pool compartido de Proxmox (local-lvm) y avisa a Uptime Kuma
+After=network-online.target uptime-kuma.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/vigilar-pool

@@ -1,0 +1,10 @@
+---
+# Alerta de espacio del pool de Proxmox (rol vigilar_pool)
+vigilar_pool_pve_host: "10.10.10.1"      # Proxmox visto desde la red interna vmbr1
+vigilar_pool_pve_node: "pve"
+vigilar_pool_storage: "local-lvm"
+# Huella sha256 del certificado de la API (verificada desde dos VMs distintas el 21-11-2026)
+vigilar_pool_huella: "F7C0F432678131582D576BE7D4B088117A66F229EC45072B8133180E8B772A88"
+vigilar_pool_umbral: 80                   # % de uso a partir del cual Kuma marca ALERTA
+vigilar_pool_token: ""                    # se entrega con -e (solo lectura, rol PVEAuditor)
+vigilar_pool_push_url: ""                 # se entrega con -e (monitor "push" de Kuma)
