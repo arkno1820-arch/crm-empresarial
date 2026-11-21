@@ -1,8 +1,17 @@
 ---
-# etcd: el "arbitro" de Patroni. Tres miembros en tres VMs distintas (crm-edge,
-# crm-edge-b y crm-core-b): con la caida de cualquiera queda mayoria y Patroni
-# puede elegir primario sin riesgo de split-brain, sin necesitar un tercer servidor.
+# etcd: el "arbitro" de Patroni. Cinco miembros en cinco nodos distintos (crm-edge,
+# crm-edge-b, crm-core, crm-core-b y el contenedor crm-mon): la mayoria es de tres,
+# por lo que el clúster tolera DOS caidas simultaneas sin perder quorum (ADR-15).
+# Empezo con tres miembros y se amplio a cinco en caliente (etcdctl member add, estado
+# "existing"); este rol describe ese estado final.
 # Se usa la API v2 (la del paquete de Ubuntu 22.04, etcd 3.3).
+#
+# Dos situaciones, ambas seguras:
+#  - Cluster NUEVO (ningun miembro tiene datos): los cinco arrancan juntos con estado
+#    "new" y el rol reinicia todos a la vez para aplicar la configuracion.
+#  - Cluster EN MARCHA (el miembro ya tiene datos): el rol solo deja la configuracion
+#    alineada con la realidad (estado "existing") y NO reinicia nada; reejecutarlo no
+#    interrumpe el servicio ni pone en riesgo el quorum.
 
 - name: Instalar etcd
   ansible.builtin.apt:
@@ -13,19 +22,34 @@
     update_cache: true
     cache_valid_time: 86400
 
+- name: Detectar si el miembro ya fue inicializado (tiene datos de etcd)
+  ansible.builtin.stat:
+    path: "/var/lib/etcd/{{ etcd_name }}.etcd/member"
+  register: etcd_datos
+
+- name: Definir el estado inicial del cluster para este miembro
+  ansible.builtin.set_fact:
+    etcd_ya_inicializado: "{{ etcd_datos.stat.exists }}"
+    etcd_estado_inicial: "{{ 'existing' if etcd_datos.stat.exists else 'new' }}"
+
 - name: Configurar el miembro del cluster etcd
   ansible.builtin.template:
     src: etcd.default.j2
     dest: /etc/default/etcd
     mode: "0644"
-  notify: Reiniciar etcd
+  register: etcd_conf
 
 # El paquete arranca etcd solo, con una configuracion por defecto de un unico nodo:
-# hay que aplicar la nuestra ANTES de seguir (los tres miembros reinician a la vez).
-- name: Aplicar la configuracion (reinicio simultaneo de los tres miembros)
-  ansible.builtin.meta: flush_handlers
+# en un cluster nuevo hay que aplicar la nuestra ANTES de seguir (los cinco miembros
+# reinician a la vez). En un cluster en marcha NO se reinicia: los parametros
+# ETCD_INITIAL_* solo se usan al crear el miembro y despues se ignoran.
+- name: Aplicar la configuracion (reinicio simultaneo, SOLO en un cluster nuevo)
+  ansible.builtin.systemd:
+    name: etcd
+    state: restarted
+  when: etcd_conf.changed and not etcd_ya_inicializado
 
-- name: Habilitar e iniciar etcd (los tres miembros arrancan juntos)
+- name: Habilitar e iniciar etcd (en un cluster nuevo, los miembros arrancan juntos)
   ansible.builtin.systemd:
     name: etcd
     state: started

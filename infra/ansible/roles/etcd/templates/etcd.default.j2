@@ -6,6 +6,6 @@ ETCD_LISTEN_CLIENT_URLS="http://{{ etcd_ip }}:{{ etcd_client_port }},http://127.
 ETCD_ADVERTISE_CLIENT_URLS="http://{{ etcd_ip }}:{{ etcd_client_port }}"
 ETCD_INITIAL_ADVERTISE_PEER_URLS="http://{{ etcd_ip }}:{{ etcd_peer_port }}"
 ETCD_INITIAL_CLUSTER="{% for h in groups['etcd'] %}{{ hostvars[h].etcd_name }}=http://{{ hostvars[h].etcd_ip }}:{{ etcd_peer_port }}{% if not loop.last %},{% endif %}{% endfor %}"
-ETCD_INITIAL_CLUSTER_STATE="new"
+ETCD_INITIAL_CLUSTER_STATE="{{ etcd_estado_inicial }}"
 ETCD_INITIAL_CLUSTER_TOKEN="{{ etcd_cluster_token }}"
 ETCD_ENABLE_V2="true"

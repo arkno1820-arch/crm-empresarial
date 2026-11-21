@@ -17,7 +17,7 @@ pg_port_directo: 5433       # 5432 lo ocupa el contenedor heredado hasta el tras
 pg_port_haproxy: 5000       # punto de entrada de la aplicacion: siempre el primario vigente
 etcd_client_port: 2379
 etcd_peer_port: 2380
-etcd_endpoints: "10.10.10.2:2379,10.10.10.3:2379,10.10.10.11:2379"
+etcd_endpoints: "10.10.10.2:2379,10.10.10.3:2379,10.10.10.10:2379,10.10.10.11:2379,10.10.10.20:2379"
 etcd_cluster_token: crm-etcd
 
 # Par de borde: IP virtual que Keepalived mueve entre crm-edge y crm-edge-b.

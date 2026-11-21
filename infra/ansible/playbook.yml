@@ -21,7 +21,7 @@
   roles:
     - uptime_kuma
 
-- name: "Arbitro de Patroni: cluster etcd de 3 miembros repartidos en 3 VMs"
+- name: "Arbitro de Patroni: cluster etcd de 5 miembros (4 VMs y el contenedor crm-mon)"
   hosts: etcd
   become: true
   tags: [etcd]
